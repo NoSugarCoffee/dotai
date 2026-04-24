@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "hooks": {
+    "session_start": "hooks/on-session-start.md",
+    "task_complete": "hooks/on-task-complete.md"
+  }
+}
