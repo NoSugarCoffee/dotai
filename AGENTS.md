@@ -45,6 +45,7 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | `~/.cursor/skills/<name>` | Symlink per skill directory |
 | `~/.agents/skills/<name>` | Symlink per skill directory |
 | `~/.copilot/skills/<name>` | Symlink per skill directory |
+| `~/.config/github-copilot/intellij/global-copilot-instructions.md` | Symlink → `rules/coding.md` |
 
 ## Adding a new skill
 
