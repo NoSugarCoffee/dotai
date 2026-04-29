@@ -16,6 +16,7 @@ CURSOR_DIR="$HOME/.cursor"
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
 CURSOR_SKILLS_DIR="$HOME/.cursor/skills"
 COPILOT_SKILLS_DIR="$HOME/.copilot/skills"
+COPILOT_INTELLIJ_DIR="$HOME/.config/github-copilot/intellij"
 
 # ── Helpers ────────────────────────────────────────────────────────
 
@@ -61,17 +62,26 @@ install_copilot_skills() {
   link_skills "$COPILOT_SKILLS_DIR"
 }
 
+# ── 5. GitHub Copilot IntelliJ plugin (~/.config/github-copilot/intellij) ──
+install_copilot_intellij() {
+  echo "→ GitHub Copilot (IntelliJ)"
+  mkdir -p "$COPILOT_INTELLIJ_DIR"
+  ln -sfn "$RULES_SRC/coding.md" "$COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "  ✓ linked rules/coding.md → global-copilot-instructions.md"
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 main() {
   install_claude
   install_cursor
   install_agent_skills
   install_copilot_skills
+  install_copilot_intellij
 
   echo ""
   echo "✅ dotai installed."
   echo "   Skills : $SKILLS_SRC (symlinked)"
-  echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.md"
+  echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.md, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
 }
 
 main
