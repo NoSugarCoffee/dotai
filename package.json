@@ -1,0 +1,12 @@
+{
+  "name": "skills",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "skills": "./scripts/skills.mjs"
+  },
+  "scripts": {
+    "skills": "node ./scripts/skills.mjs"
+  }
+}
