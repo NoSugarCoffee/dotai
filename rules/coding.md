@@ -3,6 +3,10 @@
 ## Code style
 
 - Comments in English only.
+- Comment only to explain *why*, never *what* or *how*; code must be clear enough to express what it does through naming and structure alone.
+- Do not write narrating comments (e.g. `// increment counter`, `// return result`, `// handle error`).
+- Prefer renaming variables or extracting well-named functions over adding explanatory comments.
+- Comments are appropriate for: non-obvious trade-offs, workarounds for external constraints, intent that cannot be expressed in code (regulatory requirements, algorithm selection rationale), and links to relevant tickets or specs.
 - Prefer functional programming over object-oriented programming.
 - Use classes only when the domain naturally requires rich objects, stateful behavior, or integration boundaries.
 - Write pure functions: only modify return values; never mutate input parameters or global state.

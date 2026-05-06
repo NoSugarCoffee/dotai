@@ -83,6 +83,21 @@ DO NOT flag:
   - Dynamic typing in truly dynamic contexts (e.g. JSON deserialization entry points)
 ```
 
+### Comments
+
+```
+FLAG when:
+  - A comment restates what the code does (narrating comment)
+  - A comment describes how code works when the code itself is clear
+  - A comment exists where a better name or extracted function would eliminate it
+
+DO NOT flag:
+  - Comments explaining a non-obvious "why" (trade-off, workaround, external constraint)
+  - Comments linking to tickets, specs, or external systems
+  - Language doc-comment conventions on public APIs (JSDoc, docstrings)
+  - TODO/FIXME comments that reference a tracked issue
+```
+
 ### Dependency Hygiene
 
 ```
@@ -100,7 +115,6 @@ DO NOT flag:
 
 - All code formatting and whitespace (linters handle this)
 - Import ordering
-- Comment quantity or style
 - Variable naming that follows existing project conventions
 - Minor stylistic preferences with no behavioral impact
 - Code outside the diff that isn't directly affected
