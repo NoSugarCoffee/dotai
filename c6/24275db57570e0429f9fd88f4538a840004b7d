@@ -1,0 +1,26 @@
+skills/coding-standards-review/SKILL.md
+  43f59f04fc97a8ab 2
+skills/code-review/SKILL.md
+  43f59f04fc97a8ab 3,19,57-61,63,77-83,95,159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c624275db57570e0429f9fd88f4538a840004b7d",
+  "prompts": {
+    "43f59f04fc97a8ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "c7f70de4-23e3-401f-8f04-1f8b16bbdec6",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee",
+      "messages": [],
+      "total_additions": 234,
+      "total_deletions": 102,
+      "accepted_lines": 23,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/75bd3d2cc7b18d833b47b9bea23e7e7529dc0a0285eda30be1865ef715aa2623"
+    }
+  }
+}
