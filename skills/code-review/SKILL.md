@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Comprehensive code review - orchestrates focused sub-reviews for security, performance, architecture, and maintainability. Detects dead code, bool traps, and critical issues. Precision over recall.
+description: Comprehensive code review - orchestrates focused sub-reviews for security, performance, architecture, maintainability, and coding standards. Detects dead code, bool traps, and critical issues. Precision over recall.
 ---
 
 # Code Review
@@ -16,7 +16,7 @@ Your goal is **precision over recall** — it is better to catch fewer issues wi
 BEFORE starting any review, ask the user:
 
   1. "What would you like me to focus on?"
-       a) Security, Performance, Architecture, or Maintainability
+       a) Security, Performance, Architecture, Maintainability, or Coding Standards
           → Focused Review (one sub-skill only)
        b) Full / thorough
           → Full Review (all sub-skills)
@@ -54,12 +54,13 @@ main — sound right?").
 
 When the user asks for a **specific domain only** (e.g. "just check security", "review for dead code"):
 
-| Trigger phrase | Sub-skill to invoke |
-|----------------|--------------------|
-| "security", "vulnerabilities", "auth" | `security-review` |
-| "performance", "speed", "memory", "queries" | `performance-review` |
-| "architecture", "design", "coupling", "API" | `architecture-review` |
+| Trigger phrase                                              | Sub-skill to invoke      |
+| ----------------------------------------------------------- | ------------------------ |
+| "security", "vulnerabilities", "auth"                       | `security-review`        |
+| "performance", "speed", "memory", "queries"                 | `performance-review`     |
+| "architecture", "design", "coupling", "API"                 | `architecture-review`    |
 | "maintainability", "dead code", "bool traps", "readability" | `maintainability-review` |
+| "coding standards", "style", "typing", "error handling"     | `coding-standards-review` |
 
 ```
 FOR focused review:
@@ -73,12 +74,13 @@ FOR focused review:
 
 For critical changes or when user says "full" / "thorough". Dispatch to all sub-skills:
 
-| Domain | Sub-skill |
-|--------|-----------|
-| Security | `security-review` |
-| Performance | `performance-review` |
-| Architecture | `architecture-review` |
-| Maintainability | `maintainability-review` |
+| Domain           | Sub-skill                |
+| ---------------- | ------------------------ |
+| Security         | `security-review`        |
+| Performance      | `performance-review`     |
+| Architecture     | `architecture-review`    |
+| Maintainability  | `maintainability-review` |
+| Coding Standards | `coding-standards-review` |
 
 ```
 FOR full review:
@@ -90,6 +92,7 @@ FOR full review:
 ```
 
 > Dead code and bool trap rules are defined in `maintainability-review/SKILL.md` and applied during the maintainability sub-review.
+> Coding style, typing, and error-handling rules are defined in `coding-standards-review/SKILL.md` and applied during the coding standards sub-review.
 
 ## Project Context Auto-Detection
 
@@ -153,7 +156,7 @@ Severity emoji key:
 - 🟡 **medium** — Fix in near-term
 - 🔵 **low** — Nice to have / minor
 
-Group under `## Security`, `## Performance`, `## Architecture`, `## Maintainability / Dead Code` headers.
+Group under `## Security`, `## Performance`, `## Architecture`, `## Maintainability`, `## Coding Standards` headers.
 
 ### Summary Table (end of review)
 
