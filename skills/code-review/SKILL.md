@@ -27,7 +27,7 @@ code-review/
 | [Workflow](#workflow) | Orchestration; W1 / W2; parallel reviewer dispatch |
 | [Operating rules](#operating-rules) | Philosophy and exclusions |
 | [Sub-skill routing](#sub-skill-routing) | User intent → sub-skill |
-| [Project context auto-detection](#project-context-auto-detection) | Stack & conventions |
+| [Project context](#project-context) | Infer stack & norms from the repo (brief) |
 | [Output contract](#output-contract) | Finding Markdown + summary table |
 
 ## Purpose
@@ -69,7 +69,7 @@ Orchestration uses **only** this **`code-review`** skill definition. Nested path
 | Step | Action |
 |------|--------|
 | 1 | Map the user’s domain to a sub-skill using [Sub-skill routing](#sub-skill-routing). |
-| 2 | Run [Project context auto-detection](#project-context-auto-detection). |
+| 2 | [Project context](#project-context): infer once from the repo. |
 | 3 | Invoke **only** the matching sub-skill. |
 | 4 | Present findings using [Output contract](#output-contract). |
 | 5 | Do **not** add findings from other domains unless **critical**. |
@@ -78,7 +78,7 @@ Orchestration uses **only** this **`code-review`** skill definition. Nested path
 
 | Step | Action |
 |------|--------|
-| 1 | Run [Project context auto-detection](#project-context-auto-detection) **once** (shared baseline for all reviewers). |
+| 1 | [Project context](#project-context) **once** — shared baseline for all reviewers. |
 | 2 | **In parallel**, for each row in **Full mode — domain → sub-skill** ([below](#full-mode--domain--sub-skill)): open that subdirectory’s `SKILL.md`, apply against the **same** diff concurrently (parallel reads, subagents/tasks, batched tool calls). Kick off **all** reviewer passes together; avoid serial pipelines unless your runtime forbids overlap. |
 | 3 | Deduplicate (same issue from multiple sub-skills). |
 | 4 | Sort by severity: critical → high → medium → low. |
@@ -142,45 +142,9 @@ Use the **folder name** under `code-review/` (not a separate top-level installed
 | Maintainability | `maintainability-review` |
 | Coding Standards | `coding-standards-review` |
 
-## Project context auto-detection
+## Project context
 
-Before reviewing, infer the stack from repo root. Do **not** ask the user to supply this unless files are missing.
-
-### LANGUAGE (first match)
-
-| Signals | Language |
-|---------|----------|
-| `package.json` or `tsconfig.json` | TypeScript/JavaScript |
-| `pyproject.toml`, `setup.py`, `requirements.txt` | Python |
-| `go.mod` | Go |
-| `Cargo.toml` | Rust |
-| `pom.xml`, `build.gradle` | Java/Kotlin |
-| `*.csproj`, `*.sln` | C#/.NET |
-| `mix.exs` | Elixir |
-| `Gemfile` | Ruby |
-| `composer.json` | PHP |
-
-### FRAMEWORK (from the detected manifest’s dependencies)
-
-- `package.json` → next, react, vue, angular, express, fastify, nestjs, etc.
-- `pyproject.toml` → django, flask, fastapi, etc.
-- `go.mod` → gin, echo, fiber, etc.
-- `Cargo.toml` → actix, axum, rocket, etc.
-
-### TEST FRAMEWORK
-
-- `package.json` devDependencies → jest, vitest, mocha, playwright, cypress
-- `pyproject.toml` → pytest, unittest
-- `go.mod` → standard testing package
-- `Cargo.toml` → `#[test]`
-
-### CONVENTIONS
-
-- `.eslintrc*`, `biome.json`, `.prettierrc` → JS/TS lint/format
-- `ruff.toml`, `[tool.ruff]` in `pyproject.toml` → Python
-- `.golangci.yml` → Go
-- `clippy.toml`, `rustfmt.toml` → Rust
-- `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md` → team review notes
+Infer language, frameworks, tests, and lint/setup from the repository (manifests, lockfiles, config, `AGENTS.md` / `CONTRIBUTING.md` when present). **Prefer this project’s actual conventions** over generic defaults. Ask the user only when the tree is too sparse or ambiguous to tell.
 
 ## Output contract
 
