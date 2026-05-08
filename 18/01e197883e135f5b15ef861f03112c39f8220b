@@ -1,0 +1,22 @@
+skills/code-review/SKILL.md
+  s_e97f2cbed66beb::t_6437dfdd21a19e 145,147
+  s_e97f2cbed66beb::t_b822bb01eda2c2 72
+  s_e97f2cbed66beb::t_874509b99ca512 81
+  s_e97f2cbed66beb::t_0f964207f0205c 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "1801e197883e135f5b15ef861f03112c39f8220b",
+  "prompts": {},
+  "sessions": {
+    "s_e97f2cbed66beb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "5215364c-7528-4cb4-800b-7d49014dc1c6",
+        "model": "composer-2"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
