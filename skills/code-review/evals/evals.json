@@ -1,0 +1,109 @@
+{
+  "skill_name": "code-review",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Can you do a security review of this PR? It's a Python Flask endpoint we're adding for user login.\n\n```python\n# auth.py\nfrom flask import Flask, request, session, redirect\nimport sqlite3\n\napp = Flask(__name__)\napp.secret_key = \"mysecret123\"\n\ndef get_db():\n    return sqlite3.connect('users.db')\n\n@app.route('/login', methods=['POST'])\ndef login():\n    username = request.form['username']\n    password = request.form['password']\n    db = get_db()\n    query = f\"SELECT * FROM users WHERE username='{username}' AND password='{password}'\"\n    user = db.execute(query).fetchone()\n    if user:\n        session['user_id'] = user[0]\n        session['username'] = user[1]\n        return redirect('/dashboard')\n    return \"Invalid credentials\", 401\n\n@app.route('/profile')\ndef profile():\n    if 'user_id' not in session:\n        return redirect('/login')\n    db = get_db()\n    user = db.execute(f\"SELECT * FROM users WHERE id={session['user_id']}\").fetchone()\n    return f\"<h1>Welcome {user[1]}</h1><p>Email: {user[2]}</p>\"\n```",
+      "expected_output": "Security review identifying SQL injection in login and profile, plaintext password comparison, XSS in profile template, hardcoded secret key.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "sql-injection-login-detected",
+          "text": "Review identifies SQL injection vulnerability in the login() function"
+        },
+        {
+          "id": "sql-injection-profile-detected",
+          "text": "Review identifies SQL injection vulnerability in the profile() function"
+        },
+        {
+          "id": "plaintext-password-flagged",
+          "text": "Review flags that passwords are compared as plaintext (not hashed)"
+        },
+        {
+          "id": "hardcoded-secret-key-flagged",
+          "text": "Review flags the hardcoded app.secret_key value as a security risk"
+        },
+        {
+          "id": "xss-in-profile-template-flagged",
+          "text": "Review identifies XSS risk in the f-string HTML template in profile()"
+        },
+        {
+          "id": "concrete-fix-provided",
+          "text": "Review provides at least one concrete code-level fix suggestion (not just general advice)"
+        },
+        {
+          "id": "has-severity-labels",
+          "text": "Findings are labeled with severity levels (critical/high/medium/low or equivalent)"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Full code review please, comparing against main.\n\n```javascript\n// userService.js\nconst db = require('./db');\n\nasync function getUsersWithPosts() {\n    const users = await db.query('SELECT * FROM users');\n    for (let user of users) {\n        const posts = await db.query(`SELECT * FROM posts WHERE user_id = ${user.id}`);\n        user.posts = posts;\n        const comments = await db.query(`SELECT * FROM comments WHERE user_id = ${user.id}`);\n        user.comments = comments;\n    }\n    return users;\n}\n\nasync function processUserData(userId, action, data, options, callback) {\n    const user = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\n    if (action === 'update') {\n        await db.query(`UPDATE users SET name='${data.name}', email='${data.email}' WHERE id=${userId}`);\n        if (options.sendEmail) {\n            await sendEmail(user.email, 'Profile updated', `Hi ${data.name}, your profile was updated`);\n        }\n        if (options.logActivity) {\n            await db.query(`INSERT INTO activity_log VALUES (${userId}, 'update', NOW())`);\n        }\n        if (options.notify && data.followers) {\n            for (const followerId of data.followers) {\n                await db.query(`INSERT INTO notifications VALUES (${followerId}, 'User ${data.name} updated their profile', NOW())`);\n            }\n        }\n        callback(null, { success: true });\n    } else if (action === 'delete') {\n        await db.query(`DELETE FROM users WHERE id=${userId}`);\n        await db.query(`DELETE FROM posts WHERE user_id=${userId}`);\n        callback(null, { success: true });\n    } else if (action === 'suspend') {\n        await db.query(`UPDATE users SET status='suspended' WHERE id=${userId}`);\n        callback(null, { success: true });\n    }\n}\n\nfunction formatUserName(user) {\n    return user.firstName + ' ' + user.lastName;\n}\n\n// TODO: remove this, not used anymore\nfunction legacyFormatUser(user) {\n    return user.first_name + ' ' + user.last_name;\n}\n\nmodule.exports = { getUsersWithPosts, processUserData, formatUserName };\n```",
+      "expected_output": "Full review: SQL injection (security/critical), N+1 queries (performance), god-function processUserData (architecture), dead code legacyFormatUser (maintainability), mixed callback+async (coding standards).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "sql-injection-detected",
+          "text": "Review identifies SQL injection vulnerabilities in the JavaScript code"
+        },
+        {
+          "id": "n-plus-one-query-detected",
+          "text": "Review identifies the N+1 query pattern in getUsersWithPosts"
+        },
+        {
+          "id": "god-function-flagged",
+          "text": "Review flags processUserData as doing too much / violating single responsibility"
+        },
+        {
+          "id": "dead-code-flagged",
+          "text": "Review flags legacyFormatUser as dead code that should be removed"
+        },
+        {
+          "id": "mixed-callback-async-flagged",
+          "text": "Review flags the mixed use of callbacks and async/await in the same function"
+        },
+        {
+          "id": "covers-multiple-domains",
+          "text": "Review covers findings across at least 3 distinct domains (security, performance, architecture, maintainability, coding standards)"
+        },
+        {
+          "id": "has-summary-table",
+          "text": "Review ends with a structured summary table showing severity counts"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review this for performance and maintainability issues.\n\n```python\n# data_processor.py\nfrom typing import List, Dict\nimport json\n\ndef find_duplicates(records):\n    duplicates = []\n    for i in range(len(records)):\n        for j in range(len(records)):\n            if i != j and records[i]['email'] == records[j]['email']:\n                if records[i] not in duplicates:\n                    duplicates.append(records[i])\n    return duplicates\n\ndef process_report(data, report_type, output_format):\n    with open('config.json') as f:\n        config = json.load(f)\n\n    results = []\n    total = 0\n    count = 0\n\n    for item in data:\n        if item['status'] == 'active':\n            value = item['value'] * config['multiplier']\n            results.append({'id': item['id'], 'value': value, 'status': item['status']})\n            total = total + value\n            count = count + 1\n        avg = total / count if count > 0 else 0\n\n    if report_type == 'legacy':\n        pass\n\n    if output_format == 'json':\n        return json.dumps({'results': results, 'total': total, 'avg': avg})\n    elif output_format == 'dict':\n        return {'results': results, 'total': total, 'avg': avg}\n    else:\n        return results\n\ndef calculate_stats(numbers):\n    total = 0\n    for n in numbers:\n        total = total + n\n    avg = total / len(numbers)\n\n    total2 = 0\n    for n in numbers:\n        total2 = total2 + n\n\n    minimum = numbers[0]\n    for n in numbers:\n        if n < minimum:\n            minimum = n\n\n    maximum = numbers[0]\n    for n in numbers:\n        if n > maximum:\n            maximum = n\n\n    return {'avg': avg, 'min': minimum, 'max': maximum, 'total': total}\n```",
+      "expected_output": "Performance: O(n²) find_duplicates, config read per call. Maintainability: redundant total2 loop, dead legacy branch, avg computed in wrong scope, missing type hints.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "quadratic-find-duplicates-flagged",
+          "text": "Review identifies O(n²) complexity in find_duplicates due to the nested loop"
+        },
+        {
+          "id": "config-read-inside-function-noted",
+          "text": "Review flags that config.json is read from disk on every process_report call"
+        },
+        {
+          "id": "redundant-total2-loop-flagged",
+          "text": "Review identifies the redundant total2 loop in calculate_stats (computes same sum as total, result is never used)"
+        },
+        {
+          "id": "dead-legacy-branch-flagged",
+          "text": "Review flags the `if report_type == 'legacy': pass` dead code block"
+        },
+        {
+          "id": "avg-computed-in-wrong-scope",
+          "text": "Review catches that avg is computed inside the for loop body (indented too far), causing it to recompute on every non-active item"
+        },
+        {
+          "id": "stays-in-scope",
+          "text": "Review does not raise security or architecture findings (correctly scoped to performance and maintainability only)"
+        }
+      ]
+    }
+  ]
+}

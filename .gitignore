@@ -1,1 +1,5 @@
 .idea/
+
+# Eval viewer HTML (generated, can be recreated from eval-results/)
+/tmp/code-review-eval-viewer*.html
+

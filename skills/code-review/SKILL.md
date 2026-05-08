@@ -148,12 +148,23 @@ Infer language, frameworks, tests, and lint/setup from the repository (manifests
 
 ## Output contract
 
-Use **Markdown only** (no XML). Group findings by domain, then deliver the summary table.
+Use **Markdown only** (no XML). Always open with the verdict banner, then group findings by domain, then deliver the summary table.
+
+### Verdict banner (first 3 lines — always)
+
+The very first thing in every review, before any findings:
+
+```markdown
+**Verdict:** ✅ Approve / 🔁 Request Changes / 💬 Needs Discussion
+**Blocking issues:** N (must fix before merge) · **Total findings:** N
+```
+
+A reviewer skimming a long diff needs the verdict immediately — do not bury it at the end.
 
 ### Per-finding block
 
 ```markdown
-### 🔴/🟠/🟡/🔵 [SEVERITY] — [category] · `file:line`
+### 🔴/🟡/🔵 [SEVERITY] — [category] · `file:line`
 
 **Issue:** One-sentence description of the specific problem.
 
@@ -167,8 +178,7 @@ Use **Markdown only** (no XML). Group findings by domain, then deliver the summa
 | Emoji | Level | Meaning |
 |-------|-------|---------|
 | 🔴 | critical | Must fix before merge |
-| 🟠 | high | Should fix before merge |
-| 🟡 | medium | Fix in near term |
+| 🟡 | medium | Should fix, not blocking |
 | 🔵 | low | Nice to have |
 
 Use section headers: `## Security`, `## Performance`, `## Architecture`, `## Maintainability`, `## Coding Standards`.
@@ -181,12 +191,9 @@ Use section headers: `## Security`, `## Performance`, `## Architecture`, `## Mai
 | Severity | Count |
 |----------|-------|
 | 🔴 Critical | N |
-| 🟠 High | N |
 | 🟡 Medium | N |
 | 🔵 Low | N |
 | **Total** | **N** |
-
-**Verdict:** ✅ Approve / 🔁 Request Changes / 💬 Needs Discussion
 
 **Overall:** One paragraph assessment.
 ```
