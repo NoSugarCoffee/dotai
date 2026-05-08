@@ -1,0 +1,53 @@
+skills/skill-creator/SKILL.md
+  s_c469480bf0add1::t_40f2354ccfdfca 1-485
+skills/skill-creator/agents/analyzer.md
+  s_c469480bf0add1::t_40f2354ccfdfca 1-274
+skills/skill-creator/scripts/improve_description.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-247
+skills/skill-creator/scripts/package_skill.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-136
+skills/skill-creator/scripts/run_loop.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-328
+skills/skill-creator/scripts/generate_report.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-326
+skills/skill-creator/eval-viewer/viewer.html
+  s_c469480bf0add1::t_40f2354ccfdfca 1-1325
+skills/skill-creator/assets/eval_review.html
+  s_c469480bf0add1::t_40f2354ccfdfca 1-146
+skills/skill-creator/references/schemas.md
+  s_c469480bf0add1::t_40f2354ccfdfca 1-430
+skills/skill-creator/scripts/aggregate_benchmark.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-401
+skills/skill-creator/scripts/quick_validate.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-103
+skills/skill-creator/scripts/run_eval.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-310
+skills/skill-creator/scripts/utils.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-47
+README.md
+  s_c469480bf0add1::t_b672dc4c278df1 85
+skills/skill-creator/eval-viewer/generate_review.py
+  s_c469480bf0add1::t_40f2354ccfdfca 1-471
+skills/skill-creator/agents/comparator.md
+  s_c469480bf0add1::t_40f2354ccfdfca 1-202
+skills/skill-creator/LICENSE.txt
+  s_c469480bf0add1::t_40f2354ccfdfca 1-202
+skills/skill-creator/agents/grader.md
+  s_c469480bf0add1::t_40f2354ccfdfca 1-223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "adc051550f97ab68a1a631fca5ce057cc69da710",
+  "prompts": {},
+  "sessions": {
+    "s_c469480bf0add1": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f100015e-4d73-4bc4-90b7-5cb3d92242f3",
+        "model": "composer-2"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
