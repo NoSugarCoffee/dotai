@@ -71,14 +71,4 @@ Review ONLY for architectural concerns. Do not comment on security, performance,
 
 ## Output Format
 
-Use the shared Markdown format defined in the `code-review` master skill:
-
-```
-### 🔴/🟠/🟡/🔵 [SEVERITY] — architecture · `file:line`
-
-**Issue:** Specific architectural problem description.
-
-**Impact:** How this affects system evolution, maintainability, or team velocity.
-
-**Fix:** Concrete structural fix recommendation.
-```
+Follow [`../SKILL.md#output-contract`](../SKILL.md#output-contract). In each finding heading, replace `[category]` with **`architecture`**.

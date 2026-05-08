@@ -130,14 +130,4 @@ DO NOT flag:
 
 ## Output Format
 
-Use the shared Markdown format defined in the `code-review` master skill:
-
-```
-### 🔴/🟠/🟡/🔵 [SEVERITY] — coding-standards · `file:line`
-
-**Issue:** Specific standards violation.
-
-**Impact:** How this affects correctness, team consistency, or future maintenance.
-
-**Fix:** Concrete fix recommendation.
-```
+Follow [`../SKILL.md#output-contract`](../SKILL.md#output-contract). In each finding heading, replace `[category]` with **`coding-standards`**.

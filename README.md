@@ -68,7 +68,7 @@ No other steps needed; symlinks keep all tools in sync automatically.
 
 ```
 rules/          Authoritative rule text — edit here
-skills/         Reusable skill directories (symlinked to all tools)
+skills/         Reusable skill dirs (focused review passes live under `skills/code-review/<name>/`; install.sh symlinks those as top-level skill names too)
 agents/         Named sub-agent persona definitions
 hooks/          Lifecycle hook registry and handlers
 scripts/

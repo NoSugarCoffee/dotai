@@ -83,14 +83,4 @@ PATTERN: Look for O(n²) hiding as:
 
 ## Output Format
 
-Use the shared Markdown format defined in the `code-review` master skill:
-
-```
-### 🔴/🟠/🟡/🔵 [SEVERITY] — performance · `file:line`
-
-**Issue:** Specific performance problem description.
-
-**Impact:** Expected performance effect (quantify if possible: O(n²), memory growth rate, etc.).
-
-**Fix:** Concrete fix recommendation.
-```
+Follow [`../SKILL.md#output-contract`](../SKILL.md#output-contract). In each finding heading, replace `[category]` with **`performance`**.

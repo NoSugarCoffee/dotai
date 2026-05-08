@@ -20,10 +20,37 @@ COPILOT_INTELLIJ_DIR="$HOME/.config/github-copilot/intellij"
 
 # ── Helpers ────────────────────────────────────────────────────────
 
-# Symlink every skill directory under SKILLS_SRC into a target directory.
+# Remove every symlink in target_dir that resolves into SKILLS_SRC (this repo).
+# Keeps installs idempotent without special cases (old reviewer aliases, renamed skills).
+prune_symlinks_into_skills_dir() {
+  local target_dir="$1"
+  local abs_skills="$2"
+  shopt -s nullglob
+  local entry resolved
+  for entry in "${target_dir}"/*; do
+    [[ -L "$entry" ]] || continue
+    resolved=""
+    resolved="$(realpath "$entry" 2>/dev/null || true)"
+    if [[ -z "$resolved" ]]; then
+      resolved="$(readlink -f "$entry" 2>/dev/null || true)"
+    fi
+    [[ -z "$resolved" ]] && continue
+    if [[ "$resolved" == "$abs_skills" || "$resolved" == "$abs_skills"/* ]]; then
+      rm -f "${entry:?}"
+      echo "  ✓ prune $(basename "$entry")"
+    fi
+  done
+}
+
+# Symlink every top-level skill directory under SKILLS_SRC into target_dir.
 link_skills() {
   local target_dir="$1"
+  local abs_skills
+  abs_skills="$(cd "$SKILLS_SRC" && pwd -P)"
+
   mkdir -p "$target_dir"
+  prune_symlinks_into_skills_dir "$target_dir" "$abs_skills"
+
   for skill_dir in "$SKILLS_SRC"/*/; do
     local skill_name
     skill_name="$(basename "$skill_dir")"

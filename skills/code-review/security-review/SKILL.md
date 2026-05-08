@@ -87,14 +87,4 @@ CHECK: Is user-controlled data ever used in:
 
 ## Output Format
 
-Use the shared Markdown format defined in the `code-review` master skill:
-
-```
-### 🔴/🟠/🟡/🔵 [SEVERITY] — security · `file:line`
-
-**Issue:** Specific vulnerability description.
-
-**Impact:** What an attacker could do.
-
-**Fix:** Concrete fix with code example if possible.
-```
+Follow [`../SKILL.md#output-contract`](../SKILL.md#output-contract). In each finding heading, replace `[category]` with **`security`**.

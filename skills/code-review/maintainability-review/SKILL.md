@@ -169,14 +169,4 @@ DO NOT flag:
 
 ## Output Format
 
-Use the shared Markdown format defined in the `code-review` master skill:
-
-```
-### 🔴/🟠/🟡/🔵 [SEVERITY] — dead-code|bool-trap|maintainability · `file:line`
-
-**Issue:** Specific maintainability problem description.
-
-**Impact:** How this affects future developers or maintenance burden.
-
-**Fix:** Concrete fix recommendation.
-```
+Follow [`../SKILL.md#output-contract`](../SKILL.md#output-contract). In each finding heading, replace `[category]` with **`maintainability`**, **`dead-code`**, or **`bool-trap`** (pick the closest match).
