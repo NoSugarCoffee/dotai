@@ -1,0 +1,31 @@
+eval-results/code-review/iteration-1/report.html
+  s_232194e6c54562::t_c17cbd00e77d5a 1-1325
+skills/code-review/SKILL.md
+  s_232194e6c54562::t_5ada36a9250387 167,181
+  s_232194e6c54562::t_72269c7bcf1769 151-162
+eval-results/code-review/iteration-2/report.html
+  s_232194e6c54562::t_c17cbd00e77d5a 1-1325
+.gitignore
+  s_232194e6c54562::t_1ed1cb1986b908 2,5
+  s_232194e6c54562::t_6f78b40cb1e018 3-4
+skills/code-review/evals/evals.json
+  s_232194e6c54562::t_2fabd2f1e73eaa 1-109
+skills/skill-creator/eval-viewer/generate_review.py
+  s_232194e6c54562::t_30a3a3f08937e8 280-282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "dda78a6364876c6ac4d74d524e5e63dfece5760d",
+  "prompts": {},
+  "sessions": {
+    "s_232194e6c54562": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d5e6c9e4-faa4-440e-a2fc-30945b6751a8",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
