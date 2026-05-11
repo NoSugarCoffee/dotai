@@ -82,6 +82,7 @@ Some skills in this repo were copied from external projects. Attribution:
 
 | Skill | Source |
 |-------|--------|
+| `impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
 | `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/skill-creator) |
 | `project-readme-author` | [tsilva](https://github.com/tsilva) |
 | `project-logo-author` | [tsilva](https://github.com/tsilva) |
