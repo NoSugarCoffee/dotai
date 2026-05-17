@@ -1,8 +1,12 @@
 import { deepStrictEqual, strictEqual, throws } from "node:assert";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
+
+const SKILLS_MJS = resolve(dirname(fileURLToPath(import.meta.url)), "skills.mjs");
 
 // ── Inline copies of the pure functions under test ────────────────────────────
 // These mirror the implementations in skills.mjs.
@@ -115,12 +119,20 @@ test("writeManifest: creates parent directory if absent", () => {
   }
 });
 
-test("listCommand: prints 'no tracked skills' when manifest is empty", () => {
-  const entries = [];
-  let output = "";
-  const log = (msg) => { output += msg + "\n"; };
-  if (entries.length === 0) {
-    log("No tracked skills. Install one with: npx skills add <url> --skill <name>");
+test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
+  const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
+  try {
+    const result = spawnSync(
+      process.execPath,
+      [SKILLS_MJS, "list"],
+      { cwd: dir, encoding: "utf8" },
+    );
+    strictEqual(result.status, 0);
+    strictEqual(
+      result.stdout.trim(),
+      "No tracked skills. Install one with: npx skills add <url> --skill <name>",
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
-  strictEqual(output.trim(), "No tracked skills. Install one with: npx skills add <url> --skill <name>");
 });

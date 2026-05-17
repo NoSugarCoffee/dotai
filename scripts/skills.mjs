@@ -284,7 +284,14 @@ function listCommand() {
     return;
   }
 
-  const nameW = Math.max(4, ...entries.map(([k]) => k.length));
+  const MISSING_SUFFIX = " (missing)";
+  const nameW = Math.max(
+    4,
+    ...entries.map(([k]) => {
+      const localDir = join(SKILLS_DIR, k);
+      return existsSync(localDir) ? k.length : k.length + MISSING_SUFFIX.length;
+    }),
+  );
   const repoW = Math.max(4, ...entries.map(([, v]) => v.repo.length));
 
   const header = `${"NAME".padEnd(nameW)}  ${"REPO".padEnd(repoW)}  SHA`;
@@ -293,7 +300,7 @@ function listCommand() {
 
   for (const [name, entry] of entries) {
     const localDir = join(SKILLS_DIR, name);
-    const label = existsSync(localDir) ? name : `${name} (missing)`;
+    const label = existsSync(localDir) ? name : `${name}${MISSING_SUFFIX}`;
     console.log(`${label.padEnd(nameW)}  ${entry.repo.padEnd(repoW)}  ${entry.sha.slice(0, 8)}`);
   }
 }
