@@ -96,7 +96,7 @@ A `(missing)` marker is appended to the name if the local dir does not exist on 
 | `update <name>` not in manifest | Hard error: "Skill '<name>' is not tracked. Install it first with `skills add`." |
 | `git clone` fails during update | Propagate exit-code error; no manifest write; stop batch. |
 | Partial batch failure | Stop at first failure; report which skill failed; do not run `install.sh`. |
-| Local edits since install (`sha` differs) | Print a warning before overwriting: "Warning: local changes in '<name>' will be overwritten." Continue without prompting (update always replaces). |
+| Local edits to skill files | Always print "Warning: '<name>' will be overwritten with upstream version." before replacing. `sha` tracks the upstream commit, not local file state, so we warn unconditionally rather than trying to detect edits. |
 | `skills.json` missing or empty | Treat as empty manifest; `update` with no args prints "No tracked skills." |
 
 ---
