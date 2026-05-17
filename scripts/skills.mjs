@@ -272,8 +272,69 @@ function getRepoSha(repoDir) {
   return result.stdout.trim();
 }
 
-function updateCommand(_args) {
-  throw new Error("update: not yet implemented");
+/**
+ * Updates a single skill from its recorded upstream.
+ * Returns the new SHA.
+ * @param {string} name - local skill slug
+ * @param {{repo: string, skill: string, sha: string}} entry - manifest entry
+ * @param {string} tempDir - pre-created temp directory to clone into
+ */
+function updateOneSkill(name, entry, tempDir) {
+  const repoDir = join(tempDir, name);
+  run("git", ["clone", "--depth", "1", entry.repo, repoDir], ROOT_DIR);
+
+  const candidates = findSkillCandidates(repoDir);
+  const selected = selectSkill(candidates, entry.skill);
+  const targetDir = join(SKILLS_DIR, name);
+
+  console.log(`  Warning: '${name}' will be overwritten with upstream version.`);
+
+  if (existsSync(targetDir)) {
+    rmSync(targetDir, { recursive: true, force: true });
+  }
+
+  mkdirSync(SKILLS_DIR, { recursive: true });
+  cpSync(selected.dir, targetDir, { recursive: true, dereference: true });
+
+  const sha = getRepoSha(repoDir);
+  console.log(`  ✓ updated ${name} @ ${sha.slice(0, 8)}`);
+  return sha;
+}
+
+function updateCommand(args) {
+  const targetName = args[0];
+  const manifest = readManifest();
+  const entries = Object.entries(manifest);
+
+  /** @type {Array<[string, {repo: string, skill: string, sha: string}]>} */
+  let targets;
+
+  if (targetName !== undefined) {
+    if (manifest[targetName] === undefined) {
+      throw new Error(`Skill '${targetName}' is not tracked. Install it first with: npx skills add <url> --skill <name>`);
+    }
+    targets = [[targetName, manifest[targetName]]];
+  } else {
+    if (entries.length === 0) {
+      console.log("No tracked skills to update.");
+      return;
+    }
+    targets = entries;
+  }
+
+  const tempDir = mkdtempSync(join(tmpdir(), "dotai-update-"));
+
+  try {
+    for (const [name, entry] of targets) {
+      const newSha = updateOneSkill(name, entry, tempDir);
+      manifest[name] = { ...entry, sha: newSha };
+    }
+
+    writeManifest(manifest);
+    run("bash", [join(ROOT_DIR, "scripts", "install.sh")], ROOT_DIR);
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true });
+  }
 }
 
 function listCommand() {
