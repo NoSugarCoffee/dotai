@@ -119,30 +119,6 @@ test("writeManifest: creates parent directory if absent", () => {
   }
 });
 
-test("updateCommand: throws when skill name is not in manifest", () => {
-  const manifest = { "impeccable": { repo: "https://example.com/repo", skill: "impeccable", sha: "abc" } };
-  const targetName = "nonexistent";
-  throws(
-    () => {
-      if (manifest[targetName] === undefined) {
-        throw new Error(`Skill '${targetName}' is not tracked. Install it first with: npx skills add <url> --skill <name>`);
-      }
-    },
-    /Skill 'nonexistent' is not tracked/
-  );
-});
-
-test("updateCommand: selects all entries when no name given", () => {
-  const manifest = {
-    "impeccable": { repo: "https://example.com/a", skill: "impeccable", sha: "aaa" },
-    "logo-generator": { repo: "https://example.com/b", skill: "logo-generator", sha: "bbb" },
-  };
-  const targets = Object.entries(manifest);
-  strictEqual(targets.length, 2);
-  strictEqual(targets[0][0], "impeccable");
-  strictEqual(targets[1][0], "logo-generator");
-});
-
 test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
   const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
   try {
@@ -158,5 +134,58 @@ test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
     );
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("updateCommand: exits with error when skill name is not tracked", () => {
+  const result = spawnSync(
+    process.execPath,
+    [SKILLS_MJS, "update", "nonexistent"],
+    { encoding: "utf8" },
+  );
+  strictEqual(result.status, 1);
+  strictEqual(result.stderr.includes("Skill 'nonexistent' is not tracked"), true);
+});
+
+test("updateCommand: prints 'no tracked skills' when no manifest exists", () => {
+  const result = spawnSync(
+    process.execPath,
+    [SKILLS_MJS, "update"],
+    { encoding: "utf8" },
+  );
+  strictEqual(result.status, 0);
+  strictEqual(result.stdout.trim(), "No tracked skills to update.");
+});
+
+test("listCommand: prints table when manifest has entries", () => {
+  const repoRoot = resolve(dirname(SKILLS_MJS), "..");
+  const manifestPath = join(repoRoot, "skills", "skills.json");
+  const existed = existsSync(manifestPath);
+  const original = existed ? readFileSync(manifestPath, "utf8") : null;
+
+  try {
+    writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        "impeccable": { repo: "https://github.com/pbakaus/impeccable", skill: "impeccable", sha: "a1b2c3d4e5f6" },
+      }, null, 2) + "\n",
+      "utf8",
+    );
+
+    const result = spawnSync(
+      process.execPath,
+      [SKILLS_MJS, "list"],
+      { encoding: "utf8" },
+    );
+    strictEqual(result.status, 0);
+    strictEqual(result.stdout.includes("impeccable"), true);
+    strictEqual(result.stdout.includes("https://github.com/pbakaus/impeccable"), true);
+    strictEqual(result.stdout.includes("a1b2c3d4"), true);
+  } finally {
+    if (original !== null) {
+      writeFileSync(manifestPath, original, "utf8");
+    } else if (existsSync(manifestPath)) {
+      rmSync(manifestPath);
+    }
   }
 });
