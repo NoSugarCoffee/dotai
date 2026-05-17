@@ -101,12 +101,13 @@ Some skills in this repo were copied from external projects. Attribution:
 
 | Skill | Source |
 |-------|--------|
+| `baoyu-translate` | [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) |
 | `hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
 | `impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
 | `logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
-| `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/skill-creator) |
-| `project-readme-author` | [tsilva](https://github.com/tsilva) |
-| `project-logo-author` | [tsilva](https://github.com/tsilva) |
+| `project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills) |
 
 Skills are installed via `npx skills add <repo> --skill "<name>"` and live under `skills/` in this repo. If you recognise your work here and attribution is missing or wrong, please open an issue.
 

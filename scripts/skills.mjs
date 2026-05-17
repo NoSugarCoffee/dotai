@@ -9,6 +9,7 @@ const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(SCRIPT_DIR, "..");
 const SKILLS_DIR = join(ROOT_DIR, "skills");
 const MANIFEST_PATH = join(SKILLS_DIR, "skills.json");
+const README_PATH = join(ROOT_DIR, "README.md");
 
 function main() {
   const args = process.argv.slice(2);
@@ -63,6 +64,7 @@ function addSkill(args) {
     manifest[targetName] = { repo: options.repoUrl, skill: options.skillName, sha };
     writeManifest(manifest);
     console.log(`  recorded upstream: ${options.repoUrl} @ ${sha.slice(0, 8)}`);
+    updateReadmeCredits(manifest);
 
     run("bash", [join(ROOT_DIR, "scripts", "install.sh")], ROOT_DIR);
   } finally {
@@ -273,6 +275,51 @@ function getRepoSha(repoDir) {
 }
 
 /**
+ * Rewrites the ## Credits section in README.md from the current manifest.
+ * Sorted alphabetically by skill name. No-ops if README.md has no Credits heading.
+ * @param {Record<string, {repo: string, skill: string, sha: string}>} manifest
+ */
+function updateReadmeCredits(manifest) {
+  if (!existsSync(README_PATH)) return;
+
+  const entries = Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b));
+  if (entries.length === 0) return;
+
+  const rows = entries.map(([name, { repo }]) => {
+    const display = repo.replace(/^https?:\/\/[^/]+\//, "");
+    return `| \`${name}\` | [${display}](${repo}) |`;
+  });
+
+  const newSection = [
+    "## Credits",
+    "",
+    "Some skills in this repo were copied from external projects. Attribution:",
+    "",
+    "| Skill | Source |",
+    "|-------|--------|",
+    ...rows,
+    "",
+    "Skills are installed via `npx skills add <repo> --skill \"<name>\"` and live under `skills/` in this repo. If you recognise your work here and attribution is missing or wrong, please open an issue.",
+  ].join("\n");
+
+  const readme = readFileSync(README_PATH, "utf8");
+  const creditsStart = readme.indexOf("\n## Credits");
+  if (creditsStart === -1) return;
+
+  const afterCredits = creditsStart + "\n## Credits".length;
+  const nextHeading = readme.indexOf("\n## ", afterCredits);
+  const before = readme.slice(0, creditsStart);
+  const after = nextHeading === -1 ? "" : readme.slice(nextHeading);
+
+  const updated = `${before}\n${newSection}\n${after}`;
+  if (updated !== readme) {
+    writeFileSync(README_PATH, updated, "utf8");
+    console.log("  ✓ updated README.md credits");
+  }
+}
+
+
+/**
  * Updates a single skill from its recorded upstream.
  * Returns the new SHA.
  * @param {string} name - local skill slug
@@ -331,6 +378,7 @@ function updateCommand(args) {
     }
 
     writeManifest(manifest);
+    updateReadmeCredits(manifest);
     run("bash", [join(ROOT_DIR, "scripts", "install.sh")], ROOT_DIR);
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
