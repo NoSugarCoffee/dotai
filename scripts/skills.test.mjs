@@ -120,12 +120,17 @@ test("writeManifest: creates parent directory if absent", () => {
 });
 
 test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
-  const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
+  const repoRoot = resolve(dirname(SKILLS_MJS), "..");
+  const manifestPath = join(repoRoot, "skills", "skills.json");
+  const existed = existsSync(manifestPath);
+  const original = existed ? readFileSync(manifestPath, "utf8") : null;
+
   try {
+    if (existed) rmSync(manifestPath);
     const result = spawnSync(
       process.execPath,
       [SKILLS_MJS, "list"],
-      { cwd: dir, encoding: "utf8" },
+      { encoding: "utf8" },
     );
     strictEqual(result.status, 0);
     strictEqual(
@@ -133,7 +138,11 @@ test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
       "No tracked skills. Install one with: npx skills add <url> --skill <name>",
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    if (original !== null) {
+      writeFileSync(manifestPath, original, "utf8");
+    } else if (existsSync(manifestPath)) {
+      rmSync(manifestPath);
+    }
   }
 });
 
@@ -148,13 +157,27 @@ test("updateCommand: exits with error when skill name is not tracked", () => {
 });
 
 test("updateCommand: prints 'no tracked skills' when no manifest exists", () => {
-  const result = spawnSync(
-    process.execPath,
-    [SKILLS_MJS, "update"],
-    { encoding: "utf8" },
-  );
-  strictEqual(result.status, 0);
-  strictEqual(result.stdout.trim(), "No tracked skills to update.");
+  const repoRoot = resolve(dirname(SKILLS_MJS), "..");
+  const manifestPath = join(repoRoot, "skills", "skills.json");
+  const existed = existsSync(manifestPath);
+  const original = existed ? readFileSync(manifestPath, "utf8") : null;
+
+  try {
+    if (existed) rmSync(manifestPath);
+    const result = spawnSync(
+      process.execPath,
+      [SKILLS_MJS, "update"],
+      { encoding: "utf8" },
+    );
+    strictEqual(result.status, 0);
+    strictEqual(result.stdout.trim(), "No tracked skills to update.");
+  } finally {
+    if (original !== null) {
+      writeFileSync(manifestPath, original, "utf8");
+    } else if (existsSync(manifestPath)) {
+      rmSync(manifestPath);
+    }
+  }
 });
 
 test("listCommand: prints table when manifest has entries", () => {
