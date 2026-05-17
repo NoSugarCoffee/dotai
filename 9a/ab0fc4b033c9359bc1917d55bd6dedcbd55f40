@@ -1,0 +1,19 @@
+scripts/skills.mjs
+  s_56e21f07b9276a::t_7c5159b1971860 51-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "9aab0fc4b033c9359bc1917d55bd6dedcbd55f40",
+  "prompts": {},
+  "sessions": {
+    "s_56e21f07b9276a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "8608ee8b-c869-4451-bd30-c61dfe21e03d",
+        "model": "claude-4.6-sonnet-medium-thinking"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
