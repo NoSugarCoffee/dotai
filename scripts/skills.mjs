@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(SCRIPT_DIR, "..");
 const SKILLS_DIR = join(ROOT_DIR, "skills");
+const MANIFEST_PATH = join(SKILLS_DIR, "skills.json");
 
 function main() {
   const args = process.argv.slice(2);
@@ -223,6 +224,33 @@ function run(command, args, cwd) {
   if (result.status !== 0) {
     throw new Error(`${command} ${args.join(" ")} failed with exit code ${result.status}`);
   }
+}
+
+/** @returns {Record<string, {repo: string, skill: string, sha: string}>} */
+function readManifest() {
+  if (!existsSync(MANIFEST_PATH)) {
+    return {};
+  }
+  try {
+    return JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
+  } catch {
+    throw new Error(`Could not parse ${MANIFEST_PATH}. Fix or delete it and re-run.`);
+  }
+}
+
+/** @param {Record<string, {repo: string, skill: string, sha: string}>} manifest */
+function writeManifest(manifest) {
+  mkdirSync(SKILLS_DIR, { recursive: true });
+  writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+}
+
+/** @param {string} repoDir — absolute path to a git repo on disk */
+function getRepoSha(repoDir) {
+  const result = spawnSync("git", ["-C", repoDir, "rev-parse", "HEAD"], { encoding: "utf8" });
+  if (result.status !== 0) {
+    throw new Error(`git rev-parse HEAD failed in ${repoDir}`);
+  }
+  return result.stdout.trim();
 }
 
 function printUsage() {
