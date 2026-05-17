@@ -1,0 +1,41 @@
+skills/baoyu-translate/scripts/main.ts
+  ai_agent 1-55
+skills/baoyu-translate/scripts/chunk.ts
+  ai_agent 1-335
+skills/baoyu-translate/SKILL.md
+  ai_agent 1-263
+skills/baoyu-translate/references/workflow-mechanics.md
+  ai_agent 1-25
+skills/baoyu-translate/references/config/extend-schema.md
+  ai_agent 1-107
+skills/baoyu-translate/scripts/bun.lock
+  ai_agent 1-26
+skills/skills.json
+  s_5a5c12ab1b4daa::t_db8986c64aa3fb 31-35
+skills/baoyu-translate/references/refined-workflow.md
+  ai_agent 1-151
+skills/baoyu-translate/references/subagent-prompt-template.md
+  ai_agent 1-79
+skills/baoyu-translate/scripts/package.json
+  ai_agent 1-7
+skills/baoyu-translate/references/glossary-en-zh.md
+  ai_agent 1-21
+skills/baoyu-translate/references/config/first-time-setup.md
+  ai_agent 1-169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "65a54872d95d7c9fe1f83c5640e90eb4601c8185",
+  "prompts": {},
+  "sessions": {
+    "s_5a5c12ab1b4daa": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a3613867-28ec-4947-823f-7c00d6f34a73",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
