@@ -1,0 +1,19 @@
+docs/superpowers/specs/2026-05-17-skill-upstream-update-design.md
+  s_5a5c12ab1b4daa::t_44a39411517349 1-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "5304f5c7bbd221a6c760813632bb977020bf1e66",
+  "prompts": {},
+  "sessions": {
+    "s_5a5c12ab1b4daa": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a3613867-28ec-4947-823f-7c00d6f34a73",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
