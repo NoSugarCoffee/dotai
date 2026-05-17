@@ -49,13 +49,32 @@ That's it. All rules and skills are symlinked into every supported tool's config
 
 All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately.
 
-## Adding a Skill from Git
+## Managing Skills
+
+### Add a skill from Git
 
 ```bash
 npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer"
 ```
 
-This finds the matching `SKILL.md`, copies it into `skills/<skill-name>/`, and re-runs `install.sh`. Use `--force` to overwrite an existing skill.
+Finds the matching `SKILL.md`, copies it into `skills/<skill-name>/`, records its upstream in `skills/skills.json`, and re-runs `install.sh`. Use `--force` to overwrite an existing skill.
+
+### Update skills to latest upstream
+
+```bash
+npx skills update                  # update all tracked skills
+npx skills update impeccable       # update one skill by name
+```
+
+Re-fetches each skill from its recorded Git source and overwrites the local copy. Runs `install.sh` once at the end. Skills not added via `skills add` are not tracked and will not be updated.
+
+### List tracked skills
+
+```bash
+npx skills list
+```
+
+Prints all skills recorded in `skills/skills.json` with their upstream repo and the commit SHA they were last installed from.
 
 ## Editing Rules
 
@@ -84,6 +103,7 @@ Some skills in this repo were copied from external projects. Attribution:
 |-------|--------|
 | `hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
 | `impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
+| `logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
 | `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/skill-creator) |
 | `project-readme-author` | [tsilva](https://github.com/tsilva) |
 | `project-logo-author` | [tsilva](https://github.com/tsilva) |
