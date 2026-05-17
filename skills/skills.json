@@ -2,12 +2,12 @@
   "hyperframes": {
     "repo": "https://github.com/heygen-com/hyperframes",
     "skill": "hyperframes",
-    "sha": "unknown"
+    "sha": "b30fd296950ef394e9ae5415e4db705e1751915c"
   },
   "impeccable": {
     "repo": "https://github.com/pbakaus/impeccable",
     "skill": "impeccable",
-    "sha": "unknown"
+    "sha": "4af581e23f17d112d8f9d6b7a5b7ff37823494e1"
   },
   "logo-generator": {
     "repo": "https://github.com/op7418/logo-generator-skill",
@@ -17,16 +17,16 @@
   "project-logo-author": {
     "repo": "https://github.com/tsilva/claudeskillz",
     "skill": "project-logo-author",
-    "sha": "unknown"
+    "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
   },
   "project-readme-author": {
     "repo": "https://github.com/tsilva/claudeskillz",
     "skill": "project-readme-author",
-    "sha": "unknown"
+    "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
   },
   "skill-creator": {
     "repo": "https://github.com/anthropics/skills",
     "skill": "skill-creator",
-    "sha": "unknown"
+    "sha": "f458cee31a7577a47ba0c9a101976fa599385174"
   }
 }

@@ -277,9 +277,6 @@ def generate_html(
         embedded["benchmark"] = benchmark
 
     data_json = json.dumps(embedded)
-    # Escape angle brackets so the browser HTML parser cannot see </script> or <script>
-    # inside the embedded JSON block and break out of it (prevents XSS in review content).
-    data_json = data_json.replace("<", r"\u003c").replace(">", r"\u003e").replace("&", r"\u0026")
 
     return template.replace("/*__EMBEDDED_DATA__*/", f"const EMBEDDED_DATA = {data_json};")
 
