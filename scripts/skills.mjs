@@ -247,6 +247,9 @@ function writeManifest(manifest) {
 /** @param {string} repoDir — absolute path to a git repo on disk */
 function getRepoSha(repoDir) {
   const result = spawnSync("git", ["-C", repoDir, "rev-parse", "HEAD"], { encoding: "utf8" });
+  if (result.error !== undefined) {
+    throw result.error;
+  }
   if (result.status !== 0) {
     throw new Error(`git rev-parse HEAD failed in ${repoDir}`);
   }
