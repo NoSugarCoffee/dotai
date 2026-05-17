@@ -1,7 +1,7 @@
 import { deepStrictEqual, strictEqual, throws } from "node:assert";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 
 // ── Inline copies of the pure functions under test ────────────────────────────
@@ -25,11 +25,16 @@ function normalizeName(value) {
 
 function readManifestFrom(path) {
   if (!existsSync(path)) return {};
-  return JSON.parse(readFileSync(path, "utf8"));
+  try {
+    return JSON.parse(readFileSync(path, "utf8"));
+  } catch {
+    throw new Error(`Could not parse ${path}. Fix or delete it and re-run.`);
+  }
 }
 
-function writeManifestTo(path, manifest) {
-  writeFileSync(path, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+function writeManifestTo(manifestPath, manifest) {
+  mkdirSync(dirname(manifestPath), { recursive: true });
+  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -45,8 +50,10 @@ test("slugify: throws on empty result", () => {
 });
 
 test("normalizeName: matches case-insensitively", () => {
-  strictEqual(normalizeName("Impeccable"), normalizeName("impeccable"));
-  strictEqual(normalizeName("SVG Logo Designer"), normalizeName("svg logo designer"));
+  strictEqual(normalizeName("Impeccable"), "impeccable");
+  strictEqual(normalizeName("impeccable"), "impeccable");
+  strictEqual(normalizeName("SVG Logo Designer"), "svg-logo-designer");
+  strictEqual(normalizeName("svg logo designer"), "svg-logo-designer");
 });
 
 test("readManifest: returns empty object when file is absent", () => {
@@ -67,6 +74,42 @@ test("writeManifest + readManifest: round-trips an entry", () => {
     writeManifestTo(manifestPath, { "my-skill": entry });
     const parsed = readManifestFrom(manifestPath);
     deepStrictEqual(parsed["my-skill"], entry);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("slugify: strips quotes", () => {
+  strictEqual(slugify("it's alive"), "its-alive");
+  strictEqual(slugify('"hello world"'), "hello-world");
+});
+
+test("slugify: throws on all-whitespace input", () => {
+  throws(() => slugify("   "), /Cannot create a skill directory name/);
+});
+
+test("readManifest: throws descriptive error for malformed JSON", () => {
+  const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
+  try {
+    const manifestPath = join(dir, "skills.json");
+    writeFileSync(manifestPath, "{ not valid json", "utf8");
+    throws(
+      () => readManifestFrom(manifestPath),
+      /Could not parse.*Fix or delete it/
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("writeManifest: creates parent directory if absent", () => {
+  const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
+  try {
+    const manifestPath = join(dir, "nested", "skills.json");
+    const entry = { repo: "https://github.com/example/repo", skill: "test", sha: "abc" };
+    writeManifestTo(manifestPath, { test: entry });
+    const parsed = readManifestFrom(manifestPath);
+    deepStrictEqual(parsed["test"], entry);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
