@@ -48,6 +48,12 @@ function addSkill(args) {
     cpSync(selected.dir, targetDir, { recursive: true, dereference: true });
     console.log(`Installed ${selected.name} to ${relative(ROOT_DIR, targetDir)}`);
 
+    const sha = getRepoSha(repoDir);
+    const manifest = readManifest();
+    manifest[targetName] = { repo: options.repoUrl, skill: options.skillName, sha };
+    writeManifest(manifest);
+    console.log(`  recorded upstream: ${options.repoUrl} @ ${sha.slice(0, 8)}`);
+
     run("bash", [join(ROOT_DIR, "scripts", "install.sh")], ROOT_DIR);
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
