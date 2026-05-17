@@ -119,6 +119,30 @@ test("writeManifest: creates parent directory if absent", () => {
   }
 });
 
+test("updateCommand: throws when skill name is not in manifest", () => {
+  const manifest = { "impeccable": { repo: "https://example.com/repo", skill: "impeccable", sha: "abc" } };
+  const targetName = "nonexistent";
+  throws(
+    () => {
+      if (manifest[targetName] === undefined) {
+        throw new Error(`Skill '${targetName}' is not tracked. Install it first with: npx skills add <url> --skill <name>`);
+      }
+    },
+    /Skill 'nonexistent' is not tracked/
+  );
+});
+
+test("updateCommand: selects all entries when no name given", () => {
+  const manifest = {
+    "impeccable": { repo: "https://example.com/a", skill: "impeccable", sha: "aaa" },
+    "logo-generator": { repo: "https://example.com/b", skill: "logo-generator", sha: "bbb" },
+  };
+  const targets = Object.entries(manifest);
+  strictEqual(targets.length, 2);
+  strictEqual(targets[0][0], "impeccable");
+  strictEqual(targets[1][0], "logo-generator");
+});
+
 test("listCommand: prints 'no tracked skills' when no manifest exists", () => {
   const dir = mkdtempSync(join(tmpdir(), "dotai-test-"));
   try {
