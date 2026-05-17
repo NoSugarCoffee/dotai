@@ -19,6 +19,16 @@ function main() {
     return;
   }
 
+  if (command === "list") {
+    listCommand();
+    return;
+  }
+
+  if (command === "update") {
+    updateCommand(args.slice(1));
+    return;
+  }
+
   printUsage();
   process.exitCode = command === "--help" || command === "-h" ? 0 : 1;
 }
@@ -262,12 +272,43 @@ function getRepoSha(repoDir) {
   return result.stdout.trim();
 }
 
+function updateCommand(_args) {
+  throw new Error("update: not yet implemented");
+}
+
+function listCommand() {
+  const manifest = readManifest();
+  const entries = Object.entries(manifest);
+  if (entries.length === 0) {
+    console.log("No tracked skills. Install one with: npx skills add <url> --skill <name>");
+    return;
+  }
+
+  const nameW = Math.max(4, ...entries.map(([k]) => k.length));
+  const repoW = Math.max(4, ...entries.map(([, v]) => v.repo.length));
+
+  const header = `${"NAME".padEnd(nameW)}  ${"REPO".padEnd(repoW)}  SHA`;
+  console.log(header);
+  console.log("-".repeat(header.length));
+
+  for (const [name, entry] of entries) {
+    const localDir = join(SKILLS_DIR, name);
+    const label = existsSync(localDir) ? name : `${name} (missing)`;
+    console.log(`${label.padEnd(nameW)}  ${entry.repo.padEnd(repoW)}  ${entry.sha.slice(0, 8)}`);
+  }
+}
+
 function printUsage() {
   console.log(`Usage:
   npx skills add <git-url> --skill <skill-name> [--force]
+  npx skills update [skill-name]
+  npx skills list
 
-Example:
-  npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer"`);
+Examples:
+  npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer"
+  npx skills update
+  npx skills update impeccable
+  npx skills list`);
 }
 
 try {

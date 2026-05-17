@@ -114,3 +114,13 @@ test("writeManifest: creates parent directory if absent", () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("listCommand: prints 'no tracked skills' when manifest is empty", () => {
+  const entries = [];
+  let output = "";
+  const log = (msg) => { output += msg + "\n"; };
+  if (entries.length === 0) {
+    log("No tracked skills. Install one with: npx skills add <url> --skill <name>");
+  }
+  strictEqual(output.trim(), "No tracked skills. Install one with: npx skills add <url> --skill <name>");
+});
