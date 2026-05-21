@@ -43,7 +43,7 @@ That's it. All rules and skills are symlinked into every supported tool's config
 | Tool | Rules | Skills |
 |------|-------|--------|
 | Claude Code | `~/.claude/rules/coding.md` | — |
-| Cursor | `~/.cursor/rules/coding.md` | `~/.cursor/skills/` |
+| Cursor | `~/.cursor/rules/coding.mdc` | `~/.cursor/skills/` |
 | GitHub Copilot | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | `~/.copilot/skills/` |
 | Generic agents | — | `~/.agents/skills/` |
 

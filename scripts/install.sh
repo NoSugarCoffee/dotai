@@ -72,8 +72,16 @@ install_claude() {
 install_cursor() {
   echo "→ Cursor"
   mkdir -p "$CURSOR_DIR/rules"
-  ln -sfn "$RULES_SRC/coding.md" "$CURSOR_DIR/rules/coding.md"
-  echo "  ✓ linked rules/coding.md"
+  {
+    echo "---"
+    echo "description: General coding standards — style, error handling, typing, and dependency management"
+    echo "alwaysApply: true"
+    echo "---"
+    echo
+    cat "$RULES_SRC/coding.md"
+  } > "$CURSOR_DIR/rules/coding.mdc"
+  rm -f "$CURSOR_DIR/rules/coding.md"
+  echo "  ✓ generated rules/coding.mdc from rules/coding.md"
   link_skills "$CURSOR_SKILLS_DIR"
 }
 
@@ -108,7 +116,7 @@ main() {
   echo ""
   echo "✅ dotai installed."
   echo "   Skills : $SKILLS_SRC (symlinked)"
-  echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.md, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
 }
 
 main

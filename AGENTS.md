@@ -44,7 +44,7 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | Target | What gets installed |
 |--------|---------------------|
 | `~/.claude/rules/coding.md` | Symlink → `rules/coding.md` |
-| `~/.cursor/rules/coding.md` | Symlink → `rules/coding.md` |
+| `~/.cursor/rules/coding.mdc` | Generated from `rules/coding.md` with Cursor frontmatter |
 | `~/.cursor/skills/<name>` | Symlink per top-level directory under `skills/` (nested reviewers live only under `code-review/`). |
 | `~/.agents/skills/<name>` | Same symlink rules as Cursor skills |
 | `~/.copilot/skills/<name>` | Same as Cursor skills |
