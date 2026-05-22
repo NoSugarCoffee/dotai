@@ -27,15 +27,14 @@ prune_symlinks_into_skills_dir() {
   local target_dir="$1"
   local abs_skills="$2"
   shopt -s nullglob
-  local entry resolved
+  local entry raw resolved
   for entry in "${target_dir}"/*; do
     [[ -L "$entry" ]] || continue
-    resolved=""
-    resolved="$(realpath "$entry" 2>/dev/null || true)"
-    if [[ -z "$resolved" ]]; then
-      resolved="$(readlink -f "$entry" 2>/dev/null || true)"
-    fi
-    [[ -z "$resolved" ]] && continue
+    # Use readlink for the raw target (works even for broken symlinks).
+    raw="$(readlink "$entry" 2>/dev/null || true)"
+    [[ -z "$raw" ]] && continue
+    # Prefer fully resolved path; fall back to raw target for broken links.
+    resolved="$(realpath "$entry" 2>/dev/null || readlink -f "$entry" 2>/dev/null || echo "$raw")"
     if [[ "$resolved" == "$abs_skills" || "$resolved" == "$abs_skills"/* ]]; then
       rm -f "${entry:?}"
       echo "  ✓ prune $(basename "$entry")"
