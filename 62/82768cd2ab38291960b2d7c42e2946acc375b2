@@ -1,0 +1,19 @@
+scripts/install.sh
+  s_3b792cce66bc7b::t_6aa90e3aef6235 30,33-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "6282768cd2ab38291960b2d7c42e2946acc375b2",
+  "prompts": {},
+  "sessions": {
+    "s_3b792cce66bc7b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6ce4b86-7061-43dc-8ee8-cc5461593851",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
