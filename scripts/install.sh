@@ -59,7 +59,7 @@ link_skills() {
       [[ -d "$skill_dir" ]] || continue
       local skill_name link_name
       skill_name="$(basename "$skill_dir")"
-      link_name="${category}:${skill_name}"
+      link_name="${category}.${skill_name}"
       rm -rf "${target_dir:?}/$link_name"
       ln -sfn "$skill_dir" "$target_dir/$link_name"
       echo "  ✓ skill: $link_name → $target_dir/$link_name"
