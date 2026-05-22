@@ -1,0 +1,33 @@
+skills/diagnose/SKILL.md
+  s_7495dc5eafc055::t_f428dd53688a52 1-117
+skills/skills.json
+  s_7495dc5eafc055::t_0edb4158b2361f 41-45
+  s_7495dc5eafc055::t_a903418e4a457e 46-50
+skills/grill-with-docs/ADR-FORMAT.md
+  s_7495dc5eafc055::t_a903418e4a457e 1-47
+README.md
+  s_7495dc5eafc055::t_663240ad239b15 105,109
+  s_7495dc5eafc055::t_a903418e4a457e 106
+skills/diagnose/scripts/hitl-loop.template.sh
+  s_7495dc5eafc055::t_8549d5e9951f08 1-41
+skills/grill-with-docs/SKILL.md
+  s_7495dc5eafc055::t_a903418e4a457e 1-88
+skills/grill-with-docs/CONTEXT-FORMAT.md
+  s_7495dc5eafc055::t_a903418e4a457e 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "15bd3ab777b19d6fa1906c93954ca057567461f5",
+  "prompts": {},
+  "sessions": {
+    "s_7495dc5eafc055": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba36ff1b-ad8d-4927-a093-8b094e4cf8fc",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
