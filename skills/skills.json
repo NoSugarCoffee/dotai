@@ -1,52 +1,52 @@
 {
-  "hyperframes": {
-    "repo": "https://github.com/heygen-com/hyperframes",
-    "skill": "hyperframes",
-    "sha": "b30fd296950ef394e9ae5415e4db705e1751915c"
+  "code.diagnose": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "code/diagnose",
+    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
   },
-  "impeccable": {
+  "code.improve-codebase-architecture": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "code/improve-codebase-architecture",
+    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
+  },
+  "code.impeccable": {
     "repo": "https://github.com/pbakaus/impeccable",
-    "skill": "impeccable",
+    "skill": "code/impeccable",
     "sha": "4af581e23f17d112d8f9d6b7a5b7ff37823494e1"
   },
-  "logo-generator": {
+  "docs.grill-with-docs": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "docs/grill-with-docs",
+    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
+  },
+  "docs.project-readme-author": {
+    "repo": "https://github.com/tsilva/claudeskillz",
+    "skill": "docs/project-readme-author",
+    "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
+  },
+  "creative.hyperframes": {
+    "repo": "https://github.com/heygen-com/hyperframes",
+    "skill": "creative/hyperframes",
+    "sha": "b30fd296950ef394e9ae5415e4db705e1751915c"
+  },
+  "creative.logo-generator": {
     "repo": "https://github.com/op7418/logo-generator-skill",
-    "skill": "logo-generator",
+    "skill": "creative/logo-generator",
     "sha": "bf4e9ac4d4428bda261afcfe981871ceb92d94e6"
   },
-  "project-logo-author": {
+  "creative.project-logo-author": {
     "repo": "https://github.com/tsilva/claudeskillz",
-    "skill": "project-logo-author",
+    "skill": "creative/project-logo-author",
     "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
   },
-  "project-readme-author": {
-    "repo": "https://github.com/tsilva/claudeskillz",
-    "skill": "project-readme-author",
-    "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
-  },
-  "skill-creator": {
-    "repo": "https://github.com/anthropics/skills",
-    "skill": "skill-creator",
-    "sha": "f458cee31a7577a47ba0c9a101976fa599385174"
-  },
-  "baoyu-translate": {
+  "creative.baoyu-translate": {
     "repo": "https://github.com/JimLiu/baoyu-skills",
-    "skill": "baoyu-translate",
+    "skill": "creative/baoyu-translate",
     "sha": "38cc497748bc8e32da84a8097bee1361234ce4dd"
   },
-  "improve-codebase-architecture": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "improve-codebase-architecture",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
-  },
-  "diagnose": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "diagnose",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
-  },
-  "grill-with-docs": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "grill-with-docs",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
+  "utils.skill-creator": {
+    "repo": "https://github.com/anthropics/skills",
+    "skill": "utils/skill-creator",
+    "sha": "f458cee31a7577a47ba0c9a101976fa599385174"
   }
 }

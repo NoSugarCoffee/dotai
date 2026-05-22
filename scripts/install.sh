@@ -27,15 +27,14 @@ prune_symlinks_into_skills_dir() {
   local target_dir="$1"
   local abs_skills="$2"
   shopt -s nullglob
-  local entry resolved
+  local entry raw resolved
   for entry in "${target_dir}"/*; do
     [[ -L "$entry" ]] || continue
-    resolved=""
-    resolved="$(realpath "$entry" 2>/dev/null || true)"
-    if [[ -z "$resolved" ]]; then
-      resolved="$(readlink -f "$entry" 2>/dev/null || true)"
-    fi
-    [[ -z "$resolved" ]] && continue
+    # Use readlink for the raw target (works even for broken symlinks).
+    raw="$(readlink "$entry" 2>/dev/null || true)"
+    [[ -z "$raw" ]] && continue
+    # Prefer fully resolved path; fall back to raw target for broken links.
+    resolved="$(realpath "$entry" 2>/dev/null || readlink -f "$entry" 2>/dev/null || echo "$raw")"
     if [[ "$resolved" == "$abs_skills" || "$resolved" == "$abs_skills"/* ]]; then
       rm -f "${entry:?}"
       echo "  ✓ prune $(basename "$entry")"
@@ -43,7 +42,7 @@ prune_symlinks_into_skills_dir() {
   done
 }
 
-# Symlink every top-level skill directory under SKILLS_SRC into target_dir.
+# Symlink every skill under SKILLS_SRC into target_dir as {category}:{skill-name}.
 link_skills() {
   local target_dir="$1"
   local abs_skills
@@ -52,12 +51,18 @@ link_skills() {
   mkdir -p "$target_dir"
   prune_symlinks_into_skills_dir "$target_dir" "$abs_skills"
 
-  for skill_dir in "$SKILLS_SRC"/*/; do
-    local skill_name
-    skill_name="$(basename "$skill_dir")"
-    rm -rf "${target_dir:?}/$skill_name"
-    ln -sfn "$skill_dir" "$target_dir/$skill_name"
-    echo "  ✓ skill: $skill_name → $target_dir/$skill_name"
+  for category_dir in "$SKILLS_SRC"/*/; do
+    local category
+    category="$(basename "$category_dir")"
+    for skill_dir in "$category_dir"*/; do
+      [[ -d "$skill_dir" ]] || continue
+      local skill_name link_name
+      skill_name="$(basename "$skill_dir")"
+      link_name="${category}.${skill_name}"
+      rm -rf "${target_dir:?}/$link_name"
+      ln -sfn "$skill_dir" "$target_dir/$link_name"
+      echo "  ✓ skill: $link_name → $target_dir/$link_name"
+    done
   done
 }
 
