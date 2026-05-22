@@ -1,0 +1,21 @@
+scripts/verify-skills-layout.sh
+  s_862106890c0501::t_6f3bf2565462ec 20
+skills/skills.json
+  s_862106890c0501::t_7a84bd548a24ce 42,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "fcc6658cb37f02476407cd01514698053f9a4503",
+  "prompts": {},
+  "sessions": {
+    "s_862106890c0501": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6fe62f49-5ec3-4a31-9787-a47d8dbf8772",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
