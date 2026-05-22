@@ -38,5 +38,15 @@
     "repo": "https://github.com/mattpocock/skills",
     "skill": "improve-codebase-architecture",
     "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
+  },
+  "diagnose": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "diagnose",
+    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
+  },
+  "grill-with-docs": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "grill-with-docs",
+    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
   }
 }
