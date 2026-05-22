@@ -107,6 +107,7 @@ Some skills in this repo were copied from external projects. Attribution:
 | `logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
 | `project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
 | `project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills) |
 
 Skills are installed via `npx skills add <repo> --skill "<name>"` and live under `skills/` in this repo. If you recognise your work here and attribution is missing or wrong, please open an issue.
