@@ -39,9 +39,9 @@
     "skill": "creative/project-logo-author",
     "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
   },
-  "utils:baoyu-translate": {
+  "writing:baoyu-translate": {
     "repo": "https://github.com/JimLiu/baoyu-skills",
-    "skill": "utils/baoyu-translate",
+    "skill": "writing/baoyu-translate",
     "sha": "38cc497748bc8e32da84a8097bee1361234ce4dd"
   },
   "utils:skill-creator": {
