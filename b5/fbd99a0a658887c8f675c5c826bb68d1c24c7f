@@ -1,0 +1,24 @@
+scripts/verify-skills-layout.sh
+  s_862106890c0501::t_909aea7bc37153 57
+  s_862106890c0501::t_7787a984138455 1-44,46-47,49-56,58-69
+  s_862106890c0501::t_b7716afe276092 45,48
+docs/superpowers/plans/2026-05-23-skills-namespaced-layout.md
+  s_862106890c0501::t_bbf940fc7d3335 107
+  s_862106890c0501::t_821aac22f5bd62 1-106,108-433
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "b5fbd99a0a658887c8f675c5c826bb68d1c24c7f",
+  "prompts": {},
+  "sessions": {
+    "s_862106890c0501": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6fe62f49-5ec3-4a31-9787-a47d8dbf8772",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
