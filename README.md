@@ -24,7 +24,7 @@
 | Type | Path | Purpose |
 |------|------|---------|
 | 📏 **Rules** | `rules/coding.md` | Coding standards — style, error handling, typing, dependencies |
-| 🔧 **Skills** | `skills/<name>/SKILL.md` | Reusable AI capabilities (code review, logo gen, etc.) |
+| 🔧 **Skills** | `skills/<category>/<name>/SKILL.md` | Reusable AI capabilities (code review, logo gen, etc.) |
 | 🤖 **Agents** | `agents/<name>.md` | Named sub-agent personas (architect, reviewer) |
 | 🪝 **Hooks** | `hooks/` | Lifecycle hooks: `session_start`, `task_complete` |
 
@@ -42,7 +42,7 @@ That's it. All rules and skills are symlinked into every supported tool's config
 
 | Tool | Rules | Skills |
 |------|-------|--------|
-| Claude Code | `~/.claude/rules/coding.md` | — |
+| Claude Code | `~/.claude/rules/coding.md` | `~/.claude/skills/` |
 | Cursor | `~/.cursor/rules/coding.mdc` | `~/.cursor/skills/` |
 | GitHub Copilot | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | `~/.copilot/skills/` |
 | Generic agents | — | `~/.agents/skills/` |
@@ -57,13 +57,13 @@ All paths are **symlinks** — edit `rules/coding.md` or a skill once and every 
 npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer"
 ```
 
-Finds the matching `SKILL.md`, copies it into `skills/<skill-name>/`, records its upstream in `skills/skills.json`, and re-runs `install.sh`. Use `--force` to overwrite an existing skill.
+Finds the matching `SKILL.md`, copies it into `skills/` under the skill's slugified name, records its upstream in `skills/skills.json`, and re-runs `install.sh`. Use `--force` to overwrite an existing skill.
 
 ### Update skills to latest upstream
 
 ```bash
 npx skills update                  # update all tracked skills
-npx skills update impeccable       # update one skill by name
+npx skills update code.impeccable  # update one skill by name
 ```
 
 Re-fetches each skill from its recorded Git source and overwrites the local copy. Runs `install.sh` once at the end. Skills not added via `skills add` are not tracked and will not be updated.
@@ -87,12 +87,13 @@ No other steps needed; symlinks keep all tools in sync automatically.
 
 ```
 rules/          Authoritative rule text — edit here
-skills/         Reusable skill dirs (focused review passes live under `skills/code-review/<name>/`; install.sh symlinks those as top-level skill names too)
+skills/         Skills organized by category (code/, docs/, creative/, utils/)
+                install.sh symlinks each as {category}.{name} in every tool directory
 agents/         Named sub-agent persona definitions
 hooks/          Lifecycle hook registry and handlers
 scripts/
   install.sh    Publishes rules and skills to all tool directories
-  skills.mjs    CLI for adding skills from Git repos
+  skills.mjs    CLI for adding, updating, and listing skills
 ```
 
 ## Credits
@@ -101,16 +102,16 @@ Some skills in this repo were copied from external projects. Attribution:
 
 | Skill | Source |
 |-------|--------|
-| `baoyu-translate` | [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) |
-| `diagnose` | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `grill-with-docs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
-| `impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
-| `improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
-| `project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
-| `project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
-| `skill-creator` | [anthropics/skills](https://github.com/anthropics/skills) |
+| `code.diagnose` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `code.impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
+| `code.improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `creative.baoyu-translate` | [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) |
+| `creative.hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
+| `creative.logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
+| `creative.project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `docs.grill-with-docs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `docs.project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `utils.skill-creator` | [anthropics/skills](https://github.com/anthropics/skills) |
 
 Skills are installed via `npx skills add <repo> --skill "<name>"` and live under `skills/` in this repo. If you recognise your work here and attribution is missing or wrong, please open an issue.
 
