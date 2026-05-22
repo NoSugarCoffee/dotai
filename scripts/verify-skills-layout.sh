@@ -17,7 +17,7 @@ EXPECTED=(
   "creative:logo-generator"
   "creative:project-logo-author"
   "creative:hyperframes"
-  "writing:baoyu-translate"
+  "creative:baoyu-translate"
   "utils:skill-creator"
 )
 
