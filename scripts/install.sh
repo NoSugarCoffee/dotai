@@ -17,6 +17,7 @@ AGENTS_SKILLS_DIR="$HOME/.agents/skills"
 CURSOR_SKILLS_DIR="$HOME/.cursor/skills"
 COPILOT_SKILLS_DIR="$HOME/.copilot/skills"
 COPILOT_INTELLIJ_DIR="$HOME/.config/github-copilot/intellij"
+CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
 
 # ── Helpers ────────────────────────────────────────────────────────
 
@@ -66,6 +67,7 @@ install_claude() {
   mkdir -p "$CLAUDE_DIR/rules"
   ln -sfn "$RULES_SRC/coding.md" "$CLAUDE_DIR/rules/coding.md"
   echo "  ✓ linked rules/coding.md"
+  link_skills "$CLAUDE_SKILLS_DIR"
 }
 
 # ── 2. Cursor (~/.cursor) ──────────────────────────────────────────
