@@ -1,0 +1,29 @@
+skills/skills.json
+  s_77077350ad0d70::t_198075474f2194 36-75
+skills-lock.json
+  s_88508f284f1031::t_d371bc6c420407 1-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "91e5d11e2111a4d1d085c634d30afda9e454b2bd",
+  "prompts": {},
+  "sessions": {
+    "s_77077350ad0d70": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e5674b7a-608a-45ae-90bb-22bb6402a0ee",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    },
+    "s_88508f284f1031": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "73f5969b-34b0-4356-81c2-6eb718834c99",
+        "model": "composer-2.5"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
