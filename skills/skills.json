@@ -1,23 +1,8 @@
 {
-  "code.diagnose": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "code/diagnose",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
-  },
-  "code.improve-codebase-architecture": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "code/improve-codebase-architecture",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
-  },
   "code.impeccable": {
     "repo": "https://github.com/pbakaus/impeccable",
     "skill": "code/impeccable",
     "sha": "4af581e23f17d112d8f9d6b7a5b7ff37823494e1"
-  },
-  "docs.grill-with-docs": {
-    "repo": "https://github.com/mattpocock/skills",
-    "skill": "docs/grill-with-docs",
-    "sha": "b8be62ffacb0118fa3eaa29a0923c87c8c11985c"
   },
   "docs.project-readme-author": {
     "repo": "https://github.com/tsilva/claudeskillz",
@@ -48,5 +33,45 @@
     "repo": "https://github.com/anthropics/skills",
     "skill": "utils/skill-creator",
     "sha": "f458cee31a7577a47ba0c9a101976fa599385174"
+  },
+  "mattpocock.diagnose": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/diagnose"
+  },
+  "mattpocock.grill-with-docs": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/grill-with-docs"
+  },
+  "mattpocock.improve-codebase-architecture": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/improve-codebase-architecture"
+  },
+  "mattpocock.prototype": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/prototype"
+  },
+  "mattpocock.setup-matt-pocock-skills": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/setup-matt-pocock-skills"
+  },
+  "mattpocock.tdd": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/tdd"
+  },
+  "mattpocock.to-issues": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/to-issues"
+  },
+  "mattpocock.to-prd": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/to-prd"
+  },
+  "mattpocock.triage": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/triage"
+  },
+  "mattpocock.zoom-out": {
+    "repo": "https://github.com/mattpocock/skills",
+    "skill": "mattpocock/zoom-out"
   }
 }
