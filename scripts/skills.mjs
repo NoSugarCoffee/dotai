@@ -45,7 +45,8 @@ function addSkill(args) {
     const candidates = findSkillCandidates(repoDir);
     const selected = selectSkill(candidates, options.skillName);
     const targetName = slugify(selected.name);
-    const targetDir = join(SKILLS_DIR, targetName);
+    const manifestKey = options.category === "" ? targetName : `${slugify(options.category)}.${targetName}`;
+    const targetDir = skillDirFromKey(manifestKey);
 
     if (existsSync(targetDir) && !options.force) {
       throw new Error(`Skill already exists at ${relative(ROOT_DIR, targetDir)}. Re-run with --force to replace it.`);
@@ -55,13 +56,13 @@ function addSkill(args) {
       rmSync(targetDir, { recursive: true, force: true });
     }
 
-    mkdirSync(SKILLS_DIR, { recursive: true });
+    mkdirSync(dirname(targetDir), { recursive: true });
     cpSync(selected.dir, targetDir, { recursive: true, dereference: true });
     console.log(`Installed ${selected.name} to ${relative(ROOT_DIR, targetDir)}`);
 
     const sha = getRepoSha(repoDir);
     const manifest = readManifest();
-    manifest[targetName] = { repo: options.repoUrl, skill: options.skillName, sha };
+    manifest[manifestKey] = { repo: options.repoUrl, skill: options.skillName, sha };
     writeManifest(manifest);
     console.log(`  recorded upstream: ${options.repoUrl} @ ${sha.slice(0, 8)}`);
     updateReadmeCredits(manifest);
@@ -75,6 +76,7 @@ function addSkill(args) {
 function parseAddArgs(args) {
   const repoUrl = args[0];
   let skillName = "";
+  let category = "";
   let force = false;
 
   if (repoUrl === undefined || repoUrl.startsWith("-")) {
@@ -94,6 +96,16 @@ function parseAddArgs(args) {
       continue;
     }
 
+    if (arg === "--category") {
+      const value = args[index + 1];
+      if (value === undefined || value.startsWith("-")) {
+        throw new Error("Missing value for --category.");
+      }
+      category = value;
+      index += 1;
+      continue;
+    }
+
     if (arg === "--force") {
       force = true;
       continue;
@@ -109,6 +121,7 @@ function parseAddArgs(args) {
   return {
     repoUrl,
     skillName,
+    category,
     force,
   };
 }
@@ -191,8 +204,18 @@ function stripYamlString(value) {
   return value;
 }
 
+// Manifest keys use "." as the category separator (e.g. "code.impeccable")
+// because Claude Code rejects "/" and ":" in skill names; on disk the same
+// skill lives at skills/code/impeccable.
+function skillDirFromKey(manifestKey) {
+  return join(SKILLS_DIR, ...manifestKey.split("."));
+}
+
 function selectSkill(candidates, requestedName) {
-  const requested = normalizeName(requestedName);
+  // Older manifest entries store the local namespaced path ("code/impeccable")
+  // in the skill field; upstream repos only know the bare skill name.
+  const bareName = requestedName.split("/").at(-1) ?? requestedName;
+  const requested = normalizeName(bareName);
   const matches = candidates.filter((candidate) => {
     const names = [candidate.name, candidate.dirName, slugify(candidate.name), slugify(candidate.dirName)];
     return names.some((name) => normalizeName(name) === requested);
@@ -332,7 +355,7 @@ function updateOneSkill(name, entry, tempDir) {
 
   const candidates = findSkillCandidates(repoDir);
   const selected = selectSkill(candidates, entry.skill);
-  const targetDir = join(SKILLS_DIR, name);
+  const targetDir = skillDirFromKey(name);
 
   console.log(`  Warning: '${name}' will be overwritten with upstream version.`);
 
@@ -340,7 +363,7 @@ function updateOneSkill(name, entry, tempDir) {
     rmSync(targetDir, { recursive: true, force: true });
   }
 
-  mkdirSync(SKILLS_DIR, { recursive: true });
+  mkdirSync(dirname(targetDir), { recursive: true });
   cpSync(selected.dir, targetDir, { recursive: true, dereference: true });
 
   const sha = getRepoSha(repoDir);
@@ -397,7 +420,7 @@ function listCommand() {
   const nameW = Math.max(
     4,
     ...entries.map(([k]) => {
-      const localDir = join(SKILLS_DIR, k);
+      const localDir = skillDirFromKey(k);
       return existsSync(localDir) ? k.length : k.length + MISSING_SUFFIX.length;
     }),
   );
@@ -408,7 +431,7 @@ function listCommand() {
   console.log("-".repeat(header.length));
 
   for (const [name, entry] of entries) {
-    const localDir = join(SKILLS_DIR, name);
+    const localDir = skillDirFromKey(name);
     const label = existsSync(localDir) ? name : `${name}${MISSING_SUFFIX}`;
     console.log(`${label.padEnd(nameW)}  ${entry.repo.padEnd(repoW)}  ${entry.sha.slice(0, 8)}`);
   }
@@ -416,14 +439,14 @@ function listCommand() {
 
 function printUsage() {
   console.log(`Usage:
-  npx skills add <git-url> --skill <skill-name> [--force]
+  npx skills add <git-url> --skill <skill-name> [--category <category>] [--force]
   npx skills update [skill-name]
   npx skills list
 
 Examples:
-  npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer"
+  npx skills add https://github.com/rknall/claude-skills --skill "SVG Logo Designer" --category creative
   npx skills update
-  npx skills update impeccable
+  npx skills update code.impeccable
   npx skills list`);
 }
 

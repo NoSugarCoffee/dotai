@@ -102,15 +102,23 @@ Some skills in this repo were copied from external projects. Attribution:
 
 | Skill | Source |
 |-------|--------|
-| `code.diagnose` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `code.clean-code-principles` | [AsyrafHussin/agent-skills](https://github.com/AsyrafHussin/agent-skills) |
 | `code.impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
-| `code.improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `creative.baoyu-translate` | [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) |
 | `creative.hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
 | `creative.logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
 | `creative.project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
-| `docs.grill-with-docs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `docs.project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `mattpocock.diagnose` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.grill-with-docs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.prototype` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.setup-matt-pocock-skills` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.to-issues` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.to-prd` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.triage` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `mattpocock.zoom-out` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `utils.skill-creator` | [anthropics/skills](https://github.com/anthropics/skills) |
 
 Skills are installed via `npx skills add <repo> --skill "<name>"` and live under `skills/` in this repo. If you recognise your work here and attribution is missing or wrong, please open an issue.

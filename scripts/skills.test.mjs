@@ -41,6 +41,19 @@ function writeManifestTo(manifestPath, manifest) {
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 }
 
+function manifestKeyFor(category, targetName) {
+  return category === "" ? targetName : `${slugify(category)}.${targetName}`;
+}
+
+function skillDirSegmentsFromKey(manifestKey) {
+  return manifestKey.split(".");
+}
+
+function normalizeRequestedSkill(requestedName) {
+  const bareName = requestedName.split("/").at(-1) ?? requestedName;
+  return normalizeName(bareName);
+}
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 test("slugify: converts name to kebab-case slug", () => {
@@ -178,6 +191,33 @@ test("updateCommand: prints 'no tracked skills' when no manifest exists", () => 
       rmSync(manifestPath);
     }
   }
+});
+
+test("manifestKeyFor: prefixes the slugified category with a dot separator", () => {
+  strictEqual(manifestKeyFor("code", "clean-code-principles"), "code.clean-code-principles");
+  strictEqual(manifestKeyFor("", "clean-code-principles"), "clean-code-principles");
+  strictEqual(manifestKeyFor("My Utils", "skill-creator"), "my-utils.skill-creator");
+});
+
+test("skillDirSegmentsFromKey: maps namespaced keys to category/skill segments", () => {
+  deepStrictEqual(skillDirSegmentsFromKey("code.impeccable"), ["code", "impeccable"]);
+  deepStrictEqual(skillDirSegmentsFromKey("clean-code-principles"), ["clean-code-principles"]);
+});
+
+test("normalizeRequestedSkill: matches namespaced manifest paths against upstream names", () => {
+  strictEqual(normalizeRequestedSkill("code/impeccable"), "impeccable");
+  strictEqual(normalizeRequestedSkill("impeccable"), "impeccable");
+  strictEqual(normalizeRequestedSkill("mattpocock/grill-with-docs"), "grill-with-docs");
+});
+
+test("addSkill: rejects --category without a value", () => {
+  const result = spawnSync(
+    process.execPath,
+    [SKILLS_MJS, "add", "https://github.com/example/repo", "--skill", "demo", "--category"],
+    { encoding: "utf8" },
+  );
+  strictEqual(result.status, 1);
+  strictEqual(result.stderr.includes("Missing value for --category."), true);
 });
 
 test("listCommand: prints table when manifest has entries", () => {

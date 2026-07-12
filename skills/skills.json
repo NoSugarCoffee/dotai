@@ -73,5 +73,10 @@
   "mattpocock.zoom-out": {
     "repo": "https://github.com/mattpocock/skills",
     "skill": "mattpocock/zoom-out"
+  },
+  "code.clean-code-principles": {
+    "repo": "https://github.com/AsyrafHussin/agent-skills",
+    "skill": "clean-code-principles",
+    "sha": "2631530e9d47c45f6d153ed9f245f073ccbbba30"
   }
 }
