@@ -1,0 +1,99 @@
+skills/code/clean-code-principles/rules/core-composition.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-317
+skills/code/clean-code-principles/rules/solid-ocp-abstraction.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-265
+README.md
+  s_9579d4a3430962::t_36fa674aee7c0c 112-121
+  s_76f040c8dbc1f2::t_5e157bfac468bd 105
+skills/code/clean-code-principles/rules/solid-dip-injection.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-349
+skills/code/clean-code-principles/rules/solid-srp-class.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-149
+scripts/skills.mjs
+  s_76f040c8dbc1f2::t_20e6e339092837 48-49,59,65
+  s_76f040c8dbc1f2::t_41842ab8ab4847 79,99-108,124
+  s_76f040c8dbc1f2::t_851d46530bb586 423
+  s_76f040c8dbc1f2::t_7ee9bc0e2dfa64 207-213,215-218
+  s_76f040c8dbc1f2::t_81953e48ee27f9 358,366
+  s_76f040c8dbc1f2::t_85154d45ed6a2f 434
+  s_76f040c8dbc1f2::t_3cc2402181fe07 442,447,449
+skills/skills.json
+  s_76f040c8dbc1f2::t_5e157bfac468bd 76-80
+skills/code/clean-code-principles/rules/_template.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-211
+skills/code/clean-code-principles/rules/solid-ocp-extension.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-205
+skills/code/clean-code-principles/rules/solid-dip-abstractions.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-336
+skills/code/clean-code-principles/rules/_sections.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-320
+skills/code/clean-code-principles/rules/core-separation-concerns.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-337
+skills/code/clean-code-principles/rules/pattern-repository.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-359
+scripts/skills.test.mjs
+  s_76f040c8dbc1f2::t_82a6b6805e5ef3 44-56
+  s_76f040c8dbc1f2::t_936e08d817ede2 196-222
+skills/code/clean-code-principles/rules/core-kiss-readability.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-202
+skills/code/clean-code-principles/rules/core-yagni-features.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-205
+skills/code/clean-code-principles/rules/solid-isp-interfaces.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-286
+skills/code/clean-code-principles/README.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-88
+skills/code/clean-code-principles/rules/solid-lsp-contracts.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-203
+skills/code/clean-code-principles/rules/solid-srp-function.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-208
+skills/code/clean-code-principles/SKILL.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-213
+skills/code/clean-code-principles/rules/core-encapsulation.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-335
+skills/code/clean-code-principles/rules/core-law-demeter.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-321
+skills/code/clean-code-principles/rules/solid-isp-clients.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-246
+skills/code/clean-code-principles/AGENTS.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-450
+skills/code/clean-code-principles/rules/core-dry.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-320
+skills/code/clean-code-principles/rules/core-dry-single-source.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-282
+skills/code/clean-code-principles/metadata.json
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-376
+skills/code/clean-code-principles/rules/core-kiss-simplicity.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-255
+skills/code/clean-code-principles/rules/core-dry-extraction.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-316
+skills/code/clean-code-principles/rules/core-yagni-abstractions.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-252
+skills/code/clean-code-principles/rules/core-fail-fast.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-325
+skills/code/clean-code-principles/rules/solid-lsp-preconditions.md
+  s_76f040c8dbc1f2::t_5e157bfac468bd 1-256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "0ab7961b0d98c688739e13f44bf613f9d9f83e9f",
+  "prompts": {},
+  "sessions": {
+    "s_76f040c8dbc1f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "927b0c50-26f2-4b65-9e58-651e08eeff58",
+        "model": "claude-fable-5"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    },
+    "s_9579d4a3430962": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2346dad8-8dc8-4c70-a688-d6f8b94a6cf4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
