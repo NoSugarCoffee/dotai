@@ -1,0 +1,82 @@
+skills/skills.json
+  s_b346a080e88890::t_408aa49e61857e 40,45,50,55,60,65,76-85
+  s_b346a080e88890::t_d9e29a3b7a0754 71-75
+  s_b346a080e88890::t_14eb3a89bda0d6 39,44,49,54,59,64
+skills/mattpocock/to-spec/SKILL.md
+  s_b346a080e88890::t_408aa49e61857e 1-75
+skills/mattpocock/to-spec/agents/openai.yaml
+  s_b346a080e88890::t_408aa49e61857e 1-5
+README.md
+  s_b346a080e88890::t_d9e29a3b7a0754 112
+  s_b346a080e88890::t_408aa49e61857e 118-119
+skills/mattpocock/to-tickets/SKILL.md
+  s_b346a080e88890::t_408aa49e61857e 1-107
+skills/mattpocock/diagnosing-bugs/SKILL.md
+  s_b346a080e88890::t_d9e29a3b7a0754 1-134
+skills/mattpocock/to-tickets/agents/openai.yaml
+  s_b346a080e88890::t_408aa49e61857e 1-5
+skills/mattpocock/diagnosing-bugs/agents/openai.yaml
+  s_b346a080e88890::t_d9e29a3b7a0754 1-3
+skills/mattpocock/diagnosing-bugs/scripts/hitl-loop.template.sh
+  s_b346a080e88890::t_d9e29a3b7a0754 1-41
+skills/mattpocock/grill-with-docs/SKILL.md
+  s_b346a080e88890::t_bf34ba142177b1 3-4,7
+skills/mattpocock/improve-codebase-architecture/HTML-REPORT.md
+  s_b346a080e88890::t_c802c5fa97fd87 42,108,123
+skills/mattpocock/improve-codebase-architecture/SKILL.md
+  s_b346a080e88890::t_5d9f34fdef3e74 3-4,11,13-14,20-25,43,54,64,66,68,70-71
+skills/mattpocock/prototype/LOGIC.md
+  s_b346a080e88890::t_bbdbbcccf128bc 39,69,71
+skills/mattpocock/prototype/SKILL.md
+  s_b346a080e88890::t_1beda42424ab92 3,24,26
+skills/mattpocock/prototype/UI.md
+  s_b346a080e88890::t_3f566167bd4f81 100,102-103,105
+skills/mattpocock/setup-matt-pocock-skills/SKILL.md
+  s_b346a080e88890::t_f461b6297f9f1b 3,29-30,34,36,40,49,51,53,55,57,59,61,68,102-104,109
+skills/mattpocock/setup-matt-pocock-skills/domain.md
+  s_b346a080e88890::t_8afd869c6cae95 11,45
+skills/mattpocock/setup-matt-pocock-skills/issue-tracker-github.md
+  s_b346a080e88890::t_502df44a5c8b4f 16-27,35-45
+skills/mattpocock/setup-matt-pocock-skills/issue-tracker-gitlab.md
+  s_b346a080e88890::t_c99baf984715c5 17-28,36-46
+skills/mattpocock/setup-matt-pocock-skills/issue-tracker-local.md
+  s_b346a080e88890::t_afd73aba73bbe9 3,8-9,20-30
+skills/mattpocock/tdd/SKILL.md
+  s_b346a080e88890::t_d4ffa31a6d243e 3,8,10,12,14,18,20,22,24,26,28-30,32,34-36
+skills/mattpocock/tdd/tests.md
+  s_b346a080e88890::t_305dfb675272d7 62-77
+skills/mattpocock/triage/AGENT-BRIEF.md
+  s_b346a080e88890::t_8b582e0d4cf374 3-5,148-184
+skills/mattpocock/triage/OUT-OF-SCOPE.md
+  s_b346a080e88890::t_78cb21a8b5c4d0 86-90
+skills/mattpocock/triage/SKILL.md
+  s_b346a080e88890::t_af62466d33d908 3-4,11-12,39-40,52,64-66,68,70,72,74,76,82-85,112
+skills/mattpocock/grill-with-docs/agents/openai.yaml
+  s_b346a080e88890::t_23479285c65013 1-5
+skills/mattpocock/improve-codebase-architecture/agents/openai.yaml
+  s_b346a080e88890::t_82b8f753dd0457 1-5
+skills/mattpocock/prototype/agents/openai.yaml
+  s_b346a080e88890::t_a8d1fa20a7cf63 1-3
+skills/mattpocock/setup-matt-pocock-skills/agents/openai.yaml
+  s_b346a080e88890::t_3558e2b756067a 1-5
+skills/mattpocock/tdd/agents/openai.yaml
+  s_b346a080e88890::t_e074cb75b062cb 1-3
+skills/mattpocock/triage/agents/openai.yaml
+  s_b346a080e88890::t_04d6e51bc8aab6 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "2c270edd1db9d22bd1a8e1dd245c11d2c366561a",
+  "prompts": {},
+  "sessions": {
+    "s_b346a080e88890": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c4b42bf-a736-4410-b10c-7a8cd60a4b9f",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
