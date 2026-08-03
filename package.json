@@ -4,9 +4,12 @@
   "private": true,
   "type": "module",
   "bin": {
-    "skills": "./scripts/skills.mjs"
+    "skills": "./scripts/skills.mjs",
+    "clis": "./scripts/clis.mjs"
   },
   "scripts": {
-    "skills": "node ./scripts/skills.mjs"
+    "skills": "node ./scripts/skills.mjs",
+    "clis": "node ./scripts/clis.mjs",
+    "test": "node --test scripts/*.test.mjs"
   }
 }
