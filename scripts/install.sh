@@ -112,6 +112,23 @@ install_copilot_intellij() {
   echo "  ✓ linked rules/coding.md → global-copilot-instructions.md"
 }
 
+# ── 6. External CLIs (clis.json) ───────────────────────────────────
+install_clis() {
+  echo "→ CLIs"
+
+  if [[ "${DOTAI_SKIP_CLIS:-0}" == "1" ]]; then
+    echo "  ⏭ skipped (DOTAI_SKIP_CLIS=1)"
+    return
+  fi
+
+  if ! command -v node >/dev/null 2>&1; then
+    echo "  ✗ node not found — install Node.js and re-run, or set DOTAI_SKIP_CLIS=1" >&2
+    return 1
+  fi
+
+  node "$ROOT/scripts/clis.mjs" install
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 main() {
   install_claude
@@ -119,11 +136,13 @@ main() {
   install_agent_skills
   install_copilot_skills
   install_copilot_intellij
+  install_clis
 
   echo ""
   echo "✅ dotai installed."
   echo "   Skills : $SKILLS_SRC (symlinked)"
   echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "   CLIs   : $ROOT/clis.json (node scripts/clis.mjs check)"
 }
 
 main

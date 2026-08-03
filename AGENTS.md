@@ -32,10 +32,20 @@ hooks/          Lifecycle hooks loaded by compatible runtimes
   on-session-start.md   Read rules, check for existing skills, confirm scope
   on-task-complete.md   Verify output, re-check assumptions, note follow-ups
 
+clis.json       External CLIs the setup depends on (name → purpose, package, binary,
+                install/version/check/update commands)
+
 scripts/
-  install.sh    Publishes rules and skills to ~/.claude, ~/.cursor, ~/.agents, ~/.copilot
+  install.sh    Publishes rules and skills to ~/.claude, ~/.cursor, ~/.agents, ~/.copilot,
+                then installs any CLI in clis.json that is missing
+  skills.mjs    Adds, updates, and lists vendored skills (skills/skills.json)
+  clis.mjs      Installs, checks, and updates the CLIs in clis.json
   sync.sh       (utility) syncs local state
 ```
+
+## Vendored skill vs. CLI-managed tool
+
+A skill whose upstream ships as a CLI that installs and updates its own skills does **not** belong in `skills/`. Vendoring it there gets the `{category}.{name}` prefix, which breaks the upstream's cross-skill slugs (`/hyperframes-core`) and hides the install from its own updater. Declare the CLI in `clis.json` instead and let it own its skill directories.
 
 ## Install targets
 
