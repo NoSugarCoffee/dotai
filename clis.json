@@ -6,6 +6,6 @@
     "install": "npm install -g hyperframes@latest",
     "version": "hyperframes --version",
     "check": "hyperframes skills check",
-    "update": "npm install -g hyperframes@latest && hyperframes skills"
+    "update": "npm install -g hyperframes@latest && hyperframes skills update"
   }
 }
