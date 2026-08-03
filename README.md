@@ -27,7 +27,6 @@
 | 🔧 **Skills** | `skills/<category>/<name>/SKILL.md` | Reusable AI capabilities (code review, logo gen, etc.) |
 | 🤖 **Agents** | `agents/<name>.md` | Named sub-agent personas (architect, reviewer) |
 | 🪝 **Hooks** | `hooks/` | Lifecycle hooks: `session_start`, `task_complete` |
-| 🛠️ **CLIs** | `clis.json` | External command-line tools the setup depends on (install / check / update in one place) |
 
 ## 🚀 Quick Start
 
@@ -77,33 +76,6 @@ npx skills list
 
 Prints all skills recorded in `skills/skills.json` with their upstream repo and the commit SHA they were last installed from.
 
-## Managing CLIs
-
-Some capabilities ship as a command-line tool rather than a skill directory — the tool installs and updates its own skills, so vendoring them here would fight it. `clis.json` is the single place those tools are declared:
-
-```json
-{
-  "hyperframes": {
-    "purpose": "Renders video from HTML; owns the hyperframes-* skill family …",
-    "package": "hyperframes",
-    "binary": "hyperframes",
-    "install": "npm install -g hyperframes@latest",
-    "version": "hyperframes --version",
-    "check": "hyperframes skills check",
-    "update": "npm install -g hyperframes@latest && hyperframes skills"
-  }
-}
-```
-
-```bash
-npx clis list             # tracked CLIs and what they're for
-npx clis check            # installed vs latest, then each CLI's own check
-npx clis install          # install any that are missing (--force to reinstall)
-npx clis update           # update the CLI and whatever it manages
-```
-
-`install.sh` runs `clis install` as its last step, so a fresh clone gets the tools too. It only installs what is missing — set `DOTAI_SKIP_CLIS=1` to skip it entirely. `clis check` exits non-zero when anything needs attention, so it works in a pre-flight script.
-
 ## Editing Rules
 
 1. Edit `rules/coding.md` — the single source of truth.
@@ -119,11 +91,9 @@ skills/         Skills organized by category (code/, docs/, creative/, utils/)
                 install.sh symlinks each as {category}.{name} in every tool directory
 agents/         Named sub-agent persona definitions
 hooks/          Lifecycle hook registry and handlers
-clis.json       External CLIs the setup depends on, with their install/check/update commands
 scripts/
-  install.sh    Publishes rules and skills to all tool directories, then installs missing CLIs
+  install.sh    Publishes rules and skills to all tool directories
   skills.mjs    CLI for adding, updating, and listing skills
-  clis.mjs      CLI for installing, checking, and updating the tools in clis.json
 ```
 
 ## Credits
@@ -135,6 +105,7 @@ Some skills in this repo were copied from external projects. Attribution:
 | `code.clean-code-principles` | [AsyrafHussin/agent-skills](https://github.com/AsyrafHussin/agent-skills) |
 | `code.impeccable` | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
 | `creative.baoyu-translate` | [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) |
+| `creative.hyperframes` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) |
 | `creative.logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
 | `creative.project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
 | `docs.project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |

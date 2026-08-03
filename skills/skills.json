@@ -9,6 +9,11 @@
     "skill": "docs/project-readme-author",
     "sha": "d0470890caeb54268f0aa2917b35646ecea5d7b1"
   },
+  "creative.hyperframes": {
+    "repo": "https://github.com/heygen-com/hyperframes",
+    "skill": "creative/hyperframes",
+    "sha": "b30fd296950ef394e9ae5415e4db705e1751915c"
+  },
   "creative.logo-generator": {
     "repo": "https://github.com/op7418/logo-generator-skill",
     "skill": "creative/logo-generator",
