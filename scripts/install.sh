@@ -11,6 +11,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
 RULES_SRC="$ROOT/rules"
 
+BIN_SRC="$ROOT/scripts"
+BIN_DIR="$HOME/.local/bin"
+
 CLAUDE_DIR="$HOME/.claude"
 CURSOR_DIR="$HOME/.cursor"
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
@@ -112,6 +115,18 @@ install_copilot_intellij() {
   echo "  ✓ linked rules/coding.md → global-copilot-instructions.md"
 }
 
+# ── 6. Command-line tools (~/.local/bin) ───────────────────────────
+install_bin() {
+  echo "→ Commands"
+  mkdir -p "$BIN_DIR"
+  ln -sfn "$BIN_SRC/claude-tabs.sh" "$BIN_DIR/claude-tabs"
+  echo "  ✓ command: claude-tabs → $BIN_DIR/claude-tabs"
+  case ":$PATH:" in
+    *":$BIN_DIR:"*) ;;
+    *) echo "  ! $BIN_DIR is not on your PATH" ;;
+  esac
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 main() {
   install_claude
@@ -119,11 +134,13 @@ main() {
   install_agent_skills
   install_copilot_skills
   install_copilot_intellij
+  install_bin
 
   echo ""
   echo "✅ dotai installed."
-  echo "   Skills : $SKILLS_SRC (symlinked)"
-  echo "   Rules  : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "   Skills   : $SKILLS_SRC (symlinked)"
+  echo "   Rules    : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "   Commands : $BIN_DIR/claude-tabs"
 }
 
 main

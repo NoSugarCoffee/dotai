@@ -83,6 +83,26 @@ Prints all skills recorded in `skills/skills.json` with their upstream repo and 
 
 No other steps needed; symlinks keep all tools in sync automatically.
 
+## Restoring Claude Code Sessions
+
+`claude-tabs` reopens the Claude Code sessions you had running — after a reboot, a closed
+window, or a crashed terminal — each in its own zellij tab, in its own working directory,
+resumed in place.
+
+```bash
+claude-tabs save                # snapshot the sessions open right now
+claude-tabs list                # live sessions, and what a restore would do
+claude-tabs restore             # reopen them as zellij tabs
+claude-tabs restore --dry-run   # print the plan and the layout, change nothing
+```
+
+Sessions already running are skipped, so `restore` is safe to run twice. Entries whose
+working directory or transcript has since disappeared are reported and skipped rather than
+opened into a tab that would fail.
+
+Reads Claude Code's own live-session registry (`~/.claude/sessions/`); the snapshot lands in
+`~/.claude/open-sessions.json`. Requires `jq`, `zellij`, and Linux `/proc`.
+
 ## Repository Structure
 
 ```
@@ -92,8 +112,9 @@ skills/         Skills organized by category (code/, docs/, creative/, utils/)
 agents/         Named sub-agent persona definitions
 hooks/          Lifecycle hook registry and handlers
 scripts/
-  install.sh    Publishes rules and skills to all tool directories
-  skills.mjs    CLI for adding, updating, and listing skills
+  install.sh      Publishes rules and skills to all tool directories
+  skills.mjs      CLI for adding, updating, and listing skills
+  claude-tabs.sh  Saves and restores open Claude Code sessions as zellij tabs
 ```
 
 ## Credits
