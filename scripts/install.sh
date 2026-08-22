@@ -14,6 +14,10 @@ RULES_SRC="$ROOT/rules"
 BIN_SRC="$ROOT/scripts"
 BIN_DIR="$HOME/.local/bin"
 
+# Gitignored, machine-local: maps a skill category to a directory of skills
+# maintained in another repo. Format per line: "<category> <absolute-dir>".
+EXTERNAL_SKILLS_CONF="$ROOT/external-skills.conf"
+
 CLAUDE_DIR="$HOME/.claude"
 CURSOR_DIR="$HOME/.cursor"
 AGENTS_SKILLS_DIR="$HOME/.agents/skills"
@@ -67,6 +71,43 @@ link_skills() {
       echo "  ✓ skill: $link_name → $target_dir/$link_name"
     done
   done
+}
+
+# Mirror every skill of each configured external source directory into
+# skills/<category>/ as per-skill symlinks, and drop symlinks whose source
+# skill no longer exists, so link_skills sees externally maintained skills
+# without anyone hand-linking each new one.
+sync_external_skills() {
+  [[ -f "$EXTERNAL_SKILLS_CONF" ]] || return 0
+  echo "→ External skill sources ($EXTERNAL_SKILLS_CONF)"
+  shopt -s nullglob
+  local category src_dir category_dir entry raw skill_dir name
+  while read -r category src_dir; do
+    [[ -z "$category" || "$category" == \#* ]] && continue
+    if [[ ! -d "$src_dir" ]]; then
+      echo "  ! $category: source dir missing, skipped: $src_dir" >&2
+      continue
+    fi
+    category_dir="$SKILLS_SRC/$category"
+    mkdir -p "$category_dir"
+    for entry in "$category_dir"/*; do
+      [[ -L "$entry" ]] || continue
+      raw="$(readlink "$entry" 2>/dev/null || true)"
+      [[ "$raw" == "$src_dir"/* ]] || continue
+      [[ -f "$entry/SKILL.md" ]] && continue
+      rm -f "$entry"
+      echo "  ✓ prune ${category}.$(basename "$entry") (gone from source)"
+    done
+    for skill_dir in "$src_dir"/*/; do
+      name="$(basename "$skill_dir")"
+      [[ -f "$skill_dir/SKILL.md" ]] || continue
+      # ln -n does not replace an existing real directory (it would nest the
+      # link inside it), so clear whatever holds the name first.
+      rm -rf "${category_dir:?}/$name"
+      ln -sn "${skill_dir%/}" "$category_dir/$name"
+      echo "  ✓ source: ${category}.${name} → ${skill_dir%/}"
+    done
+  done < "$EXTERNAL_SKILLS_CONF"
 }
 
 # ── 1. Claude Code (~/.claude) ─────────────────────────────────────
@@ -129,6 +170,7 @@ install_bin() {
 
 # ── Main ───────────────────────────────────────────────────────────
 main() {
+  sync_external_skills
   install_claude
   install_cursor
   install_agent_skills
