@@ -1,0 +1,24 @@
+.gitignore
+  s_a2ca2c43aa1a5f::t_e91b6ada9c0319 3-5
+scripts/install.sh
+  s_a2ca2c43aa1a5f::t_cd6a8b20722233 76-103,108-112
+  s_a2ca2c43aa1a5f::t_6585ef960a3dbe 104-107
+  s_a2ca2c43aa1a5f::t_acceaa76f58da3 173
+  s_a2ca2c43aa1a5f::t_c2129c881d8f20 17-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "8fd87e01218f8a7f37d0d2b38dfc3b8b65af7845",
+  "prompts": {},
+  "sessions": {
+    "s_a2ca2c43aa1a5f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c12181d5-5a1d-480d-a18b-af23288443b6",
+        "model": "claude-fable-5"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
