@@ -1,5 +1,8 @@
 .idea/
 
+# Machine-local map of external skill source directories (see scripts/install.sh)
+/external-skills.conf
+
 # Eval viewer HTML (generated, can be recreated from eval-results/)
 /tmp/code-review-eval-viewer*.html
 
