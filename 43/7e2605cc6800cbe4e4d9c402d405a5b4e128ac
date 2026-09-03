@@ -1,0 +1,19 @@
+skills/utils/spawn-session/SKILL.md
+  s_58df07e2f6b0dc::t_295ec5ff03b6b7 1-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "437e2605cc6800cbe4e4d9c402d405a5b4e128ac",
+  "prompts": {},
+  "sessions": {
+    "s_58df07e2f6b0dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6279e037-2507-493d-ba75-eb20fb7a3b58",
+        "model": "claude-opus-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
