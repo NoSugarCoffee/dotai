@@ -5,81 +5,66 @@ description: Launch a new Claude Code session in a zellij tab on this machine, o
 
 # Spawn a Claude session in zellij
 
-From a phone there is no terminal. This turns *"start a session working on X"* into one instruction:
-the new session lands in a zellij tab that keeps running, so it is there — with its scrollback — when
-you next attach at your desk.
+Claude Code mobile cannot start a session on the PC, so from a phone there is no way to begin work.
+This opens one as a zellij tab that keeps running — still there, with its scrollback, when you next
+attach at your desk.
 
-## First decide: are you inside zellij?
+## Target a session explicitly
 
-Everything below depends on this, and getting it wrong is the main failure.
+Always resolve a session name and pass `--session <name>`. That works from outside zellij *and* from
+inside the named session, so there is one rule instead of an inside/outside branch:
 
 ```bash
-echo "${ZELLIJ:-not-in-zellij} / ${ZELLIJ_SESSION_NAME:-}"
+zellij --session <name> action …
 ```
 
-- **Set** — `zellij action …` targets the session you are in.
-- **Not set** (a mobile/cloud session, a cron run, a plain shell) — every command needs an explicit
-  target: `zellij --session <name> action …`. This works fine from outside; it is not a limitation,
-  just a required flag.
-
-## Pick the target session — not with `list-sessions -s`
-
-`-s` prints dead sessions alongside live ones (measured on this machine: 9 names listed, 7 actually
-alive), so choosing from it can aim at a corpse and fail for reasons that look like a zellij bug.
-Filter instead:
+Inside zellij the name is already `$ZELLIJ_SESSION_NAME`. Otherwise list the live ones:
 
 ```bash
 zellij list-sessions -n | grep -v EXITED | awk '{print $1}'
 ```
 
-`-n` also marks the session you are in as `(current)`.
+`-s` looks like the obvious flag but lists EXITED sessions too, so a name taken from it may be dead.
 
-**Cold start — nothing alive.** Create a detached session first, then add the tab to it:
+**Nothing alive?** Create a detached session first — no terminal needed, which is the whole point:
 
 ```bash
 zellij attach --create-background <session>
 ```
 
-Do not ask the user to "just open a terminal" — that is the exact thing they cannot do.
+Don't suggest opening a terminal instead.
 
 ## Create the tab
 
-```bash
-zellij action new-tab --name <name> --cwd <abs-dir> -- /abs/path/to/claude ["initial prompt"]
-```
-
-- It prints the new tab's **id** on stdout. Keep it for the report.
-- **Use an absolute path to `claude`.** The command runs without a shell, so it does not get your
-  login shell's PATH. Resolve it first with `command -v claude`.
-- **`claude [prompt]` starts interactive *and* submits that prompt.** This is the whole point for
-  mobile — the spawned session begins the work instead of waiting at an empty prompt.
-- **Prefer a tab over a pane.** A tab gets full width and does not shrink the caller's own pane. Use
-  `zellij run -- claude` only when the user actually wants it side by side.
-
-## Confirm, then report back concretely
-
-The requester cannot see the screen, so an unverified "done" is worthless. Check the tab exists:
+Read the existing tab names first, so you don't add a second tab the user cannot tell from the first:
 
 ```bash
-zellij action query-tab-names                      # inside
-zellij --session <name> action query-tab-names     # outside
+zellij --session <name> action query-tab-names
+zellij --session <name> action new-tab --name <tab> --cwd <abs-dir> \
+  -- "$(command -v claude)" ["initial prompt"]
 ```
 
-Then say: session name, tab name, tab id, cwd, and the initial prompt if you passed one. Add how to
-reach it — `zellij attach <session>`, then `Ctrl+t` and arrows to switch tabs.
+- `new-tab` prints the new tab's **id** on stdout; that plus exit 0 is your confirmation — no second
+  query afterwards.
+- **Resolve `claude` with `command -v`.** What follows `--` runs without a shell, so it does not
+  inherit your login PATH.
+- **`claude [prompt]` starts interactive *and* submits that prompt.** From a phone this is the
+  payload: the session starts working instead of idling at an empty prompt.
+- Prefer a tab to a pane — a tab gets full width and doesn't shrink the caller's. Use
+  `zellij run -- claude` only when the user wants it side by side.
 
-## Choose the cwd deliberately
+## Choose the cwd deliberately, then report back
 
-A session opened in the wrong directory is the most common way this disappoints. Default to the
-project/repo root and **say which you used**. In particular do not inherit the calling shell's cwd by
-accident — after earlier work it is often parked in a git worktree or a scratch dir, which is rarely
-where the next session should start. Ask only if the target is genuinely ambiguous.
+Default to the project root and **say which you used**. Don't inherit the calling shell's cwd: after
+other work it is often parked in a git worktree or a scratch dir. Ask only if the target is genuinely
+ambiguous.
+
+The requester cannot see the screen, so report the session, tab name, tab id, cwd, and the initial
+prompt if you passed one — plus how to reach it: `zellij attach <session>`, then `Ctrl+t` and arrows.
 
 ## Never
 
 - **Kill or delete sessions to tidy up.** `kill-session` / `delete-session` destroy someone's running
-  work and its scrollback; they are not part of this task.
+  work and its scrollback.
 - **Resurrect an `EXITED` session unasked.** Attaching with `--force-run-commands` re-runs every
   command it had on startup.
-- **Assume the tab name is unique.** Reusing a name makes two tabs the user cannot tell apart; add a
-  short suffix when one already exists.
