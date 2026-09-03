@@ -1,0 +1,31 @@
+skills/improve-codebase-architecture/DEEPENING.md
+  s_330ee699d4c601::t_08da9ca939eddc 1-37
+skills/improve-codebase-architecture/INTERFACE-DESIGN.md
+  s_330ee699d4c601::t_90343c68b62eab 1-44
+skills/improve-codebase-architecture/SKILL.md
+  s_330ee699d4c601::t_e6a6d6e6a87ab9 1-81
+skills/improve-codebase-architecture/LANGUAGE.md
+  s_330ee699d4c601::t_777df8e51b08f4 1-53
+README.md
+  s_330ee699d4c601::t_0bfb3b73481676 110
+skills/improve-codebase-architecture/HTML-REPORT.md
+  s_330ee699d4c601::t_615f2ab288ff25 1-29
+skills/skills.json
+  s_330ee699d4c601::t_e1afd4c89c1236 36-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "f605c30d1eaaa17fd81ad03e79cc14ea68f564cd",
+  "prompts": {},
+  "sessions": {
+    "s_330ee699d4c601": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "425cfb3a-a633-4acf-971b-c6999ad1db86",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+scripts/install.sh
+  2c9f83347add9dae 19
+rules/coding.md
+  2c9f83347add9dae 1,3-42
+README.md
+  2c9f83347add9dae 2-16
+AGENTS.md
+  2c9f83347add9dae 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "b714cda47cc6c235515bda4aa59efa904999c428",
+  "prompts": {
+    "2c9f83347add9dae": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "3e9dc531-69f0-40fa-96bc-b63c6d3ebf93",
+        "model": "composer-2"
+      },
+      "human_author": "NoSugarCoffee",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 56,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/941314b8159f500a916352a414ea3bffea997314cfefd11ec4873ca4ed70db97"
+    }
+  }
+}

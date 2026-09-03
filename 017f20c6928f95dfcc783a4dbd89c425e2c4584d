@@ -1,0 +1,19 @@
+docs/superpowers/plans/2026-05-17-skill-upstream-update.md
+  s_5a5c12ab1b4daa::t_eafb5a38e6d981 1-642
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "017f20c6928f95dfcc783a4dbd89c425e2c4584d",
+  "prompts": {},
+  "sessions": {
+    "s_5a5c12ab1b4daa": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a3613867-28ec-4947-823f-7c00d6f34a73",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

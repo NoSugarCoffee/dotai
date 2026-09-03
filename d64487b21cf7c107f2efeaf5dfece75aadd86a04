@@ -1,0 +1,24 @@
+scripts/skills.mjs
+  s_5a5c12ab1b4daa::t_175eb656b56096 67
+  s_5a5c12ab1b4daa::t_e23815453476f3 12
+  s_5a5c12ab1b4daa::t_731f886d62b049 381
+  s_5a5c12ab1b4daa::t_e972c24d03e030 278-321
+README.md
+  s_5a5c12ab1b4daa::t_203262ba0a30bb 104,108-110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "d64487b21cf7c107f2efeaf5dfece75aadd86a04",
+  "prompts": {},
+  "sessions": {
+    "s_5a5c12ab1b4daa": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a3613867-28ec-4947-823f-7c00d6f34a73",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

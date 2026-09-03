@@ -1,0 +1,25 @@
+README.md
+  s_ded35abbea3baa::t_ceed415c963bec 105
+skills/browser/chrome-cdp/SKILL.md
+  s_ded35abbea3baa::t_ceed415c963bec 1-77
+skills/skills.json
+  s_ded35abbea3baa::t_ceed415c963bec 86-90
+skills/browser/chrome-cdp/scripts/cdp.mjs
+  s_ded35abbea3baa::t_ceed415c963bec 1-882
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "971f6290716b4e42544d875d35ea4375df860d48",
+  "prompts": {},
+  "sessions": {
+    "s_ded35abbea3baa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8984ebb3-aa97-4810-8fc3-08e935bc21c1",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

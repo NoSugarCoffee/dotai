@@ -1,0 +1,22 @@
+skills/skills.json
+  s_5a5c12ab1b4daa::t_7c6a941d8dc484 1-32
+scripts/skills.test.mjs
+  s_5a5c12ab1b4daa::t_51da0d80ab8345 123-127,129,133,141-145
+  s_5a5c12ab1b4daa::t_40314ccc06b545 160-180
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "041bc2c03a260920de9354f63c6b0c191f861d70",
+  "prompts": {},
+  "sessions": {
+    "s_5a5c12ab1b4daa": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a3613867-28ec-4947-823f-7c00d6f34a73",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

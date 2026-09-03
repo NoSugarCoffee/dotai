@@ -1,0 +1,22 @@
+scripts/skills.mjs
+  s_ab2b0636c67095::t_db4480572ddc78 287-294,303
+scripts/skills.test.mjs
+  s_ab2b0636c67095::t_1013d08efb0728 122-136
+  s_ab2b0636c67095::t_c0df2a2caba3e1 2,5,7-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "178c873a16b7d28fff5a18cc84c39b2518df19e0",
+  "prompts": {},
+  "sessions": {
+    "s_ab2b0636c67095": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ae42a47e-4e2b-42ff-b556-d464677ae5a9",
+        "model": "claude-4.6-sonnet-medium-thinking"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+scripts/skills.mjs
+  4bb9e41d409dfbf0 1-242
+README.md
+  4bb9e41d409dfbf0 19,21-91
+package.json
+  4bb9e41d409dfbf0 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "6b4b96475c667e4b11c494c6988932deabf87d01",
+  "prompts": {
+    "4bb9e41d409dfbf0": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0b31a5f8-3bf2-4a63-bc06-6808093d9db1",
+        "model": "gpt-5.5"
+      },
+      "human_author": "NoSugarCoffee",
+      "messages": [],
+      "total_additions": 264,
+      "total_deletions": 0,
+      "accepted_lines": 260,
+      "overriden_lines": 2,
+      "messages_url": "https://usegitai.com/cas/7f4a176e3720ff2cbf07213959ce23349ddfc2665b3591c2db0df03c95be11e3"
+    }
+  }
+}

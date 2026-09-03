@@ -1,0 +1,19 @@
+scripts/skills.test.mjs
+  s_e9e2aac77068ab::t_8f3b733f50e63a 122-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "7307033a8e6bcf52258b382cc339c9b5520567c1",
+  "prompts": {},
+  "sessions": {
+    "s_e9e2aac77068ab": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "92ad057e-3347-41ed-9328-7e03ece98e14",
+        "model": "claude-4.6-sonnet-medium-thinking"
+      },
+      "human_author": "NoSugarCoffee <1353025854@qq.com>"
+    }
+  }
+}
