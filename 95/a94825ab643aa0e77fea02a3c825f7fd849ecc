@@ -1,0 +1,60 @@
+scripts/sync.sh
+  s_4568fd819196b7::t_5a86eb47a23516 5-10
+README.md
+  s_4568fd819196b7::t_298f55261cf13b 4
+  s_4568fd819196b7::t_c68fe8ceae3906 169
+  s_4568fd819196b7::t_d702b63def9503 88
+  s_4568fd819196b7::t_849a6e1cc4a42e 60-61,63-67,69,72,75-81,83,86-87,89-91,94-97
+  s_4568fd819196b7::t_9045b9b3a6a76d 27-28,37-38,43-45
+  s_4568fd819196b7::t_3c49caad36fb47 129-137,139-142
+apm.yml
+  s_73e12c9290c011::t_f106f30a755f98 41-43
+  s_73e12c9290c011::t_f35a72301e7eb0 1-8,48-49
+  s_73e12c9290c011::t_19e52565870321 44-47
+scripts/verify-skills-layout.sh
+  s_4568fd819196b7::t_895bfd4ca1cfdf 2-4,9,12-14,19-21,24,26-30,32-46
+AGENTS.md
+  s_4568fd819196b7::t_d9cf45a295dca8 9,17-26,38,40-41,46,52-55,57-59,61,65-75
+  s_4568fd819196b7::t_d0eadf845fcaac 39
+vendored-skills.conf
+  s_4568fd819196b7::t_86e86edaa7789f 1-30
+apm.lock.yaml
+  s_73e12c9290c011::t_19e52565870321 3360-3368,3377,3380-3384,3390
+  s_73e12c9290c011::t_f106f30a755f98 1,3-3359,3369-3376,3378-3379,3385-3389,3391
+  s_73e12c9290c011::t_d218996525098c 2
+scripts/install.sh
+  s_4568fd819196b7::t_94ccf7e7419c4e 10-13
+  s_4568fd819196b7::t_c52cfef2288520 89,91
+  s_4568fd819196b7::t_fa4b117de96a8f 267-268,272-279,281
+  s_4568fd819196b7::t_447ffae3cfda30 301
+  s_4568fd819196b7::t_ff1bca82349c81 4-9,20,26-28,41-77,79-80,85-88,92-137,140,146-152,156,160,162-167,172,269-271,282-286,296
+  s_4568fd819196b7::t_b12e27ba9b4cd7 81-84,90
+.gitignore
+  s_4568fd819196b7::t_1653e21df822f9 13
+  s_4568fd819196b7::t_ba63bd1bf1d134 9-11
+  s_4568fd819196b7::t_b3bb2b08e45d89 12,14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "95a94825ab643aa0e77fea02a3c825f7fd849ecc",
+  "prompts": {},
+  "sessions": {
+    "s_4568fd819196b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b48898c-a2bc-48b5-96f8-c852bf062302",
+        "model": "claude-opus-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    },
+    "s_73e12c9290c011": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "181a08f2-e76d-4ccd-a76d-cc4744ad463b",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
