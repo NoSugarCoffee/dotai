@@ -1,62 +1,49 @@
 #!/usr/bin/env bash
-# Verifies that ~/.claude/skills/ contains namespaced symlinks from this repo.
+# Verifies that ~/.claude/skills/ matches what install.sh resolves: every
+# skill published under its {category}.{name}, pointing at the right source,
+# with no leftover links this repo used to own.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
+APM_MODULES="$ROOT/apm_modules"
 CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
 
-EXPECTED=(
-  "code.diagnose"
-  "code.code-review"
-  "code.improve-codebase-architecture"
-  "code.impeccable"
-  "docs.grill-with-docs"
-  "docs.handoff"
-  "docs.project-readme-author"
-  "creative.logo-generator"
-  "creative.project-logo-author"
-  "creative.hyperframes"
-  "creative.baoyu-translate"
-  "utils.skill-creator"
-)
-
-FLAT_SHOULD_NOT_EXIST=(
-  "diagnose"
-  "code-review"
-  "improve-codebase-architecture"
-  "impeccable"
-  "grill-with-docs"
-  "handoff"
-  "project-readme-author"
-  "logo-generator"
-  "project-logo-author"
-  "hyperframes"
-  "baoyu-translate"
-  "skill-creator"
-)
+EXPECTED="$(mktemp)"
+trap 'rm -f "$EXPECTED"' EXIT
+bash "$ROOT/scripts/install.sh" --list > "$EXPECTED"
 
 PASS=0
 FAIL=0
 
-for name in "${EXPECTED[@]}"; do
-  if [[ -L "$CLAUDE_SKILLS_DIR/$name" ]]; then
-    echo "  ✓ $name"
-    PASS=$((PASS + 1))
-  else
+while IFS=$'\t' read -r name source_dir; do
+  link="$CLAUDE_SKILLS_DIR/$name"
+  if [[ ! -L "$link" ]]; then
     echo "  ✗ MISSING: $name"
     FAIL=$((FAIL + 1))
+    continue
   fi
-done
+  actual="$(readlink "$link")"
+  if [[ "$actual" != "$source_dir" ]]; then
+    echo "  ✗ WRONG SOURCE: $name → $actual (expected $source_dir)"
+    FAIL=$((FAIL + 1))
+    continue
+  fi
+  echo "  ✓ $name"
+  PASS=$((PASS + 1))
+done < "$EXPECTED"
 
-for name in "${FLAT_SHOULD_NOT_EXIST[@]}"; do
-  if [[ -L "$CLAUDE_SKILLS_DIR/$name" ]]; then
-    resolved="$(realpath "$CLAUDE_SKILLS_DIR/$name" 2>/dev/null || true)"
-    if [[ "$resolved" == "$SKILLS_SRC"/* ]]; then
-      echo "  ✗ STALE FLAT SYMLINK: $name"
-      FAIL=$((FAIL + 1))
-    fi
-  fi
+# A link into this repo that install.sh no longer resolves is a leftover from
+# a renamed or removed skill; install.sh prunes these, so finding one means
+# the published state is stale.
+shopt -s nullglob
+for entry in "$CLAUDE_SKILLS_DIR"/*; do
+  [[ -L "$entry" ]] || continue
+  raw="$(readlink "$entry" 2>/dev/null || true)"
+  [[ "$raw" == "$SKILLS_SRC"/* || "$raw" == "$APM_MODULES"/* ]] || continue
+  cut -f1 "$EXPECTED" | grep -qx "$(basename "$entry")" && continue
+  echo "  ✗ STALE LINK: $(basename "$entry") → $raw"
+  FAIL=$((FAIL + 1))
 done
 
 echo ""

@@ -3,6 +3,16 @@
 # Machine-local map of external skill source directories (see scripts/install.sh)
 /external-skills.conf
 
+# Per-skill symlinks install.sh generates from external-skills.conf. The source
+# repo is only present on machines that have it checked out.
+/skills/compass/
+
 # Eval viewer HTML (generated, can be recreated from eval-results/)
 /tmp/code-review-eval-viewer*.html
 
+# APM also deploys the skills it fetches into this project. install.sh is what
+# publishes them (namespaced, to every tool), so the project copy is unused.
+/.claude/skills/
+
+# APM dependencies (re-added by apm install if removed); rebuild with 'apm install'
+apm_modules/
