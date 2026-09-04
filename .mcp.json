@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "github-mcp-server": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {}
+    },
+    "agentark-mcp": {
+      "type": "http",
+      "url": "https://agentark-mcp-function.faas.ctripcorp.com/mcp"
+    }
+  }
+}

@@ -21,6 +21,7 @@ skills/         Skills authored in this repo, by category
 
 apm.yml         Upstream skill + MCP server dependencies
 apm.lock.yaml   Resolved commits and per-file hashes (committed)
+.mcp.json       Project MCP servers, regenerated from apm.yml by apm install
 apm_modules/    Fetched upstream repos (gitignored; rebuilt by apm install)
 vendored-skills.conf  Category for each apm_modules/ skill, matched on SKILL.md `name:`
 external-skills.conf  Machine-local: skill dirs owned by another repo (gitignored)

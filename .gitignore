@@ -3,6 +3,10 @@
 # Machine-local map of external skill source directories (see scripts/install.sh)
 /external-skills.conf
 
+# Per-skill symlinks install.sh generates from external-skills.conf. The source
+# repo is only present on machines that have it checked out.
+/skills/compass/
+
 # Eval viewer HTML (generated, can be recreated from eval-results/)
 /tmp/code-review-eval-viewer*.html
 
