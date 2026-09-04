@@ -7,7 +7,7 @@ targets:
 dependencies:
   apm:
     - git: mattpocock/skills
-      ref: 66898f60e8c744e269f8ce06c2b2b99ce7660d5f
+      ref: 6acc160e4e0cd062dbbbd7a1b26ae92855edf07e # v1.2.3
       skills:
         - diagnosing-bugs
         - grill-with-docs
@@ -27,7 +27,7 @@ dependencies:
       skills:
         - clean-code-principles
     - git: JimLiu/baoyu-skills
-      ref: 38cc497748bc8e32da84a8097bee1361234ce4dd
+      ref: f490f7e5e347a356cbce30fee193766b7de792cf # v2.5.2
       skills:
         - baoyu-translate
     - op7418/logo-generator-skill#bf4e9ac4d4428bda261afcfe981871ceb92d94e6
