@@ -1,0 +1,33 @@
+AGENTS.md
+  s_4568fd819196b7::t_5641d2d0d2f262 24
+.gitignore
+  s_4568fd819196b7::t_30ea0ca406d5df 6-9
+.mcp.json
+  s_73e12c9290c011::t_19e52565870321 7-9
+  s_73e12c9290c011::t_e26ba59afc8e0b 10
+  s_73e12c9290c011::t_f106f30a755f98 1-6,11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "c153b332bdf2e01b7279ebe4baecb1fd55022cda",
+  "prompts": {},
+  "sessions": {
+    "s_4568fd819196b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b48898c-a2bc-48b5-96f8-c852bf062302",
+        "model": "claude-opus-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    },
+    "s_73e12c9290c011": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "181a08f2-e76d-4ccd-a76d-cc4744ad463b",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
