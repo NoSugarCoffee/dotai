@@ -1,0 +1,21 @@
+apm.lock.yaml
+  s_14ace54a89a97c::t_6cdb4549e16e77 2,212-213,258,260-261,263-264,266-268,270,272-275,277,281,283,285-287,289,1080,1098,1116,2781,2790,2943,2952,2961,2988,3006,3015,3024,3033,3231,3276,3303,3330,3339,3348
+apm.yml
+  s_14ace54a89a97c::t_df13d309a09e03 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "ad835366e56809eb5f4d2f46c0f274be4688954b",
+  "prompts": {},
+  "sessions": {
+    "s_14ace54a89a97c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1de72e4e-5e21-4bc2-a801-b161887cce7d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
