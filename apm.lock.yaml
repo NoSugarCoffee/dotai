@@ -170,6 +170,14 @@ dependencies:
   skill_subset:
   - hyperframes
   declared_license: Apache-2.0
+- repo_url: humanlayer/skills
+  name: skills
+  host: github.com
+  resolved_commit: 3c2629142c5d437428269b1b722b08c0b87f574d
+  resolved_ref: 3c2629142c5d437428269b1b722b08c0b87f574d
+  version: 3c26291
+  package_type: marketplace_plugin
+  content_hash: sha256:4909722b6edba6dbaa5481adca944937237e71c402f62c03a973923ef5cf986f
 - repo_url: jimliu/baoyu-skills
   materialization_repo_url: JimLiu/baoyu-skills
   name: baoyu-skills
