@@ -38,6 +38,9 @@ dependencies:
     - git: heygen-com/hyperframes
       skills:
         - hyperframes
+    # Whole repo: its plugins declare no skill manifest, so --skill is rejected
+    # and vendored-skills.conf selects what gets published.
+    - humanlayer/skills#3c2629142c5d437428269b1b722b08c0b87f574d
   mcp:
     - name: io.github.github/github-mcp-server
       transport: http
