@@ -7,7 +7,7 @@ targets:
 dependencies:
   apm:
     - git: mattpocock/skills
-      ref: 6acc160e4e0cd062dbbbd7a1b26ae92855edf07e # v1.2.3
+      ref: 3cca18b368ae95cdbdebbff572ccafa662551015 # main, post-v1.2.3 (2026-09-04)
       skills:
         - diagnosing-bugs
         - grill-with-docs
