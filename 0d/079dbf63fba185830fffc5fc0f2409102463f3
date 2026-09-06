@@ -1,0 +1,21 @@
+vendored-skills.conf
+  s_aadff0beac0573::t_7675e4806c5e8a 23-25,27,29,32-33,39-40
+apm.yml
+  s_aadff0beac0573::t_c16696a0105011 12-14,16,18,21-22,28-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "0d079dbf63fba185830fffc5fc0f2409102463f3",
+  "prompts": {},
+  "sessions": {
+    "s_aadff0beac0573": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "13071d24-4458-4678-a132-e48bfa8cbcb2",
+        "model": "claude-opus-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
