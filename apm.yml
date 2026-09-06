@@ -9,15 +9,24 @@ dependencies:
     - git: mattpocock/skills
       ref: 3cca18b368ae95cdbdebbff572ccafa662551015 # main, post-v1.2.3 (2026-09-04)
       skills:
+        - ask-matt
+        - code-review
+        - codebase-design
         - diagnosing-bugs
+        - domain-modeling
         - grill-with-docs
+        - implement
         - improve-codebase-architecture
         - prototype
+        - research
+        - resolving-merge-conflicts
         - setup-matt-pocock-skills
         - tdd
         - to-spec
         - to-tickets
         - triage
+        - wayfinder
+        - wizard
     - git: anthropics/skills
       ref: f458cee31a7577a47ba0c9a101976fa599385174
       skills:
