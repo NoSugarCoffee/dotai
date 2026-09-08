@@ -123,6 +123,53 @@ dependencies:
   content_hash: sha256:5009deda125febbee97e1486186d404764c872198d4f1e643c7c014f365fb75e
   skill_subset:
   - clean-code-principles
+- repo_url: citrolabs/ego-lite
+  name: ego-lite
+  host: github.com
+  resolved_commit: 5ca3c36cba2240b8df2e22ba32127747029039d5
+  resolved_ref: 5ca3c36cba2240b8df2e22ba32127747029039d5
+  version: 5ca3c36
+  package_type: marketplace_plugin
+  deployed_files:
+  - .claude/skills/ego-browser
+  - .claude/skills/ego-browser/SKILL.md
+  - .claude/skills/ego-browser/agents/openai.yaml
+  - .claude/skills/ego-browser/assets/composer-icon.png
+  - .claude/skills/ego-browser/assets/logo.png
+  - .claude/skills/ego-browser/learnings/google/browser-tools/autocomplete.js
+  - .claude/skills/ego-browser/learnings/google/manifest.json
+  - .claude/skills/ego-browser/learnings/google/notes/overview.md
+  - .claude/skills/ego-browser/learnings/google/tools/search-extract.js
+  - .claude/skills/ego-browser/learnings/x-com/browser-tools/extract-post.js
+  - .claude/skills/ego-browser/learnings/x-com/manifest.json
+  - .claude/skills/ego-browser/learnings/x-com/notes/overview.md
+  - .claude/skills/ego-browser/learnings/x-com/notes/timeline.md
+  - .claude/skills/ego-browser/learnings/x-com/tools/search-users.js
+  - .claude/skills/ego-browser/learnings/x-com/tools/timeline.js
+  - .claude/skills/ego-browser/references/install.md
+  - .claude/skills/ego-browser/references/video.md
+  - .claude/skills/ego-browser/scripts/install.sh
+  deployed_file_hashes:
+    .claude/skills/ego-browser/SKILL.md: sha256:5a758c3393323dda529fd3809b64a8cde01b4a1d1e2ff10f8d76686345db9807
+    .claude/skills/ego-browser/agents/openai.yaml: sha256:81a941e83feb556827d72aa98d7bc97a909294e386ff9f6a1817de92e8767b89
+    .claude/skills/ego-browser/assets/composer-icon.png: sha256:2822b28752520f2a5506cb0693c8db2fd1ec0345806454b5f92d999b84b5bc1f
+    .claude/skills/ego-browser/assets/logo.png: sha256:cec732e29ea3b03d8920b28d912306f43651186dc2f4a488800da9db0a50f993
+    .claude/skills/ego-browser/learnings/google/browser-tools/autocomplete.js: sha256:95ad95f370533bf56a554e7d79ac39f16f860d1ca4d8c6eb01876fd120beb146
+    .claude/skills/ego-browser/learnings/google/manifest.json: sha256:639e61238ccdb0ee06855fb8ce2585f6f3e9fcfff86ccafc54c20a48c6e00f74
+    .claude/skills/ego-browser/learnings/google/notes/overview.md: sha256:fed87e6b4d85d43a4c54ecd8684aab44f1b3dad0817ecb06b483bdc4d580c90c
+    .claude/skills/ego-browser/learnings/google/tools/search-extract.js: sha256:98b101500428b4fe581d70569b4163297f46a0d48ec6c8ef9f3200ed6ce2c438
+    .claude/skills/ego-browser/learnings/x-com/browser-tools/extract-post.js: sha256:338db35bdf4d83258f5b646e67d38fb7f63bdbd243bac2e94236bb348b6ff64f
+    .claude/skills/ego-browser/learnings/x-com/manifest.json: sha256:4eb12fecbaa37cc41e8b556e3eea1dc006d6ee587368fb318eca6dd3910fd896
+    .claude/skills/ego-browser/learnings/x-com/notes/overview.md: sha256:23ef996495cf14b24809e29d5bcdfb3d049bb97fa26b5eebda3e035f1ed6ed1d
+    .claude/skills/ego-browser/learnings/x-com/notes/timeline.md: sha256:e6599f5770cd0226aba55694825deccdb556d1b4c5ad75324a89d14ebd85fbec
+    .claude/skills/ego-browser/learnings/x-com/tools/search-users.js: sha256:61a2966efbd76b6496b34c801435c895296a295993b2bb37ceee658c50be11ce
+    .claude/skills/ego-browser/learnings/x-com/tools/timeline.js: sha256:7c2f1368846bc921c608ed49669c27da06c97d128086a879883977ac6b6cfcc2
+    .claude/skills/ego-browser/references/install.md: sha256:878efffc4828d4f03e7a156d1031f67ddc1a7764ed876f512f4473375914ec10
+    .claude/skills/ego-browser/references/video.md: sha256:3203452b9c4d74a8e57406722c1b97cf20e537c786d08bf6e4dd12619517b66c
+    .claude/skills/ego-browser/scripts/install.sh: sha256:4cbbc9f211aca61244d9ada601c385cabbeba4ec4417b3a8be1819a01cb0221b
+  content_hash: sha256:cc4d20ee0642568d6bf03a51856d190482db561651d79530a66cf33c30a5e574
+  skill_subset:
+  - ego-browser
 - repo_url: heygen-com/hyperframes
   name: hyperframes
   host: github.com
@@ -1323,6 +1370,168 @@ deployments:
   - mattpocock/skills
   active_owner: mattpocock/skills
   content_hash: sha256:f6bf2aa996c6e6f53fdd0708e18a0d16a56aed8322cca59fedbe3c0d2c75f06b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:5a758c3393323dda529fd3809b64a8cde01b4a1d1e2ff10f8d76686345db9807
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:81a941e83feb556827d72aa98d7bc97a909294e386ff9f6a1817de92e8767b89
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/assets/composer-icon.png
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:2822b28752520f2a5506cb0693c8db2fd1ec0345806454b5f92d999b84b5bc1f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/assets/logo.png
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:cec732e29ea3b03d8920b28d912306f43651186dc2f4a488800da9db0a50f993
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/google/browser-tools/autocomplete.js
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:95ad95f370533bf56a554e7d79ac39f16f860d1ca4d8c6eb01876fd120beb146
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/google/manifest.json
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:639e61238ccdb0ee06855fb8ce2585f6f3e9fcfff86ccafc54c20a48c6e00f74
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/google/notes/overview.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:fed87e6b4d85d43a4c54ecd8684aab44f1b3dad0817ecb06b483bdc4d580c90c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/google/tools/search-extract.js
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:98b101500428b4fe581d70569b4163297f46a0d48ec6c8ef9f3200ed6ce2c438
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/browser-tools/extract-post.js
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:338db35bdf4d83258f5b646e67d38fb7f63bdbd243bac2e94236bb348b6ff64f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/manifest.json
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:4eb12fecbaa37cc41e8b556e3eea1dc006d6ee587368fb318eca6dd3910fd896
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/notes/overview.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:23ef996495cf14b24809e29d5bcdfb3d049bb97fa26b5eebda3e035f1ed6ed1d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/notes/timeline.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:e6599f5770cd0226aba55694825deccdb556d1b4c5ad75324a89d14ebd85fbec
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/tools/search-users.js
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:61a2966efbd76b6496b34c801435c895296a295993b2bb37ceee658c50be11ce
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/learnings/x-com/tools/timeline.js
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:7c2f1368846bc921c608ed49669c27da06c97d128086a879883977ac6b6cfcc2
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/references/install.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:878efffc4828d4f03e7a156d1031f67ddc1a7764ed876f512f4473375914ec10
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/references/video.md
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:3203452b9c4d74a8e57406722c1b97cf20e537c786d08bf6e4dd12619517b66c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ego-browser/scripts/install.sh
+  runtime: null
+  scope: project
+  owners:
+  - citrolabs/ego-lite
+  active_owner: citrolabs/ego-lite
+  content_hash: sha256:4cbbc9f211aca61244d9ada601c385cabbeba4ec4417b3a8be1819a01cb0221b
 - kind: project-relative
   target: claude
   value: .claude/skills/grill-with-docs
