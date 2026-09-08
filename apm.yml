@@ -50,6 +50,12 @@ dependencies:
     # Whole repo: its plugins declare no skill manifest, so --skill is rejected
     # and vendored-skills.conf selects what gets published.
     - humanlayer/skills#3c2629142c5d437428269b1b722b08c0b87f574d
+    # Stay on main (skill v1.2.6): the v2.0.0-beta tags rewrite the skill for an
+    # ego 2.x CLI, which the locally installed ego lite 0.4.7.4 does not speak.
+    - git: citrolabs/ego-lite
+      ref: 5ca3c36cba2240b8df2e22ba32127747029039d5 # main (2026-08-24)
+      skills:
+        - ego-browser
   mcp:
     - name: io.github.github/github-mcp-server
       transport: http

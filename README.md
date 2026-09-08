@@ -77,6 +77,10 @@ APM pins the resolved commit and every file hash in `apm.lock.yaml`; the categor
 file decides where the skill lands. Skills are matched by the `name:` in their
 SKILL.md frontmatter, so a repo whose directory name differs still resolves.
 
+Give the category as `-` to publish a skill under its bare name instead of
+`{category}.{name}` — for skills whose own CLI or docs refer to them by an exact
+name.
+
 Repos without a skill manifest (no `plugin.json`) reject `--skill` — install the
 whole repo and let `vendored-skills.conf` select what gets published.
 
@@ -155,6 +159,7 @@ Some skills in this repo were copied from external projects. Attribution:
 | `creative.logo-generator` | [op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill) |
 | `creative.project-logo-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
 | `docs.project-readme-author` | [tsilva/claudeskillz](https://github.com/tsilva/claudeskillz) |
+| `ego-browser` | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `mattpocock.diagnosing-bugs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `mattpocock.grill-with-docs` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `mattpocock.improve-codebase-architecture` | [mattpocock/skills](https://github.com/mattpocock/skills) |

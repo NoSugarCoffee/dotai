@@ -90,20 +90,27 @@ resolve_vendored_skills() {
     \( -name '.*' -o -name node_modules \) -prune \
     -o -name SKILL.md -type f -print0)
 
-  local skill category matches count status=0
+  local skill category link_name matches count status=0
   while read -r skill category; do
     [[ -z "$skill" || "$skill" == \#* ]] && continue
+    # A category of "-" publishes the skill under its bare name, for skills
+    # whose upstream tooling expects to find them by that exact name.
+    if [[ "$category" == "-" ]]; then
+      link_name="$skill"
+    else
+      link_name="${category}.${skill}"
+    fi
     matches="$(awk -F'\t' -v n="$skill" '$1 == n { print $2 }' "$index")"
     count="$(printf '%s' "$matches" | grep -c . || true)"
     if [[ "$count" -eq 0 ]]; then
-      echo "  ! ${category}.${skill}: no SKILL.md in apm_modules/ declares this name — is it pinned in apm.yml?" >&2
+      echo "  ! ${link_name}: no SKILL.md in apm_modules/ declares this name — is it pinned in apm.yml?" >&2
       status=1
     elif [[ "$count" -gt 1 ]]; then
-      echo "  ! ${category}.${skill}: ambiguous, $count skills declare this name:" >&2
+      echo "  ! ${link_name}: ambiguous, $count skills declare this name:" >&2
       printf '      %s\n' $matches >&2
       status=1
     else
-      printf '%s\t%s\n' "${category}.${skill}" "$matches"
+      printf '%s\t%s\n' "$link_name" "$matches"
     fi
   done < "$VENDORED_SKILLS_CONF"
 
