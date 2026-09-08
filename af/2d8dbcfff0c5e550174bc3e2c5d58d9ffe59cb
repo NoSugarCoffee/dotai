@@ -1,0 +1,30 @@
+apm.lock.yaml
+  s_1fafb874f68111::t_a34831162e7974 126-172,1373-1534
+scripts/install.sh
+  s_1fafb874f68111::t_ab18f175fefcac 93,96-102,106,109,113
+apm.yml
+  s_1fafb874f68111::t_e8cbb834b0c1af 53-54,56
+  s_1fafb874f68111::t_a34831162e7974 55,57-58
+vendored-skills.conf
+  s_1fafb874f68111::t_2f30870829f64d 9
+  s_1fafb874f68111::t_f8033d8bc0e453 24-26
+README.md
+  s_1fafb874f68111::t_c7df58af45a805 80-83
+  s_1fafb874f68111::t_d720d958b761a0 162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.43-trip",
+  "base_commit_sha": "af2d8dbcfff0c5e550174bc3e2c5d58d9ffe59cb",
+  "prompts": {},
+  "sessions": {
+    "s_1fafb874f68111": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c452bcd6-8aa4-418c-829d-a9e5939f0b57",
+        "model": "claude-opus-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
