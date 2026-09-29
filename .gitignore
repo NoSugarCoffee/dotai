@@ -14,5 +14,8 @@
 # publishes them (namespaced, to every tool), so the project copy is unused.
 /.claude/skills/
 
+# APM generates Codex's project MCP config from apm.yml on install/sync.
+/.codex/config.toml
+
 # APM dependencies (re-added by apm install if removed); rebuild with 'apm install'
 apm_modules/
