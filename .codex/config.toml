@@ -1,0 +1,15 @@
+[mcp_servers.github-mcp-server]
+url = "https://api.githubcopilot.com/mcp/"
+id = ""
+
+[mcp_servers.agentark-mcp]
+url = "https://agentark-mcp-function.faas.ctripcorp.com/mcp"
+id = ""
+
+[mcp_servers.bat-mcp-function]
+url = "https://bat-mcp-function.faas.ctripcorp.com/mcp"
+id = ""
+
+[mcp_servers.qconfig-mcp-function]
+url = "https://qconfig-mcp-server-function.faas.ctripcorp.com/mcp"
+id = ""
