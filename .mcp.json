@@ -8,6 +8,14 @@
     "agentark-mcp": {
       "type": "http",
       "url": "https://agentark-mcp-function.faas.ctripcorp.com/mcp"
+    },
+    "bat-mcp-function": {
+      "type": "http",
+      "url": "https://bat-mcp-function.faas.ctripcorp.com/mcp"
+    },
+    "qconfig-mcp-function": {
+      "type": "http",
+      "url": "https://qconfig-mcp-server-function.faas.ctripcorp.com/mcp"
     }
   }
 }

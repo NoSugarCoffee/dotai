@@ -4,6 +4,7 @@ description: APM project for dotai
 author: NoSugarCoffee
 targets:
   - claude
+  - codex
 dependencies:
   apm:
     - git: mattpocock/skills
@@ -63,5 +64,13 @@ dependencies:
       registry: false
       transport: http
       url: https://agentark-mcp-function.faas.ctripcorp.com/mcp
+    - name: bat-mcp-function
+      registry: false
+      transport: http
+      url: https://bat-mcp-function.faas.ctripcorp.com/mcp
+    - name: qconfig-mcp-function
+      registry: false
+      transport: http
+      url: https://qconfig-mcp-server-function.faas.ctripcorp.com/mcp
 includes: auto
 scripts: {}

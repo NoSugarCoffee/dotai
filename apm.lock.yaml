@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-09-06T09:39:47.770700+00:00'
+generated_at: '2026-09-29T15:59:37.018851+00:00'
 apm_version: 0.29.0
 dependencies:
 - repo_url: anthropics/skills
@@ -3946,6 +3946,15 @@ deployments:
   content_hash: null
 - kind: uri
   target: mcp
+  value: bat-mcp-function
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
   value: io.github.github/github-mcp-server
   runtime: claude
   scope: project
@@ -3953,19 +3962,83 @@ deployments:
   - .
   active_owner: .
   content_hash: null
+- kind: uri
+  target: mcp
+  value: qconfig-mcp-function
+  runtime: claude
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: agentark-mcp
+  runtime: codex
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: bat-mcp-function
+  runtime: codex
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: io.github.github/github-mcp-server
+  runtime: codex
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: uri
+  target: mcp
+  value: qconfig-mcp-function
+  runtime: codex
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
 mcp_servers:
 - agentark-mcp
+- bat-mcp-function
 - io.github.github/github-mcp-server
+- qconfig-mcp-function
 mcp_configs:
   agentark-mcp:
     name: agentark-mcp
     transport: http
     registry: false
     url: https://agentark-mcp-function.faas.ctripcorp.com/mcp
+  bat-mcp-function:
+    name: bat-mcp-function
+    transport: http
+    registry: false
+    url: https://bat-mcp-function.faas.ctripcorp.com/mcp
   io.github.github/github-mcp-server:
     name: io.github.github/github-mcp-server
     transport: http
+  qconfig-mcp-function:
+    name: qconfig-mcp-function
+    transport: http
+    registry: false
+    url: https://qconfig-mcp-server-function.faas.ctripcorp.com/mcp
 mcp_target_servers:
   claude:
   - agentark-mcp
+  - bat-mcp-function
   - io.github.github/github-mcp-server
+  - qconfig-mcp-function
+  codex:
+  - agentark-mcp
+  - bat-mcp-function
+  - io.github.github/github-mcp-server
+  - qconfig-mcp-function
