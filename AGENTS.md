@@ -17,6 +17,7 @@ rules/          Authoritative rule text (edit here, then run install.sh)
 skills/         Skills authored in this repo, by category
   <category>/<name>/SKILL.md
   code/code-review/       Master review skill + nested focused reviewers
+  code/prior-art/         Research existing projects before designing a feature
   compass/                Symlinks into another repo (see external-skills.conf)
 
 apm.yml         Upstream skill + MCP server dependencies
