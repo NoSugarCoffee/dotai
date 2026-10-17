@@ -13,6 +13,7 @@
 # APM also deploys the skills it fetches into this project. install.sh is what
 # publishes them (namespaced, to every tool), so the project copy is unused.
 /.claude/skills/
+/.agents/skills/
 
 # APM generates Codex's project MCP config from apm.yml on install/sync.
 /.codex/config.toml
