@@ -43,9 +43,11 @@ dependencies:
     - op7418/logo-generator-skill#bf4e9ac4d4428bda261afcfe981871ceb92d94e6
     - tsilva/claudeskillz#d0470890caeb54268f0aa2917b35646ecea5d7b1
     - git: pbakaus/impeccable
+      ref: 695df68a5860da4d25cd629fc3727ec8f3c0991b # v4.1.3
       skills:
         - impeccable
     - git: heygen-com/hyperframes
+      ref: c8300c69a1807d439dd951f94f325c806e020841 # v0.8.27
       skills:
         - hyperframes
     # Whole repo: its plugins declare no skill manifest, so --skill is rejected
