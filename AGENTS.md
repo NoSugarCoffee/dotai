@@ -14,6 +14,9 @@ Dependencies (upstream skills, MCP servers) are managed by [APM](https://github.
 rules/          Authoritative rule text (edit here, then run install.sh)
   coding.md     Coding standards — style, errors, typing, dependencies
 
+global/         APM package of user-scope agent instructions (MRs/PRs, …)
+  .apm/instructions/*.instructions.md   No applyTo: compiled into every tool's global file
+
 skills/         Skills authored in this repo, by category
   <category>/<name>/SKILL.md
   code/code-review/       Master review skill + nested focused reviewers
@@ -56,6 +59,7 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | `~/.agents/skills/<category>.<name>` | Same |
 | `~/.copilot/skills/<category>.<name>` | Same |
 | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | Symlink → `rules/coding.md` |
+| `~/.claude/rules/`, `~/.codex/AGENTS.md`, `~/.cursor/AGENTS.md`, `~/.copilot/AGENTS.md`, `~/.gemini/GEMINI.md`, … | `apm install -g global/` + `apm compile -g` |
 | `~/.local/bin/claude-tabs` | Symlink → `scripts/claude-tabs.sh` |
 
 Each **`install.sh`** run first **removes symlinks** under those `skills` directories that point into this repo's `skills/` or `apm_modules/`, then recreates them from the current checkout. Ordinary directories and symlinks pointing elsewhere are left alone.
@@ -78,6 +82,6 @@ Repos with no skill manifest reject `--skill`; install the whole repo and let `v
 
 ## Adding or changing rules
 
-1. Edit `rules/coding.md` (single source of truth).
+1. Edit `rules/coding.md` for coding standards, or `global/.apm/instructions/` for agent workflow rules. Leave `applyTo` out of the latter: APM compiles only `applyTo`-less instructions into user-scope files.
 2. Run `bash scripts/install.sh` to propagate the update.
 
