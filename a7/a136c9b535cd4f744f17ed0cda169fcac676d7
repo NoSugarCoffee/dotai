@@ -1,0 +1,23 @@
+vendored-skills.conf
+  s_cbf07b7e43c708::t_c6d74f8905642b 26-27
+apm.yml
+  s_cbf07b7e43c708::t_25d50f4919eff3 62
+apm.lock.yaml
+  s_cbf07b7e43c708::t_25d50f4919eff3 2,5-23,2227-2244,5377-5394
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.50-trip",
+  "base_commit_sha": "a7a136c9b535cd4f744f17ed0cda169fcac676d7",
+  "prompts": {},
+  "sessions": {
+    "s_cbf07b7e43c708": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3627bb20-856b-4850-86f2-44e071c77d98",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
