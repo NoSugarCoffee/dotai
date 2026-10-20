@@ -1,0 +1,3 @@
+name: dotai-global
+version: 1.0.0
+description: User-scope agent instructions, compiled into every tool's global context file

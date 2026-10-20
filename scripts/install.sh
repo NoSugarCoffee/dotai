@@ -19,6 +19,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
 APM_MODULES="$ROOT/apm_modules"
 RULES_SRC="$ROOT/rules"
+GLOBAL_PKG="$ROOT/global"
 
 BIN_SRC="$ROOT/scripts"
 BIN_DIR="$HOME/.local/bin"
@@ -257,7 +258,16 @@ install_copilot_intellij() {
   echo "  ✓ linked rules/coding.md → global-copilot-instructions.md"
 }
 
-# ── 6. Command-line tools (~/.local/bin) ───────────────────────────
+# ── 6. Global agent instructions (every tool's user-scope context) ──
+# APM writes ~/.codex/AGENTS.md, ~/.cursor/AGENTS.md, ~/.gemini/GEMINI.md, …
+# and ~/.claude/rules/; a local package is copied, so re-run after editing.
+install_global_instructions() {
+  echo "→ Global agent instructions"
+  apm install -g "$GLOBAL_PKG"
+  apm compile -g
+}
+
+# ── 7. Command-line tools (~/.local/bin) ───────────────────────────
 install_bin() {
   echo "→ Commands"
   mkdir -p "$BIN_DIR"
@@ -296,12 +306,14 @@ main() {
   install_agent_skills
   install_copilot_skills
   install_copilot_intellij
+  install_global_instructions
   install_bin
 
   echo ""
   echo "✅ dotai installed."
   echo "   Skills   : $SKILLS_SRC + $APM_MODULES (symlinked)"
   echo "   Rules    : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
+  echo "   Global   : $GLOBAL_PKG via apm install -g + apm compile -g"
   echo "   Commands : $BIN_DIR/claude-tabs"
 }
 

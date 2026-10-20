@@ -24,6 +24,7 @@
 | Type | Path | Purpose |
 |------|------|---------|
 | 📏 **Rules** | `rules/coding.md` | Coding standards — style, error handling, typing, dependencies |
+| 🌐 **Global instructions** | `global/` | Agent workflow rules (MRs/PRs), compiled by APM into every tool's global AGENTS.md |
 | 🔧 **Skills** | `skills/<category>/<name>/SKILL.md` | Skills authored here |
 | 📦 **Dependencies** | `apm.yml` | Upstream skills and MCP servers, pinned in `apm.lock.yaml` |
 | 🤖 **Agents** | `agents/<name>.md` | Named sub-agent personas (architect, reviewer) |
@@ -102,7 +103,7 @@ No registration step — the directory layout is the declaration.
 
 ## Editing Rules
 
-1. Edit `rules/coding.md` — the single source of truth.
+1. Edit `rules/coding.md` (coding standards) or `global/.apm/instructions/` (agent workflow rules).
 2. Run `bash scripts/install.sh` to propagate.
 
 No other steps needed; symlinks keep all tools in sync automatically.
