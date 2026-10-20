@@ -1,7 +1,26 @@
 lockfile_version: '1'
-generated_at: '2026-10-17T11:23:49.375073+00:00'
+generated_at: '2026-10-20T09:23:48.575724+00:00'
 apm_version: 0.33.0
 dependencies:
+- repo_url: anthropics/claude-plugins-community
+  name: eli5
+  host: github.com
+  resolved_commit: 06ec7b6a0a82bdc4bec44bd82d4368c42f20d7c1
+  resolved_ref: 06ec7b6a0a82bdc4bec44bd82d4368c42f20d7c1
+  version: 1.0.0
+  virtual_path: eli5
+  is_virtual: true
+  package_type: skill_bundle
+  deployed_files:
+  - .agents/skills/eli5
+  - .agents/skills/eli5/SKILL.md
+  - .claude/skills/eli5
+  - .claude/skills/eli5/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/eli5/SKILL.md: sha256:3bb95cd13852051c5a1862e8b94da1de7cfba7415d418ab0ca4d762527d1b9a5
+    .claude/skills/eli5/SKILL.md: sha256:3bb95cd13852051c5a1862e8b94da1de7cfba7415d418ab0ca4d762527d1b9a5
+  content_hash: sha256:d7c7080456945d93624c28a2c894fd76ff7e50f68d8875d86fc2552c756591f0
+  declared_license: MIT
 - repo_url: anthropics/skills
   name: skills
   host: github.com
@@ -2205,6 +2224,24 @@ deployments:
   - citrolabs/ego-lite
   active_owner: citrolabs/ego-lite
   content_hash: sha256:4cbbc9f211aca61244d9ada601c385cabbeba4ec4417b3a8be1819a01cb0221b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/eli5
+  runtime: null
+  scope: project
+  owners:
+  - anthropics/claude-plugins-community/eli5
+  active_owner: anthropics/claude-plugins-community/eli5
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/eli5/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - anthropics/claude-plugins-community/eli5
+  active_owner: anthropics/claude-plugins-community/eli5
+  content_hash: sha256:3bb95cd13852051c5a1862e8b94da1de7cfba7415d418ab0ca4d762527d1b9a5
 - kind: project-relative
   target: claude
   value: .claude/skills/grill-with-docs
@@ -5337,6 +5374,24 @@ deployments:
   - citrolabs/ego-lite
   active_owner: citrolabs/ego-lite
   content_hash: sha256:4cbbc9f211aca61244d9ada601c385cabbeba4ec4417b3a8be1819a01cb0221b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/eli5
+  runtime: null
+  scope: project
+  owners:
+  - anthropics/claude-plugins-community/eli5
+  active_owner: anthropics/claude-plugins-community/eli5
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/eli5/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - anthropics/claude-plugins-community/eli5
+  active_owner: anthropics/claude-plugins-community/eli5
+  content_hash: sha256:3bb95cd13852051c5a1862e8b94da1de7cfba7415d418ab0ca4d762527d1b9a5
 - kind: project-relative
   target: codex
   value: .agents/skills/grill-with-docs
