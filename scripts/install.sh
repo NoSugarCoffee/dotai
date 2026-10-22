@@ -21,7 +21,6 @@ APM_MODULES="$ROOT/apm_modules"
 RULES_SRC="$ROOT/rules"
 GLOBAL_PKG="$ROOT/global"
 
-BIN_SRC="$ROOT/scripts"
 BIN_DIR="$HOME/.local/bin"
 
 # Category assignment for the upstream skills APM fetches into apm_modules/.
@@ -267,16 +266,13 @@ install_global_instructions() {
   apm compile -g
 }
 
-# ── 7. Command-line tools (~/.local/bin) ───────────────────────────
-install_bin() {
-  echo "→ Commands"
-  mkdir -p "$BIN_DIR"
-  ln -sfn "$BIN_SRC/claude-tabs.sh" "$BIN_DIR/claude-tabs"
-  echo "  ✓ command: claude-tabs → $BIN_DIR/claude-tabs"
-  case ":$PATH:" in
-    *":$BIN_DIR:"*) ;;
-    *) echo "  ! $BIN_DIR is not on your PATH" ;;
-  esac
+# ── 7. Remove the retired claude-tabs command ──────────────────────
+remove_legacy_command() {
+  local command_path="$BIN_DIR/claude-tabs"
+  if [[ -L "$command_path" && "$(readlink "$command_path")" == "$ROOT/scripts/claude-tabs.sh" ]]; then
+    rm -f "$command_path"
+    echo "  ✓ removed retired command: $command_path"
+  fi
 }
 
 # ── Main ───────────────────────────────────────────────────────────
@@ -307,14 +303,13 @@ main() {
   install_copilot_skills
   install_copilot_intellij
   install_global_instructions
-  install_bin
+  remove_legacy_command
 
   echo ""
   echo "✅ dotai installed."
   echo "   Skills   : $SKILLS_SRC + $APM_MODULES (symlinked)"
   echo "   Rules    : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
   echo "   Global   : $GLOBAL_PKG via apm install -g + apm compile -g"
-  echo "   Commands : $BIN_DIR/claude-tabs"
 }
 
 main "$@"

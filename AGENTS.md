@@ -47,7 +47,6 @@ scripts/
   install.sh               Publishes rules and skills to ~/.claude, ~/.cursor, ~/.agents, ~/.copilot
   sync.sh                  git pull + apm install + install.sh
   verify-skills-layout.sh  Asserts the published layout matches install.sh --list
-  claude-tabs.sh           Saves and restores open Claude Code sessions as zellij tabs
 ```
 
 ## Install targets
@@ -64,7 +63,6 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | `~/.copilot/skills/<category>.<name>` | Same |
 | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | Symlink → `rules/coding.md` |
 | `~/.claude/rules/`, `~/.codex/AGENTS.md`, `~/.cursor/AGENTS.md`, `~/.copilot/AGENTS.md`, `~/.gemini/GEMINI.md`, … | `apm install -g global/` + `apm compile -g` |
-| `~/.local/bin/claude-tabs` | Symlink → `scripts/claude-tabs.sh` |
 
 Each **`install.sh`** run first **removes symlinks** under those `skills` directories that point into this repo's `skills/` or `apm_modules/`, then recreates them from the current checkout. Ordinary directories and symlinks pointing elsewhere are left alone.
 
