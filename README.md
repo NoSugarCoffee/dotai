@@ -26,7 +26,7 @@
 | 📏 **Rules** | `rules/coding.md` | Coding standards — style, error handling, typing, dependencies |
 | 🌐 **Global instructions** | `global/` | Agent workflow rules (MRs/PRs), compiled by APM into every tool's global AGENTS.md |
 | 🔧 **Skills** | `skills/<category>/<name>/SKILL.md` | Skills authored here |
-| 📦 **Dependencies** | `apm.yml` | Upstream skills and MCP servers, pinned in `apm.lock.yaml` |
+| 📦 **Dependencies** | `apm.yml` | Upstream skills and public MCP servers, pinned in `apm.lock.yaml` |
 | 🤖 **Agents** | `agents/<name>.md` | Named sub-agent personas (architect, reviewer) |
 | 🪝 **Hooks** | `hooks/` | Lifecycle hooks: `session_start`, `task_complete` |
 
@@ -44,6 +44,22 @@ That's it. All rules and skills are symlinked into every supported tool's config
 Requires [APM](https://github.com/microsoft/apm). If your network blocks SSH to
 GitHub, run `apm config set allow-protocol-fallback true` once so clones fall
 back to HTTPS.
+
+### Private MCP servers
+
+Keep company MCP endpoints in your user APM manifest (`~/.apm/apm.yml`), outside
+this public repository. Add each server to both Claude Code and Codex with:
+
+```bash
+apm install -g --target claude,codex --mcp internal-service \
+  --transport http --url "$MCP_URL"
+```
+
+Repeat for each private server. APM records these entries in `~/.apm/apm.yml`;
+`apm install -g --only mcp --target claude,codex` reapplies them. Project
+`apm install` continues to manage only the public MCPs in `apm.yml`. Keep private
+server names, URLs, headers, and tokens out of `apm.yml`, `.mcp.json`, and the
+committed lockfile.
 
 ## Supported Tools
 

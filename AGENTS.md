@@ -8,6 +8,10 @@ Instructions for AI agents operating on this repository (Codex, Claude Code, Cop
 
 Dependencies (upstream skills, MCP servers) are managed by [APM](https://github.com/microsoft/apm) through `apm.yml`. APM fetches and pins; `install.sh` publishes. Neither does the other's job.
 
+Private company MCP servers belong in the user APM manifest (`~/.apm/apm.yml`),
+installed with `apm install -g --target claude,codex --mcp ...`. Never add them
+to this repository's `apm.yml`, `.mcp.json`, or lockfile.
+
 ## Repo layout
 
 ```
@@ -23,9 +27,9 @@ skills/         Skills authored in this repo, by category
   code/prior-art/         Research existing projects before designing a feature
   compass/                Symlinks into another repo (see external-skills.conf)
 
-apm.yml         Upstream skill + MCP server dependencies
+apm.yml         Upstream skills + public MCP server dependencies
 apm.lock.yaml   Resolved commits and per-file hashes (committed)
-.mcp.json       Project MCP servers, regenerated from apm.yml by apm install
+.mcp.json       Public project MCP servers, regenerated from apm.yml by apm install
 apm_modules/    Fetched upstream repos (gitignored; rebuilt by apm install)
 vendored-skills.conf  Category for each apm_modules/ skill, matched on SKILL.md `name:`
 external-skills.conf  Machine-local: skill dirs owned by another repo (gitignored)

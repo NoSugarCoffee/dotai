@@ -63,17 +63,5 @@ dependencies:
   mcp:
     - name: io.github.github/github-mcp-server
       transport: http
-    - name: agentark-mcp
-      registry: false
-      transport: http
-      url: https://agentark-mcp-function.faas.ctripcorp.com/mcp
-    - name: bat-mcp-function
-      registry: false
-      transport: http
-      url: https://bat-mcp-function.faas.ctripcorp.com/mcp
-    - name: qconfig-mcp-function
-      registry: false
-      transport: http
-      url: https://qconfig-mcp-server-function.faas.ctripcorp.com/mcp
 includes: auto
 scripts: {}
