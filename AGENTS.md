@@ -26,6 +26,7 @@ skills/         Skills authored in this repo, by category
   code/code-review/       Master review skill + nested focused reviewers
   code/prior-art/         Research existing projects before designing a feature
   compass/                Symlinks into another repo (see external-skills.conf)
+  internal/               Private submodule (NoSugarCoffee/dotai-internal); empty without access
 
 apm.yml         Upstream skills + public MCP server dependencies
 apm.lock.yaml   Resolved commits and per-file hashes (committed)
@@ -71,6 +72,8 @@ Each **`install.sh`** run first **removes symlinks** under those `skills` direct
 ## Adding a new skill
 
 **Authored here:** create `skills/<category>/<name>/SKILL.md` and run `bash scripts/install.sh`. A directory without `SKILL.md` is skipped, not published.
+
+**Private (company-internal):** commit `<name>/SKILL.md` to the `skills/internal/` submodule, then bump the submodule pointer here. Fetch it with `git submodule update --init skills/internal`; without access the directory stays empty and nothing is published.
 
 **From an upstream repo:**
 

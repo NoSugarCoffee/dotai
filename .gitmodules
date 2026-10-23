@@ -1,0 +1,3 @@
+[submodule "skills/internal"]
+	path = skills/internal
+	url = git@github.com:NoSugarCoffee/dotai-internal.git
