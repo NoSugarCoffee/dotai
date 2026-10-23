@@ -2,6 +2,11 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.."; pwd)"
 git -C "$ROOT" pull --ff-only || true
+# skills/internal is a private submodule; without access to it the public
+# skills still publish, so a failed fetch is reported rather than fatal.
+if ! git -C "$ROOT" submodule update --init skills/internal; then
+  echo "warning: skills/internal not updated (no access to NoSugarCoffee/dotai-internal?); internal.* skills skipped or stale." >&2
+fi
 # Installs what apm.lock.yaml pins. Refreshing upstream refs is 'apm update',
 # a deliberate act, not something a sync should do silently.
 #
