@@ -35,6 +35,7 @@
 ```bash
 git clone https://github.com/yourusername/dotai
 cd dotai
+git submodule update --init skills/internal   # private skills; skip without access
 apm install                 # fetch pinned upstream skills + MCP servers
 bash scripts/install.sh     # publish everything to your tools
 ```
