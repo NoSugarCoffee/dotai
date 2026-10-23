@@ -9,3 +9,8 @@ description: Global agent workflow rules for every project
   - `idev-cli code mr create --squash --remove-source-branch`.
   - `glab mr create --squash-before-merge --remove-source-branch`.
   - GitHub: merge with `gh pr merge --squash --delete-branch`.
+
+## Tool preferences
+
+- Prefer Ego Lite (`ego-browser` skill) for browser automation when it is available.
+- Use Orca Automations for cron jobs and recurring scheduled tasks.
