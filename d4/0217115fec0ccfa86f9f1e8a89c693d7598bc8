@@ -1,0 +1,19 @@
+global/.apm/instructions/agents.instructions.md
+  s_0287f8da3968a6::t_afc947052c0c00 12-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "d40217115fec0ccfa86f9f1e8a89c693d7598bc8",
+  "prompts": {},
+  "sessions": {
+    "s_0287f8da3968a6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a167ab-29bb-7bc2-9964-247f27c737e7",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
