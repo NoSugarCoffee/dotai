@@ -1,0 +1,19 @@
+global/.apm/instructions/agents.instructions.md
+  s_38bdb33047b421::t_a7940fa5eac695 17-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "31f9580ed3fd80c29342beb12b4022b5b1f378fc",
+  "prompts": {},
+  "sessions": {
+    "s_38bdb33047b421": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a94888e2-db17-4f31-a432-4fd81f100973",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
