@@ -8,6 +8,14 @@ Instructions for AI agents operating on this repository (Codex, Claude Code, Cop
 
 Dependencies (upstream skills, MCP servers) are managed by [APM](https://github.com/microsoft/apm) through `apm.yml`. APM fetches and pins; `install.sh` publishes. Neither does the other's job.
 
+## Boundary with dotnix
+
+[dotnix](https://github.com/NoSugarCoffee/dotnix) installs programs and their settings, plus
+anything that ships with a program, such as the skill pack a package bundles (`cua-driver`,
+`ego-browser`): it links those so they move with the installed version. This repo owns what
+agents are told: rules, global instructions, authored and vendored skills, hooks and MCP server
+lists. Don't vendor a skill here that its program already ships, and don't install programs.
+
 Private company MCP servers belong in the user APM manifest (`~/.apm/apm.yml`),
 installed with `apm install -g --target claude,codex --mcp ...`. Never add them
 to this repository's `apm.yml`, `.mcp.json`, or lockfile.
