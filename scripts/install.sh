@@ -262,7 +262,8 @@ install_copilot_intellij() {
 # and ~/.claude/rules/; a local package is copied, so re-run after editing.
 install_global_instructions() {
   echo "→ Global agent instructions"
-  apm install -g "$GLOBAL_PKG"
+  # Publishing instructions must not reconfigure unrelated user MCP servers.
+  apm install -g --only apm "$GLOBAL_PKG"
   apm compile -g
 }
 

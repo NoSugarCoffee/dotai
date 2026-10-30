@@ -62,6 +62,9 @@ Repeat for each private server. APM records these entries in `~/.apm/apm.yml`;
 server names, URLs, headers, and tokens out of `apm.yml`, `.mcp.json`, and the
 committed lockfile.
 
+`scripts/install.sh` installs the global instructions package with `--only apm`;
+MCP changes are applied separately with the command above.
+
 ### Agent credentials
 
 Agents read logins without prompting you (see "Credentials" in `global/`). Set up
