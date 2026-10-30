@@ -7797,24 +7797,6 @@ deployments:
   content_hash: sha256:33cbe9dfb1d0e9185b60248a52aabed14bc64785a00cac695e302e739dd6c153
 - kind: uri
   target: mcp
-  value: cua-driver
-  runtime: claude
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:569b6e9d8b2c8a3efd1a216bd70d2f2f4b2d62164f4bbd191bc33cb1c3fbdbe5
-- kind: uri
-  target: mcp
-  value: cua-driver
-  runtime: codex
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:63a9e0f5c3d804f16642b2b74fe376ec56f1110c1bf423b91e8d338df3bfc1e4
-- kind: uri
-  target: mcp
   value: io.github.github/github-mcp-server
   runtime: claude
   scope: project
@@ -7832,23 +7814,13 @@ deployments:
   active_owner: .
   content_hash: sha256:f3c0b98375a3d6b45b5ca7934c95b13a1d4a1934a82acd024ad6ea4f72ee2f86
 mcp_servers:
-- cua-driver
 - io.github.github/github-mcp-server
 mcp_configs:
-  cua-driver:
-    name: cua-driver
-    transport: stdio
-    args:
-    - mcp
-    registry: false
-    command: cua-driver
   io.github.github/github-mcp-server:
     name: io.github.github/github-mcp-server
     transport: http
 mcp_target_servers:
   claude:
-  - cua-driver
   - io.github.github/github-mcp-server
   codex:
-  - cua-driver
   - io.github.github/github-mcp-server
