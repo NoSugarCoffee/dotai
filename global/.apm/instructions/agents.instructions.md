@@ -20,6 +20,7 @@ description: Global agent workflow rules for every project
 - Sign in to sites yourself rather than handing the browser back. Read credentials only through these prompt-free stores. Their keys are exported from `~/.zshrc-local`, which you source if your shell lacks them:
   1. 1Password: `op` with `OP_SERVICE_ACCOUNT_TOKEN`, a read-only service account on vault `agent`.
   2. Bitwarden: `bw` with `BW_SESSION`, using only items in folder `agent`.
+- If neither key exists, point the user to "Agent credentials" in the dotai README; don't set it up yourself.
 - Never call `op` without the service-account token. It falls back to the desktop app, which prompts the user.
 - Use the one login whose URL hostname equals the login page's hostname. If none or several match, ask. Never try candidates, because failed attempts can lock the account.
 - Never print a secret. Pipe it straight to whatever consumes it.

@@ -62,6 +62,36 @@ Repeat for each private server. APM records these entries in `~/.apm/apm.yml`;
 server names, URLs, headers, and tokens out of `apm.yml`, `.mcp.json`, and the
 committed lockfile.
 
+### Agent credentials
+
+Agents read logins without prompting you (see "Credentials" in `global/`). Set up
+one or both stores once per machine. The keys go in `~/.zshrc-local`, which is
+untracked:
+
+```bash
+# 1Password: a read-only service account on a dedicated "agent" vault
+op vault create agent
+token=$(op service-account create agent-reader --vault agent:read_items --raw)
+echo "export OP_SERVICE_ACCOUNT_TOKEN=$token" >> ~/.zshrc-local
+
+# Bitwarden: a session key for the whole vault (asks for the master password)
+bw login
+echo "export BW_SESSION=$(bw unlock --raw)" >> ~/.zshrc-local
+echo '{"name":"agent"}' | bw encode | bw create folder
+
+chmod 600 ~/.zshrc-local
+```
+
+Put a login in the `agent` vault or folder, and give it the URL of the login
+page, for agents to use. Agents use only the login whose URL hostname matches
+the page they are on.
+
+- The 1Password service account reads only the `agent` vault.
+- `BW_SESSION` opens your whole Bitwarden vault; the folder only picks the login.
+
+To revoke access, delete the service account in 1Password and run `bw lock`, then
+remove the lines from `~/.zshrc-local`.
+
 ## Supported Tools
 
 | Tool | Rules | Skills |
