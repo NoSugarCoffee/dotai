@@ -1,0 +1,19 @@
+README.md
+  s_1095b01db36704::t_6624e3a8da9f90 54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "1096582bd3ef2bc595e18c2d839fe5a63736acc1",
+  "prompts": {},
+  "sessions": {
+    "s_1095b01db36704": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e44ae20d-cc4f-4e63-99fe-4242df4f7045",
+        "model": "grok-4.6"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
