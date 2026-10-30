@@ -262,8 +262,13 @@ install_copilot_intellij() {
 # and ~/.claude/rules/; a local package is copied, so re-run after editing.
 install_global_instructions() {
   echo "→ Global agent instructions"
-  apm install -g "$GLOBAL_PKG"
-  apm compile -g
+  # MCP servers are managed separately in ~/.apm/apm.yml. Reinstalling them
+  # here can conflict with native connections already present in a tool.
+  # Claude profiles under CLAUDE_CONFIG_DIR symlink rules/ back to ~/.claude,
+  # so target ~/.claude directly; inside a profile APM refuses the symlink and
+  # falls back to a duplicate profile CLAUDE.md.
+  env -u CLAUDE_CONFIG_DIR apm install -g --only apm "$GLOBAL_PKG"
+  env -u CLAUDE_CONFIG_DIR apm compile -g
 }
 
 # ── 7. Remove the retired claude-tabs command ──────────────────────
@@ -309,7 +314,7 @@ main() {
   echo "✅ dotai installed."
   echo "   Skills   : $SKILLS_SRC + $APM_MODULES (symlinked)"
   echo "   Rules    : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
-  echo "   Global   : $GLOBAL_PKG via apm install -g + apm compile -g"
+  echo "   Global   : $GLOBAL_PKG via apm install -g --only apm + apm compile -g"
 }
 
 main "$@"

@@ -63,7 +63,7 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | `~/.agents/skills/<category>.<name>` | Same |
 | `~/.copilot/skills/<category>.<name>` | Same |
 | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | Symlink → `rules/coding.md` |
-| `~/.claude/rules/`, `~/.codex/AGENTS.md`, `~/.cursor/AGENTS.md`, `~/.copilot/AGENTS.md`, `~/.gemini/GEMINI.md`, … | `apm install -g global/` + `apm compile -g` |
+| `~/.claude/rules/`, `~/.codex/AGENTS.md`, `~/.cursor/AGENTS.md`, `~/.copilot/AGENTS.md`, `~/.gemini/GEMINI.md`, … | `apm install -g --only apm global/` + `apm compile -g` |
 
 Each **`install.sh`** run first **removes symlinks** under those `skills` directories that point into this repo's `skills/` or `apm_modules/`, then recreates them from the current checkout. Ordinary directories and symlinks pointing elsewhere are left alone.
 
