@@ -1,0 +1,21 @@
+scripts/install.sh
+  s_f474fd1637f8c6::t_21818d1070ffa2 11,14,285-297,300-322
+README.md
+  s_f474fd1637f8c6::t_21818d1070ffa2 63-65,68-71,74-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "023af4d5f6ede9a75d1cf420fcf8848531d19f3b",
+  "prompts": {},
+  "sessions": {
+    "s_f474fd1637f8c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18c88-5236-7122-a4e5-50743a84f84f",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
