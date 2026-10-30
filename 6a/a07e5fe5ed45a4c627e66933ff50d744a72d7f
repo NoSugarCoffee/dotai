@@ -1,0 +1,27 @@
+apm.yml
+  s_1095b01db36704::t_7e33712c91d2d0 66-70
+.mcp.json
+  s_1095b01db36704::t_f98abb47e5685b 7-13
+README.md
+  s_1095b01db36704::t_983d84a70c148c 49-55
+apm.lock.yaml
+  s_1095b01db36704::t_f98abb47e5685b 7800-7815,7835,7838-7844,7850,7853
+  s_1095b01db36704::t_dcee766c27cd90 2,7833
+  s_1095b01db36704::t_d95b5b795f8760 7824
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "6aa07e5fe5ed45a4c627e66933ff50d744a72d7f",
+  "prompts": {},
+  "sessions": {
+    "s_1095b01db36704": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e44ae20d-cc4f-4e63-99fe-4242df4f7045",
+        "model": "grok-4.6"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
