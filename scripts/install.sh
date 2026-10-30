@@ -295,6 +295,11 @@ main() {
     return 0
   fi
 
+  # Private skills are optional for users without access to dotai-internal.
+  if ! git -C "$ROOT" submodule update --init skills/internal; then
+    echo "warning: skills/internal not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
+  fi
+
   sync_external_skills
 
   echo "→ Resolving skills"

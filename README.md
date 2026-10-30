@@ -35,12 +35,16 @@
 ```bash
 git clone https://github.com/yourusername/dotai
 cd dotai
-git submodule update --init skills/internal   # private skills; skip without access
 apm install                 # fetch pinned upstream skills + MCP servers
-bash scripts/install.sh     # publish everything to your tools
+bash scripts/install.sh     # update private skills and publish everything to your tools
 ```
 
 That's it. All rules and skills are symlinked into every supported tool's config directory.
+
+The installer initializes and updates `skills/internal` to the commit pinned by
+dotai before publishing skills. If the private repository is unavailable or local
+changes prevent the update, it warns and continues with the available skills.
+`install.sh --list` only lists skills and does not update the submodule.
 
 Requires [APM](https://github.com/microsoft/apm). If your network blocks SSH to
 GitHub, run `apm config set allow-protocol-fallback true` once so clones fall
