@@ -4,13 +4,6 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {}
-    },
-    "cua-driver": {
-      "type": "stdio",
-      "command": "cua-driver",
-      "args": [
-        "mcp"
-      ]
     }
   }
 }
