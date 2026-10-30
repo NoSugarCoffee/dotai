@@ -46,6 +46,14 @@ Requires [APM](https://github.com/microsoft/apm). If your network blocks SSH to
 GitHub, run `apm config set allow-protocol-fallback true` once so clones fall
 back to HTTPS.
 
+### Public MCP servers
+
+`apm.yml` registers GitHub's HTTP MCP and the local [cua-driver](https://github.com/trycua/cua/tree/main/libs/cua-driver)
+stdio server (`cua-driver mcp`). `apm install` writes both into `.mcp.json` and
+the project Codex config. The `cua-driver` binary and macOS app come from
+[dotnix](https://github.com/NoSugarCoffee/dotnix) (`just switch` there); this
+repo only lists the server.
+
 ### Private MCP servers
 
 Keep company MCP endpoints in your user APM manifest (`~/.apm/apm.yml`), outside

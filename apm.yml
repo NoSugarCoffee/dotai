@@ -63,5 +63,10 @@ dependencies:
   mcp:
     - name: io.github.github/github-mcp-server
       transport: http
+    - name: cua-driver
+      registry: false
+      transport: stdio
+      command: cua-driver
+      args: ["mcp"]
 includes: auto
 scripts: {}
