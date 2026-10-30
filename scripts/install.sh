@@ -8,9 +8,10 @@
 #   skills/<category>/<name>/   authored here, or symlinked from another repo
 #   apm_modules/                fetched and pinned by APM (see apm.yml)
 #
-# Usage: install.sh [--list]
+# Usage: install.sh [--list | --sync-mcp [--dry-run] [--target claude,codex]]
 #   --list   print the resolved "<link-name>\t<source-dir>" pairs and exit,
 #            without touching any tool directory
+#   --sync-mcp   delegate to the private MCP sync script without publishing skills
 # ──────────────────────────────────────────────────────────────────
 set -euo pipefail
 
@@ -281,9 +282,44 @@ remove_legacy_command() {
 }
 
 # ── Main ───────────────────────────────────────────────────────────
+usage() {
+  echo "Usage: bash scripts/install.sh [--list | --sync-mcp [--dry-run] [--target claude,codex]]"
+}
+
+sync_private_mcp() {
+  local sync_script="$SKILLS_SRC/internal/scripts/sync-mcp"
+  if [[ ! -x "$sync_script" ]]; then
+    echo "error: private MCP sync script is unavailable. Run bash scripts/install.sh to initialize the pinned private submodule; private repository access is required." >&2
+    return 1
+  fi
+  env -u CLAUDE_CONFIG_DIR "$sync_script" "$@"
+}
+
 main() {
   local list_only=0
-  [[ "${1:-}" == "--list" ]] && list_only=1
+  case "${1:-}" in
+    --sync-mcp)
+      shift
+      sync_private_mcp "$@"
+      return
+      ;;
+    --list)
+      if [[ "$#" -ne 1 ]]; then
+        usage >&2
+        return 1
+      fi
+      list_only=1
+      ;;
+    -h|--help)
+      usage
+      return
+      ;;
+    "") ;;
+    *)
+      usage >&2
+      return 1
+      ;;
+  esac
 
   LINKS_FILE="$(mktemp)"
   trap 'rm -f "$LINKS_FILE"' EXIT

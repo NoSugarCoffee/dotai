@@ -60,19 +60,28 @@ repo only lists the server.
 
 ### Private MCP servers
 
-Keep company MCP endpoints in your user APM manifest (`~/.apm/apm.yml`), outside
-this public repository. Add each server to both Claude Code and Codex with:
+Private MCP definitions live in `skills/internal/apm.yml` in the private
+`dotai-internal` submodule. After initializing the pinned submodule with
+`bash scripts/install.sh`, preview and apply them from the dotai root:
 
 ```bash
-apm install -g --target claude,codex --mcp internal-service \
-  --transport http --url "$MCP_URL"
+bash scripts/install.sh --sync-mcp --dry-run
+bash scripts/install.sh --sync-mcp
+# Optionally select a tool:
+bash scripts/install.sh --sync-mcp --target claude
 ```
 
-Repeat for each private server. APM records these entries in `~/.apm/apm.yml`;
-`apm install -g --only mcp --target claude,codex` reapplies them. Project
-`apm install` continues to manage only the public MCPs in `apm.yml`. Keep private
-server names, URLs, headers, and tokens out of `apm.yml`, `.mcp.json`, and the
-committed lockfile.
+This mode delegates to the private sync script and requires Ruby and APM. It
+updates user-level APM and tool configuration without publishing rules or skills.
+The dry run does not initialize or update the submodule. Existing managed tool
+targets are retained; selecting a tool adds or updates that target. Servers using
+remote HTTP skip Codex. Native connection conflicts are reported and preserved.
+
+Change private definitions through a PR in `dotai-internal`, then update the
+submodule pointer here to the approved commit. Ordinary `install.sh` runs only
+publish rules and skills; private MCP sync is explicit. Project `apm install`
+continues to manage the public MCPs. Keep private server names, URLs, headers,
+and tokens out of this repository's `apm.yml`, `.mcp.json`, and lockfile.
 
 ### Agent credentials
 
