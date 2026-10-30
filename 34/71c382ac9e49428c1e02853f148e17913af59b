@@ -1,0 +1,30 @@
+AGENTS.md
+  s_ff2ccd93188050::t_bccef671623244 66
+scripts/install.sh
+  s_5b3993f1a7eeb5::t_9d92bae8e041b1 267-271
+  s_ff2ccd93188050::t_d988f6bc4d542c 265-266,317
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "3471c382ac9e49428c1e02853f148e17913af59b",
+  "prompts": {},
+  "sessions": {
+    "s_5b3993f1a7eeb5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cfa979af-c747-49ed-94b3-c73f504c3bf5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    },
+    "s_ff2ccd93188050": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18ba1-fba6-7590-8429-a7efba6fd828",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
