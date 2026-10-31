@@ -1,0 +1,61 @@
+skills/code/review-workflow/tests/test_review.py
+  s_86a03bc5b85fae::t_3a41c254cf842e 234
+  s_86a03bc5b85fae::t_efc8d84b85b68f 15,43-44
+.claude-plugin/marketplace.json
+  s_86a03bc5b85fae::t_721969b53377c9 9
+skills/code/review-workflow/references/publishing.md
+  s_86a03bc5b85fae::t_721969b53377c9 1-21
+README.md
+  s_86a03bc5b85fae::t_721969b53377c9 32
+skills/code/review-workflow/scripts/providers.py
+  s_86a03bc5b85fae::t_71b5f418c5d253 49-75,115-120,122-257,259-289
+  s_86a03bc5b85fae::t_3a41c254cf842e 12,121,258,294
+  s_86a03bc5b85fae::t_7923c056c5ac78 1-11,13-48,76-114,290-293,295-299
+skills/code/review-workflow/references/routine.md
+  s_86a03bc5b85fae::t_721969b53377c9 7,9
+skills/code/review-workflow/references/deep.md
+  s_86a03bc5b85fae::t_721969b53377c9 7
+skills/code/review-workflow/references/findings.md
+  s_86a03bc5b85fae::t_721969b53377c9 47,56
+skills/code/review-workflow/references/scope.md
+  s_86a03bc5b85fae::t_721969b53377c9 3,8,21
+skills/code/review-workflow/skills/review/SKILL.md
+  s_86a03bc5b85fae::t_721969b53377c9 3-4,10
+skills/code/review-workflow/references/github.md
+  s_86a03bc5b85fae::t_f2a879cfbecd1a 1-59
+skills/code/review-workflow/references/design.md
+  s_86a03bc5b85fae::t_721969b53377c9 26,61,96,103,111,115,128,142,146
+  s_86a03bc5b85fae::t_3a41c254cf842e 11,161-162
+skills/code/review-workflow/tests/test_github.py
+  s_86a03bc5b85fae::t_c1c025d690b5fb 1-263
+skills/code/review-workflow/scripts/review.py
+  s_86a03bc5b85fae::t_7923c056c5ac78 2,15-20,203-205,208,213,216-217,292-293,314,316-317,325,327-330,340,351-352,368,374,380,388
+  s_86a03bc5b85fae::t_3a41c254cf842e 349
+skills/code/review-workflow/README.md
+  s_86a03bc5b85fae::t_3a41c254cf842e 52,75,89,109
+  s_86a03bc5b85fae::t_721969b53377c9 3,7-8,15,25,47-49,80-87,91,105
+skills/code/review-workflow/.claude-plugin/plugin.json
+  s_86a03bc5b85fae::t_721969b53377c9 4
+skills/code/review-workflow/references/gitlab.md
+  s_86a03bc5b85fae::t_721969b53377c9 13
+skills/code/review-workflow/SKILL.md
+  s_86a03bc5b85fae::t_721969b53377c9 3,8,10,14,23-25,31
+skills/code/review-workflow/skills/deep-review/SKILL.md
+  s_86a03bc5b85fae::t_721969b53377c9 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "abdcfccdb89dc1454f5c68831d05efb0669421a7",
+  "prompts": {},
+  "sessions": {
+    "s_86a03bc5b85fae": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18d5c-24a4-7dc3-8c55-ea2e7a15e72b",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
