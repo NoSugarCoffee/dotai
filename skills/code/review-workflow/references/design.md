@@ -8,7 +8,7 @@ invocations provide the independent workers required by deep mode.
 
 This document explains the existing design. The execution rules remain in
 [scope](scope.md), [routine](routine.md), [deep](deep.md),
-[findings](findings.md), and [GitLab publishing](gitlab.md).
+[findings](findings.md), and [shared publishing](publishing.md).
 
 ## Routine: one reviewer with a second verification pass
 
@@ -23,7 +23,7 @@ flowchart TD
     Valid -->|Yes| Classify["Assign final severity and identify duplicate discussions"]
     Classify --> Report["Structured findings, stage status and Markdown report"]
     Dismiss --> Report
-    Report --> Output["Keep local, or use the shared GitLab publisher"]
+    Report --> Output["Keep local, or use the shared publisher"]
 ```
 
 The verification pass tries to disprove each candidate. It is a second pass by the
@@ -58,7 +58,7 @@ flowchart TD
     Findings --> Report["Merge results by finding ID and derive verdict"]
     Dismiss --> Report
     Failures["Failed stages, missing results or coverage gaps"] --> Report
-    Report --> Output["Local report and optional GitLab publication"]
+    Report --> Output["Local report and optional GitLab or GitHub publication"]
 ```
 
 Architecture runs before the specialist phase. Quality, bugs and security use
@@ -93,14 +93,14 @@ together. Missing responses are stage failures, not evidence that no defect exis
 ```mermaid
 flowchart TD
     Input["review.json plus captured snapshot and publication ledger"] --> Bind["Check snapshot digest and finding schema"]
-    Bind --> Current{"MR open and all diff refs unchanged?"}
+    Bind --> Current{"MR or PR open and all diff refs unchanged?"}
     Current -->|No| Stop["Stop publication; reconcile or review the new revision"]
     Current -->|Yes| Eligible["Select validated findings meeting mode requirements"]
     Eligible --> Plan["Map inline positions and inspect existing threads and receipts"]
     Plan --> Inspect["Inspect the read-only publication plan"]
     Inspect --> Apply{"User requested posting?"}
     Apply -->|No| Local["Keep local reports and plan"]
-    Apply -->|Yes| Recheck["Recheck MR state and revisions before each write"]
+    Apply -->|Yes| Recheck["Recheck target state and revisions before each write"]
     Recheck --> Write["Create or update eligible comments and summary"]
     Write --> Receipt["Save each successful write in the ledger"]
     Receipt --> More{"More writes?"}
@@ -108,12 +108,11 @@ flowchart TD
     More -->|No| Verify["Check final revision and report results"]
 ```
 
-Only the orchestrator publishes. The helper handles GitLab transport through
-`idev-cli`; reviewer workers do not hold publication tools. The user authorizes
+Only the orchestrator publishes. The helper handles GitLab through `idev-cli` and GitHub through `gh`; reviewer workers do not hold publication tools. The user authorizes
 posting through the request, so inspecting the plan is not another permission gate.
 
 Matching existing discussions suppress duplicate findings. Ledger receipts allow
-updates only to recorded comments with the expected author and marker. Resolved
+updates only to recorded comments with the expected author and marker. Resolved or outdated
 threads and threads with another author's reply are preserved. A partial failure
 leaves successful receipts available for reconciliation; publication is not atomic.
 
@@ -126,7 +125,7 @@ leaves successful receipts available for reconciliation; publication is not atom
 | Complete review with an important or blocker finding | REQUEST CHANGES | Publish eligible findings and summary |
 | Complete review with suggestions or no findings | APPROVE | Publish eligible suggestions and summary |
 
-These are report labels. They do not call GitLab approve, merge or resolve operations.
+These are report labels. They do not call provider approval, merge or resolve operations.
 Deep findings need completed validation and severity audit to become publishable.
 Rejected candidates remain in the local report, so their evidence and dismissal
 reasons are available for inspection.
@@ -140,11 +139,11 @@ different context for specialists, confidence screening, and retained dismissals
 
 | Design choice | Bitwarden | dotai-review |
 | --- | --- | --- |
-| Output | Routine supports GitHub comments; deep writes local reports | Both depths support local reports or explicitly requested GitLab comments |
+| Output | Routine supports GitHub comments; deep writes local reports | Both depths support local reports or explicitly requested GitLab or GitHub comments |
 | Product policy | Bitwarden security plugin and vault threat model | Reviewed project's baseline rules and actual trust boundaries |
 | Runtime and models | Claude-specific agents and model selection | Session model by default; runtime-specific worker scheduling |
 | Finding classification | Five severity categories | Blocker, important and suggestion; confidence remains separate |
-| Publication | GitHub tools and comment conventions | Python adapter, GitLab diff positions and publication receipts |
+| Publication | GitHub tools and comment conventions | Shared publisher, provider-specific diff positions and publication receipts |
 
 The upstream [routine agent](https://github.com/bitwarden/ai-plugins/blob/main/plugins/bitwarden-code-review/agents/bitwarden-code-reviewer/AGENT.md)
 and [deep skill](https://github.com/bitwarden/ai-plugins/blob/main/plugins/bitwarden-code-review/skills/performing-multi-agent-code-review/SKILL.md)
@@ -159,6 +158,8 @@ prove that an agent inspected the code or that workers were independent. Schedul
 context isolation and evidence quality depend on the runtime following the skill.
 
 Routine review and GitLab publication have been exercised on an authorized live MR.
+GitHub capture and publication planning have been smoke-tested read-only on a live PR;
+GitHub writes are covered by offline API fixtures, not a live posting test.
 Offline helper tests cover publication and report failure cases; small behavior
 fixtures cover routine analysis and incomplete deep reports. The full deep pipeline
 has not yet been exercised end to end on a live MR. No CI trigger or standalone

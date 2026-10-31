@@ -1,18 +1,18 @@
 # dotai-review
 
-Two review processes share one finding contract and one GitLab publisher:
+Two review processes share one finding contract and one publisher with GitLab and GitHub adapters:
 
 | Mode | Process | Destination |
 | --- | --- | --- |
-| Routine | One reviewer, followed by a deliberate verification pass | Local Markdown or GitLab |
-| Deep | Architecture, independent specialists, validation, severity audit | Local Markdown or GitLab |
+| Routine | One reviewer, followed by a deliberate verification pass | Local Markdown, GitLab or GitHub |
+| Deep | Architecture, independent specialists, validation, severity audit | Local Markdown, GitLab or GitHub |
 
 The source is this directory. `scripts/install.sh` publishes it as `code.review-workflow` for the repo's supported tools; the same directory is a Claude Code plugin. There are no generated copies, external plugin dependencies, bundled server configuration, or CI workflows.
 
 ## Design and process
 
 Depth and destination are separate choices. Both modes produce the same structured
-report; either can publish to GitLab when the user requests it.
+report; either can publish to GitLab or GitHub when the user requests it.
 
 ```mermaid
 flowchart TD
@@ -22,7 +22,7 @@ flowchart TD
     Mode -->|Deep| Deep["Architecture and specialists, then independent validation and audit"]
     Routine --> Report["review.json and Markdown reports"]
     Deep --> Report
-    Report --> Destination{"Posting requested for a GitLab MR?"}
+    Report --> Destination{"Posting requested for an MR or PR?"}
     Destination -->|No| Local["Keep local reports"]
     Destination -->|Yes| Plan["Validate positions, revisions and existing discussions"]
     Plan --> Publish["Publish eligible findings and summary; save receipts"]
@@ -44,9 +44,12 @@ Use review-workflow for a deep review of HEAD~5..HEAD.
 
 Use review-workflow to review https://gitlab.example.com/team/app/-/merge_requests/42
 and post validated findings to that MR.
+
+Use review-workflow for a deep review of https://github.com/owner/repo/pull/42
+and post validated findings to that PR.
 ```
 
-An MR URL alone does not select publication. Both modes can publish when asked. Deep reports retain rejected findings locally; only verified findings reach GitLab. The assessment is a comment, not a GitLab approval or merge action.
+An MR/PR URL alone does not select publication. Both modes can publish when asked. Deep reports retain rejected findings locally; only verified findings reach the requested MR/PR. The assessment is a comment, not a provider approval or merge action.
 
 ## Use as a Claude Code plugin
 
@@ -69,15 +72,23 @@ The repository marketplace can be installed from `NoSugarCoffee/dotai` once this
 /dotai-review:review local changes
 /dotai-review:deep-review HEAD~5..HEAD
 /dotai-review:review https://gitlab.example.com/team/app/-/merge_requests/42 post to GitLab
+/dotai-review:review https://github.com/owner/repo/pull/42 post to GitHub
 ```
 
 `/dotai-review:review-workflow` is the shared core entry. Prefer either the portable skill or plugin entry for a given invocation; both run the same rules. Plugin agents have read-only tools and return findings to the orchestrator, which alone can publish.
 
-## GitLab integration
+## GitLab and GitHub integration
 
-Python 3.9+ and an authenticated `idev-cli` are required for the helper. Credentials remain managed by the CLI. Install programs through the machine's normal tooling, not this repository. If an asdf shim says no Node version is selected, use the machine's configured Node version or a task-local `ASDF_NODEJS_VERSION` setting; this error is unrelated to GitLab authentication.
+The helper requires Python 3.9+ and the authenticated CLI for the selected provider:
 
-The helper offers `snapshot`, `render`, and `publish`; use `--help` for arguments. `publish` defaults to a read-only plan; `--apply` executes it. Keep the output directory and `publication.json` for subsequent reviews of the same MR. See [GitLab adapter](references/gitlab.md) for revision checks, ownership, partial failures and recovery.
+| Provider | CLI | Capture and publication |
+| --- | --- | --- |
+| GitLab | `idev-cli` | [GitLab adapter](references/gitlab.md) |
+| GitHub | `gh` | [GitHub adapter](references/github.md) |
+
+Credentials remain managed by the CLI. Install programs through the machine's normal tooling, not this repository. If an asdf shim says no Node version is selected, use the machine's configured Node version or a task-local `ASDF_NODEJS_VERSION` setting; this error is unrelated to GitLab authentication.
+
+The helper offers `snapshot`, `render`, and `publish`; use `--help` for arguments. `publish` defaults to a read-only plan; `--apply` executes it. Keep the output directory and `publication.json` for subsequent reviews of the same MR/PR. See [shared publication process](references/publishing.md) for revision checks, ownership, partial failures and recovery.
 
 The three outputs are `review-summary.md`, `review-inline-comments.md`, and `review-report.md`. See [finding contract](references/findings.md) for the JSON input. Routine review uses a 75 confidence screen; deep review uses 80 plus independent validation and severity audit. These are initial policy settings, not calibrated probabilities.
 
@@ -91,8 +102,8 @@ bash scripts/install.sh --list
 bash scripts/verify-skills-layout.sh
 ```
 
-The offline tests exercise added/deleted/renamed lines, pagination, stale revisions, duplicate publication, ownership, human replies, partial failure, and incomplete verdicts. They perform no network calls or GitLab writes. Behavior scenarios are in [evals/evals.json](evals/evals.json); no real MR is needed to run them.
+The offline tests exercise added/deleted/renamed lines, pagination, stale revisions, duplicate publication, ownership, human replies, partial failure, and incomplete verdicts. They perform no network calls or remote writes. Behavior scenarios are in [evals/evals.json](evals/evals.json); no real MR/PR is needed to run them.
 
 ## Design sources
 
-This implementation is independently written, informed by the two review paths in [Bitwarden's plugin](https://github.com/bitwarden/ai-plugins/tree/main/plugins/bitwarden-code-review). It uses this project's own severity rules, runtime adapters and GitLab transport. Useful technical references are [GitLab diff discussions](https://docs.gitlab.com/api/discussions/#create-a-new-thread-in-the-merge-request-diff) and [Claude plugin manifests](https://code.claude.com/docs/en/plugins-reference). Bitwarden's organizational standards and vault threat model are not dependencies.
+This implementation is independently written, informed by the two review paths in [Bitwarden's plugin](https://github.com/bitwarden/ai-plugins/tree/main/plugins/bitwarden-code-review). It uses this project's own severity rules, runtime conventions and provider adapters. Useful technical references are [GitLab diff discussions](https://docs.gitlab.com/api/discussions/#create-a-new-thread-in-the-merge-request-diff) and [Claude plugin manifests](https://code.claude.com/docs/en/plugins-reference). Bitwarden's organizational standards and vault threat model are not dependencies.

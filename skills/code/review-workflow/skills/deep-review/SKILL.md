@@ -1,7 +1,7 @@
 ---
 name: deep-review
-description: Run independent architecture, quality, bug and security reviews followed by validation and severity audit. Supports local reports and explicitly requested GitLab publication.
-argument-hint: "[GitLab MR URL | local changes | base..head] [post to GitLab]"
+description: Run independent architecture, quality, bug and security reviews followed by validation and severity audit. Supports local reports and explicitly requested GitLab or GitHub publication.
+argument-hint: "[MR/PR URL | local changes | base..head] [post]"
 disable-model-invocation: true
 ---
 

@@ -29,7 +29,7 @@
 | 📦 **Dependencies** | `apm.yml` | Upstream skills and public MCP servers, pinned in `apm.lock.yaml` |
 | 🤖 **Agents** | `agents/<name>.md` | Named sub-agent personas (architect, reviewer) |
 | 🪝 **Hooks** | `hooks/` | Lifecycle hooks: `session_start`, `task_complete` |
-| 🔍 **Review plugin** | `skills/code/review-workflow/` | Routine and deep reviews, local reports, and GitLab MR discussions |
+| 🔍 **Review plugin** | `skills/code/review-workflow/` | Routine and deep reviews, local reports, and GitLab MR and GitHub PR comments |
 
 The [dotai-review guide](skills/code/review-workflow/README.md) covers the portable
 `review-workflow` skill and the Claude Code plugin. The plugin uses the same source

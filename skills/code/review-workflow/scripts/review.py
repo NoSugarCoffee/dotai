@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render review records and publish revision-bound GitLab discussions via idev-cli."""
+"""Render review records and publish revision-bound GitLab or GitHub comments."""
 from __future__ import annotations
 
 import argparse
@@ -9,45 +9,22 @@ import hashlib
 import json
 import os
 import re
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Optional, Union, cast
-from urllib.parse import urlparse
+from typing import Dict, List, Optional, cast
 
-JSON = Union[None, bool, int, float, str, List["JSON"], Dict[str, "JSON"]]
-Object = Dict[str, JSON]
+from providers import (
+    JSON, Object, GitLab, GitHub, ReviewClient, ReviewError,
+    mr_target, target_identity, obj, records, refs, require, string,
+)
+
 SEVERITIES = ("blocker", "important", "suggestion")
 REQUIRED = {
     "routine": {"analysis", "validation"},
     "deep": {"architecture", "quality", "bugs", "security", "validation", "audit"},
 }
 PREFIX = "<!-- dotai-review:"
-
-
-class ReviewError(Exception):
-    pass
-
-
-def require(condition: bool, message: str) -> None:
-    if not condition:
-        raise ReviewError(message)
-
-
-def obj(value: JSON) -> Object:
-    require(isinstance(value, dict), "Expected a JSON object")
-    return cast(Object, value)
-
-
-def records(value: JSON) -> List[Object]:
-    require(isinstance(value, list), "Expected a JSON array")
-    return [obj(item) for item in cast(List[JSON], value)]
-
-
-def string(value: JSON) -> str:
-    require(isinstance(value, str), "Expected a string")
-    return cast(str, value)
 
 
 def read_json(path: Path) -> JSON:
@@ -223,75 +200,21 @@ def render(review: Review, output: Path) -> None:
         (output / name).write_text(body)
 
 
-def mr_target(url: str) -> tuple[str, str, str]:
-    parsed = urlparse(url)
-    require(parsed.scheme == "https" and bool(parsed.hostname) and not parsed.username and not parsed.password
-            and not parsed.query and not parsed.fragment, "Use an HTTPS MR URL without credentials, query or fragment")
-    match = re.fullmatch(r"/([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+)/-/merge_requests/([1-9][0-9]*)/?", parsed.path)
-    require(match is not None, "Expected https://HOST/group/project/-/merge_requests/IID")
-    assert match is not None
-    project, iid = match.groups()
-    require(all(p not in (".", "..") for p in project.split("/")), "Invalid project path")
-    return parsed.netloc.lower(), project, iid
+def client_for(url: str) -> ReviewClient:
+    provider = target_identity(url)[0]
+    return GitHub(url) if provider == "github" else GitLab(url)
 
 
-class GitLab:
-    def __init__(self, url: str) -> None:
-        self.url = url
-        self.host, self.project, self.iid = mr_target(url)
-
-    def call(self, operation: List[str], arguments: List[str]) -> JSON:
-        command = ["idev-cli", "code", "mr"] + operation + ["--project", self.project, "--mr", self.iid, "--json"] + arguments
-        try:
-            result = subprocess.run(command, capture_output=True, text=True, timeout=120, check=False)
-        except subprocess.TimeoutExpired as error:
-            raise ReviewError("idev-cli timed out; a write may have completed. Inspect GitLab before retrying.") from error
-        require(result.returncode == 0, "idev-cli " + " ".join(operation) + " failed; check CLI authentication/configuration. No automatic retry.")
-        try:
-            return cast(JSON, json.loads(result.stdout))
-        except json.JSONDecodeError as error:
-            raise ReviewError("idev-cli returned invalid JSON; inspect a possible write before retrying") from error
-
-    def metadata(self) -> Object:
-        data = obj(self.call(["get"], []))
-        canonical = urlparse(string(data["web_url"]))
-        # Some self-hosted instances advertise HTTP behind an HTTPS proxy.
-        if canonical.scheme == "http":
-            canonical = canonical._replace(scheme="https")
-        require(mr_target(canonical.geturl()) == (self.host, self.project, self.iid), "CLI returned a different GitLab target")
-        refs(data)
-        return data
-
-    def pages(self, operation: List[str]) -> List[Object]:
-        result: List[Object] = []
-        seen = set()
-        for page in range(1, 10001):
-            batch = records(self.call(operation, ["--page", str(page), "--per-page", "100"]))
-            signature = json.dumps(batch, sort_keys=True)
-            require(not batch or signature not in seen, "CLI pagination repeated a page")
-            seen.add(signature)
-            result.extend(batch)
-            if len(batch) < 100:
-                return result
-        raise ReviewError("Pagination exceeded 10000 pages")
-
-
-def refs(metadata: Object) -> Object:
-    result = obj(metadata.get("diff_refs"))
-    require(set(result) >= {"base_sha", "head_sha", "start_sha"}, "MR has no complete diff refs yet")
-    for key in ("base_sha", "head_sha", "start_sha"):
-        require(bool(re.fullmatch(r"[a-f0-9]{40,64}", string(result[key]))), "Invalid diff ref " + key)
-    return {key: result[key] for key in ("base_sha", "head_sha", "start_sha")}
-
-
-def snapshot(client: GitLab, output: Path) -> None:
+def snapshot(client: ReviewClient, output: Path) -> None:
     before = client.metadata()
     diffs = client.pages(["diff"])
     discussions = client.pages(["discussion", "list"])
     notes = client.pages(["note", "list"])
-    require(refs(client.metadata()) == refs(before), "MR changed during collection; take another snapshot")
+    require(refs(client.metadata()) == refs(before), "Review target changed during collection; take another snapshot")
     coverage = ["Diff unavailable for " + string(d["new_path"]) for d in diffs if not d.get("diff") or d.get("too_large") or d.get("collapsed")]
     count = before.get("changes_count")
+    if isinstance(count, int):
+        count = str(count)
     if isinstance(count, str) and (count.endswith("+") or (count.isdigit() and int(count) != len(diffs))):
         coverage.append("Server change count differs from the captured diff; verify omitted files")
     data: Object = {"version": 1, "url": client.url, "metadata": before, "diffs": diffs,
@@ -366,8 +289,8 @@ def plan(review: Review, snap: Object, ledger: Object, discussions: List[Object]
             thread = records(indexed[discussion_id]["notes"])
             note = owned_note(thread, receipt, tag)
             replied = any(not n.get("system") and obj(n.get("author")).get("id") != receipt["author_id"] for n in thread)
-            if note.get("resolved") or replied or note["body"] == body:
-                operations.append({"kind": "skip", "key": key, "reason": "Resolved, human-replied, or unchanged discussion"})
+            if note.get("resolved") or note.get("outdated") or replied or note["body"] == body:
+                operations.append({"kind": "skip", "key": key, "reason": "Resolved, outdated, human-replied, or unchanged discussion"})
             elif obj(note.get("position")).get("head_sha") != head:
                 operations.append({"kind": "skip", "key": key, "reason": "Existing discussion belongs to an earlier revision; retained"})
             else:
@@ -388,35 +311,23 @@ def plan(review: Review, snap: Object, ledger: Object, discussions: List[Object]
     return operations
 
 
-def execute(client: GitLab, operation: Object, snapshot_refs: Object) -> Object:
+def execute(client: ReviewClient, operation: Object, snapshot_refs: Object) -> Object:
     metadata = client.metadata()
-    require(metadata.get("state") == "opened", "MR closed during publication")
-    require(refs(metadata) == snapshot_refs, "MR changed before publication; stop and review the new revision")
+    require(metadata.get("state") == "opened", "Review target closed during publication")
+    require(refs(metadata) == snapshot_refs, "Review target changed before publication; stop and review the new revision")
     kind = string(operation["kind"])
-    arguments = ["--message", string(operation["body"])]
-    if kind == "create_finding":
-        for key, value in {**obj(operation["position"]), **snapshot_refs}.items():
-            arguments += ["--" + key.replace("_", "-"), str(value)]
-        result = obj(client.call(["discussion", "create"], arguments))
-        first = records(result["notes"])[0]
-        return {"discussion_id": result["id"], "note_id": first["id"], "author_id": obj(first["author"])["id"]}
     if kind == "update_finding":
         threads = client.pages(["discussion", "list"])
         matches = [d for d in threads if d["id"] == operation["discussion_id"]]
         require(len(matches) == 1, "Discussion disappeared before update")
         notes = records(matches[0]["notes"])
         note = owned_note(notes, operation, marker(string(operation["key"])))
-        require(not note.get("resolved") and not any(not n.get("system") and obj(n["author"])["id"] != operation["author_id"] for n in notes),
+        require(not note.get("resolved") and not note.get("outdated") and obj(note.get("position")).get("head_sha") == snapshot_refs["head_sha"] and not any(not n.get("system") and obj(n["author"])["id"] != operation["author_id"] for n in notes),
                 "Discussion was resolved or received a human reply; prepare a fresh plan")
-        client.call(["discussion", "update"], arguments + ["--discussion", string(operation["discussion_id"]), "--note", str(operation["note_id"])])
-        return {key: operation[key] for key in ("discussion_id", "note_id", "author_id")}
-    if kind == "create_summary":
-        result = obj(client.call(["note", "create"], arguments))
-        return {"note_id": result["id"], "author_id": obj(result["author"])["id"]}
-    require(kind == "update_summary", "Unknown publication operation")
-    owned_note(client.pages(["note", "list"]), operation, marker("summary"))
-    client.call(["note", "update"], arguments + ["--note", str(operation["note_id"])])
-    return {key: operation[key] for key in ("note_id", "author_id")}
+    if kind == "update_summary":
+        owned_note(client.pages(["note", "list"]), operation, marker("summary"))
+    return client.write(operation, snapshot_refs)
+
 
 
 def publish(review: Review, snapshot_path: Path, ledger_path: Path, apply: bool) -> None:
@@ -426,7 +337,7 @@ def publish(review: Review, snapshot_path: Path, ledger_path: Path, apply: bool)
     for gap in cast(List[str], snap["coverage_gaps"]):
         require(gap in review.coverage_gaps or bool(review.no_verdict_reason), "Review omitted a snapshot coverage gap")
     require(bool(snap["diffs"]) or bool(review.no_verdict_reason), "Empty snapshot needs No Verdict")
-    client = GitLab(string(snap["url"]))
+    client = client_for(string(snap["url"]))
     expected_refs = refs(obj(snap["metadata"]))
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     with ledger_path.with_suffix(ledger_path.suffix + ".lock").open("w") as lock:
@@ -435,10 +346,10 @@ def publish(review: Review, snapshot_path: Path, ledger_path: Path, apply: bool)
         except BlockingIOError as error:
             raise ReviewError("Another publisher holds this ledger lock") from error
         ledger = obj(read_json(ledger_path)) if ledger_path.exists() else {"version": 1, "url": client.url, "findings": {}, "summary": None}
-        require(ledger.get("version") == 1 and mr_target(string(ledger["url"])) == mr_target(client.url), "Ledger belongs to another MR or version")
+        require(ledger.get("version") == 1 and target_identity(string(ledger["url"])) == target_identity(client.url), "Ledger belongs to another review target or version")
         metadata = client.metadata()
-        require(metadata.get("state") == "opened", "MR is no longer open")
-        require(refs(metadata) == expected_refs, "MR revision changed; take a new snapshot and review again")
+        require(metadata.get("state") == "opened", "Review target is no longer open")
+        require(refs(metadata) == expected_refs, "Review target revision changed; take a new snapshot and review again")
         discussions = client.pages(["discussion", "list"])
         notes = client.pages(["note", "list"])
         operations = plan(review, snap, ledger, discussions, notes)
@@ -454,19 +365,19 @@ def publish(review: Review, snapshot_path: Path, ledger_path: Path, apply: bool)
             else:
                 ledger["summary"] = receipt
             write_json(ledger_path, ledger)
-        require(refs(client.metadata()) == expected_refs, "MR changed during publication; posted comments describe the captured commit")
+        require(refs(client.metadata()) == expected_refs, "Review target changed during publication; posted comments describe the captured commit")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    capture = commands.add_parser("snapshot", help="Read an MR through idev-cli")
+    capture = commands.add_parser("snapshot", help="Read a GitLab MR or GitHub PR")
     capture.add_argument("--url", required=True)
     capture.add_argument("--output", type=Path, required=True)
     report = commands.add_parser("render", help="Validate review JSON and write Markdown")
     report.add_argument("--review", type=Path, required=True)
     report.add_argument("--output", type=Path, required=True)
-    post = commands.add_parser("publish", help="Plan GitLab comments; --apply performs writes")
+    post = commands.add_parser("publish", help="Plan review comments; --apply performs writes")
     post.add_argument("--review", type=Path, required=True)
     post.add_argument("--snapshot", type=Path, required=True)
     post.add_argument("--ledger", type=Path, required=True)
@@ -474,7 +385,7 @@ def main() -> None:
     args = parser.parse_args()
     try:
         if args.command == "snapshot":
-            snapshot(GitLab(args.url), args.output)
+            snapshot(client_for(args.url), args.output)
         elif args.command == "render":
             render(load_review(args.review), args.output)
         else:

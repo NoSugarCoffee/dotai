@@ -12,6 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "review.py"
+sys.path.insert(0, str(MODULE_PATH.parent))
 SPEC = importlib.util.spec_from_file_location("review", MODULE_PATH)
 review = importlib.util.module_from_spec(SPEC)
 sys.modules["review"] = review
@@ -39,6 +40,8 @@ def record():
 
 
 class FakeGitLab:
+    write = review.GitLab.write
+
     def __init__(self):
         self.url = URL
         self.meta = copy.deepcopy(METADATA)
@@ -228,7 +231,7 @@ class ReviewTests(unittest.TestCase):
 
     def test_explicit_project_and_no_shell_interpolation(self):
         body = "Literal `command` $(other)\nsecond line"
-        with patch.object(review.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "{}", "")) as run:
+        with patch.object(subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "{}", "")) as run:
             review.GitLab(URL).call(["note", "create"], ["--message", body])
         args, kwargs = run.call_args
         self.assertIn("team/project", args[0])
