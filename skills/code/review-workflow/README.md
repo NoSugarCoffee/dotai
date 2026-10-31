@@ -9,6 +9,30 @@ Two review processes share one finding contract and one GitLab publisher:
 
 The source is this directory. `scripts/install.sh` publishes it as `code.review-workflow` for the repo's supported tools; the same directory is a Claude Code plugin. There are no generated copies, external plugin dependencies, bundled server configuration, or CI workflows.
 
+## Design and process
+
+Depth and destination are separate choices. Both modes produce the same structured
+report; either can publish to GitLab when the user requests it.
+
+```mermaid
+flowchart TD
+    Request["Review request"] --> Scope["Capture target, revisions, diff and project rules"]
+    Scope --> Mode{"Review depth"}
+    Mode -->|Routine| Routine["One reviewer: analyze, then challenge findings"]
+    Mode -->|Deep| Deep["Architecture and specialists, then independent validation and audit"]
+    Routine --> Report["review.json and Markdown reports"]
+    Deep --> Report
+    Report --> Destination{"Posting requested for a GitLab MR?"}
+    Destination -->|No| Local["Keep local reports"]
+    Destination -->|Yes| Plan["Validate positions, revisions and existing discussions"]
+    Plan --> Publish["Publish eligible findings and summary; save receipts"]
+```
+
+See [the design walkthrough](references/design.md) for separate routine and deep
+process graphs, context passed to each worker, publication safeguards, and the
+differences from Bitwarden. These graphs describe agent instructions and the Python
+publisher: the helper does not itself launch agents or enforce their independence.
+
 ## Use as a skill
 
 From the dotai checkout, run `bash scripts/install.sh`. Start a new agent session and ask:
