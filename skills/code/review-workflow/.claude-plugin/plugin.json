@@ -1,0 +1,8 @@
+{
+  "name": "dotai-review",
+  "version": "0.1.0",
+  "description": "Routine and deep code review with local Markdown reports and GitLab discussions.",
+  "author": { "name": "NoSugarCoffee" },
+  "repository": "https://github.com/NoSugarCoffee/dotai",
+  "skills": ["./"]
+}
