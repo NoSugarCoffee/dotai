@@ -1,0 +1,21 @@
+skills/code/review-workflow/README.md
+  s_86a03bc5b85fae::t_34b3cfee602bff 12-35
+skills/code/review-workflow/references/design.md
+  s_86a03bc5b85fae::t_34b3cfee602bff 1-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "a62c07091cb30f323f1d65341e317d872a2f36b0",
+  "prompts": {},
+  "sessions": {
+    "s_86a03bc5b85fae": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18d5c-24a4-7dc3-8c55-ea2e7a15e72b",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
