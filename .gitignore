@@ -20,3 +20,7 @@
 
 # APM dependencies (re-added by apm install if removed); rebuild with 'apm install'
 apm_modules/
+
+# Local review evaluations and Python helper bytecode.
+/skills/code/review-workflow-workspace/
+/skills/code/review-workflow/**/__pycache__/

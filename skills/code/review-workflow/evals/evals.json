@@ -1,0 +1,26 @@
+{
+  "skill_name": "review-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review the change in fixture.md using routine depth, with local output. Trace the caller before reporting a defect. Save a review report and machine-readable findings in the output directory. Do not use GitLab or execute fixture code.",
+      "expected_output": "Find the off-by-one loop that skips the last item; reject the alleged missing null check because the caller guards it. No external writes.",
+      "files": ["evals/fixtures/fixture.md"],
+      "expectations": [
+        "Identifies the skipped final item at totals.py line 3 with a concrete input example.",
+        "Does not raise a null-check defect after tracing the sole caller."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Finish a deep review report from failure.md. The security worker and severity audit failed. Preserve the validation result and the dismissal reason, expose the failed stages, and keep all output local. Do not rerun the supplied stages or access GitLab.",
+      "expected_output": "INCOMPLETE verdict; the unaudited finding is retained locally and excluded from publishable inline output; dismissed finding retains reason and original rating.",
+      "files": ["evals/fixtures/failure.md"],
+      "expectations": [
+        "Reports incomplete review and names both the failed security and audit stages.",
+        "Preserves the validated defect without inventing a final audited severity.",
+        "Retains the dismissed candidate with its original severity, confidence and reason."
+      ]
+    }
+  ]
+}

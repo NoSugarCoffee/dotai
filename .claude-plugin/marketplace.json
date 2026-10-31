@@ -1,0 +1,15 @@
+{
+  "name": "dotai",
+  "owner": {
+    "name": "NoSugarCoffee"
+  },
+  "metadata": {
+    "description": "Review workflows maintained in dotai."
+  },
+  "plugins": [
+    {
+      "name": "dotai-review",
+      "source": "./skills/code/review-workflow"
+    }
+  ]
+}
