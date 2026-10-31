@@ -79,7 +79,7 @@ The repository marketplace can be installed from `NoSugarCoffee/dotai` once this
 
 ## GitLab and GitHub integration
 
-The helper requires Python 3.9+ and the authenticated CLI for the selected provider:
+The helper requires Python 3.9+ on macOS, Linux or WSL (`fcntl` is required) and the authenticated CLI for the selected provider:
 
 | Provider | CLI | Capture and publication |
 | --- | --- | --- |

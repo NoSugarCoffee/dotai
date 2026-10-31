@@ -1,13 +1,23 @@
 ---
 name: review-workflow
-description: Review code changes using a routine reviewer or a deep multi-agent pipeline, produce Markdown reports, and publish findings to GitLab merge requests or GitHub pull requests when requested. Use for MR/PR reviews, explicit routine or deep reviews, review-workflow requests, and requests to post review findings to GitLab or GitHub. Supports local changes, branch comparisons, and commit ranges.
+description: Review code changes using a routine reviewer or a deep multi-agent pipeline, produce Markdown reports, and publish findings to GitLab merge requests or GitHub pull requests when requested. Use when the user names review-workflow or dotai-review, requests routine or deep review, or asks to post findings to GitLab or GitHub. Supports local changes, branch comparisons, and commit ranges.
 ---
 
 # Review workflow
 
 Resolve two independent choices from the request: depth (`routine` or `deep`) and destination (`local`, `gitlab`, or `github`). Routine is the default. A request to review an MR/PR alone produces local files; "post", "publish", or "leave comments" selects the provider of the requested URL. Honor an already stated destination without asking again. A local target cannot have a remote destination.
 
-This directory is both a portable skill and the self-contained `dotai-review` Claude Code plugin. Resolve resource paths relative to this file, including when installed through a symlink. Commands below use `ROOT` to mean this directory's absolute path, not the repository under review. The helper requires Python 3.9+; GitLab uses the installed `idev-cli`; GitHub uses `gh`. Each uses its existing login.
+This directory is both a portable skill and the self-contained `dotai-review` Claude Code plugin. Resolve resource paths relative to this file, including when installed through a symlink. Commands below use `ROOT` to mean this directory's absolute path, not the repository under review. The helper requires Python 3.9+ on macOS, Linux or WSL (`fcntl` is required); GitLab uses the installed `idev-cli`; GitHub uses `gh`. Each uses its existing login.
+
+Before running commands, set `ROOT` to the absolute directory containing this skill's resolved `SKILL.md` and `OUT` to a persistent directory for this target outside the reviewed checkout. For example, when installed by dotai:
+
+```bash
+ROOT="$(python3 -c 'from pathlib import Path; print((Path.home() / ".agents/skills/code.review-workflow/SKILL.md").resolve().parent)')"
+OUT="$HOME/.cache/dotai-review/github.com/OWNER/REPO/NUMBER"
+mkdir -p "$OUT"
+```
+
+Replace the example host, repository and number with the captured target; reuse its directory and ledger for later runs. In plugin sessions, resolve `ROOT` from `CLAUDE_PLUGIN_ROOT` instead. A local review can use a fresh cache directory. These shell variables need not be exported because the commands expand them as arguments.
 
 ## Execution
 

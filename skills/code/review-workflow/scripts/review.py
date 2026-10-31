@@ -16,7 +16,7 @@ from typing import Dict, List, Optional, cast
 
 from providers import (
     JSON, Object, GitLab, GitHub, ReviewClient, ReviewError,
-    mr_target, target_identity, obj, records, refs, require, string,
+    mr_target, target_identity, inline_anchor, obj, records, refs, require, string,
 )
 
 SEVERITIES = ("blocker", "important", "suggestion")
@@ -128,6 +128,9 @@ def load_review(path: Path) -> Review:
     stages = obj(data["stages"])
     require(all(s in ("complete", "failed") for s in stages.values()), "Invalid stage status")
     findings = [finding(f) for f in records(data["findings"])]
+    if data["mode"] == "routine":
+        require(all(f.final_severity is not None for f in findings if f.status == "validated"),
+                "Routine validated findings require final_severity")
     require(len({f.id for f in findings}) == len(findings), "Duplicate finding ID")
     require(len({(f.file, f.key) for f in findings}) == len(findings), "Duplicate finding key")
     require(not data["no_verdict_reason"] or not findings, "No Verdict cannot contain findings")
@@ -138,7 +141,8 @@ def load_review(path: Path) -> Review:
 
 def eligible(review: Review, f: Finding) -> bool:
     return (f.status == "validated" and f.final_severity in SEVERITIES and f.confidence >= (80 if review.mode == "deep" else 75)
-            and (review.mode == "routine" or f.audit in ("confirmed", "downgraded")))
+            and (review.mode == "routine" or (f.audit in ("confirmed", "downgraded")
+                 and all(review.stages.get(stage) == "complete" for stage in ("validation", "audit")))))
 
 
 def gaps(review: Review) -> List[str]:
@@ -259,6 +263,8 @@ def marker(key: str) -> str:
 
 
 def owned_note(notes: List[Object], receipt: Object, expected_marker: str) -> Object:
+    require(type(receipt.get("author_id")) is int and cast(int, receipt["author_id"]) > 0,
+            "Recorded comment has no author ID; reconcile the publication ledger")
     matches = [n for n in notes if n.get("id") == receipt.get("note_id")]
     require(len(matches) == 1, "Recorded review note is missing; reconcile the publication ledger")
     note = matches[0]
@@ -267,11 +273,25 @@ def owned_note(notes: List[Object], receipt: Object, expected_marker: str) -> Ob
     return note
 
 
+def owned_thread(indexed: Dict[str, Object], receipt: Object, tag: str) -> tuple[List[Object], Object]:
+    discussion_id = string(receipt["discussion_id"])
+    require(discussion_id in indexed, "Recorded discussion is missing")
+    notes = records(indexed[discussion_id]["notes"])
+    return notes, owned_note(notes, receipt, tag)
+
+
+def preserve_thread(notes: List[Object], note: Object, head: str) -> bool:
+    return bool(note.get("resolved") or note.get("outdated")
+                or obj(note.get("position")).get("head_sha") != head
+                or any(not n.get("system") and obj(n.get("author")).get("id") != obj(note["author"])["id"] for n in notes))
+
+
 def plan(review: Review, snap: Object, ledger: Object, discussions: List[Object], notes: List[Object]) -> List[Object]:
     operations: List[Object] = []
     saved = obj(ledger["findings"])
     indexed = {string(d["id"]): d for d in discussions}
     head = string(refs(obj(snap["metadata"]))["head_sha"])
+    provider = target_identity(string(snap["url"]))[0]
     for f in review.findings:
         if not eligible(review, f):
             continue
@@ -284,17 +304,24 @@ def plan(review: Review, snap: Object, ledger: Object, discussions: List[Object]
             continue
         if key in saved:
             receipt = obj(saved[key])
-            discussion_id = string(receipt["discussion_id"])
-            require(discussion_id in indexed, "Recorded discussion is missing")
-            thread = records(indexed[discussion_id]["notes"])
-            note = owned_note(thread, receipt, tag)
-            replied = any(not n.get("system") and obj(n.get("author")).get("id") != receipt["author_id"] for n in thread)
-            if note.get("resolved") or note.get("outdated") or replied or note["body"] == body:
-                operations.append({"kind": "skip", "key": key, "reason": "Resolved, outdated, human-replied, or unchanged discussion"})
-            elif obj(note.get("position")).get("head_sha") != head:
-                operations.append({"kind": "skip", "key": key, "reason": "Existing discussion belongs to an earlier revision; retained"})
+            thread, note = owned_thread(indexed, receipt, tag)
+            if preserve_thread(thread, note, head):
+                operations.append({"kind": "skip", "key": key, "reason": "Resolved, outdated, human-replied, or earlier revision; retained"})
+                continue
+            pos = position(f, records(snap["diffs"]))
+            anchor = inline_anchor(provider, pos)
+            history = records(obj(ledger.get("history", {})).get(key, []))
+            for previous in [receipt] + history:
+                thread, note = owned_thread(indexed, previous, tag)
+                if obj(note.get("position")).get("head_sha") != head or inline_anchor(provider, obj(note["position"])) != anchor:
+                    continue
+                if preserve_thread(thread, note, head) or note["body"] == body:
+                    operations.append({"kind": "skip", "key": key, "reason": "Protected or unchanged discussion at this position"})
+                else:
+                    operations.append({"kind": "update_finding", "key": key, "body": body, "position": pos, **previous})
+                break
             else:
-                operations.append({"kind": "update_finding", "key": key, "body": body, **receipt})
+                operations.append({"kind": "create_finding", "key": key, "body": body, "position": pos, "replaces": receipt})
         else:
             require(not any(tag in string(n.get("body")) for d in discussions for n in records(d["notes"])),
                     "A matching review marker exists without a receipt; recover the ledger or link that discussion")
@@ -316,14 +343,16 @@ def execute(client: ReviewClient, operation: Object, snapshot_refs: Object) -> O
     require(metadata.get("state") == "opened", "Review target closed during publication")
     require(refs(metadata) == snapshot_refs, "Review target changed before publication; stop and review the new revision")
     kind = string(operation["kind"])
-    if kind == "update_finding":
+    if kind == "update_finding" or operation.get("replaces"):
         threads = client.pages(["discussion", "list"])
-        matches = [d for d in threads if d["id"] == operation["discussion_id"]]
-        require(len(matches) == 1, "Discussion disappeared before update")
-        notes = records(matches[0]["notes"])
-        note = owned_note(notes, operation, marker(string(operation["key"])))
-        require(not note.get("resolved") and not note.get("outdated") and obj(note.get("position")).get("head_sha") == snapshot_refs["head_sha"] and not any(not n.get("system") and obj(n["author"])["id"] != operation["author_id"] for n in notes),
-                "Discussion was resolved or received a human reply; prepare a fresh plan")
+        old_receipt = obj(operation["replaces"]) if operation.get("replaces") else operation
+        notes, note = owned_thread({string(d["id"]): d for d in threads}, old_receipt, marker(string(operation["key"])))
+        require(not preserve_thread(notes, note, string(snapshot_refs["head_sha"])),
+                "Discussion state changed; prepare a fresh plan")
+        if kind == "update_finding":
+            provider = target_identity(client.url)[0]
+            require(inline_anchor(provider, obj(note["position"])) == inline_anchor(provider, obj(operation["position"])),
+                    "Discussion position changed; prepare a fresh plan")
     if kind == "update_summary":
         owned_note(client.pages(["note", "list"]), operation, marker("summary"))
     return client.write(operation, snapshot_refs)
@@ -361,7 +390,13 @@ def publish(review: Review, snapshot_path: Path, ledger_path: Path, apply: bool)
                 continue
             receipt = execute(client, operation, expected_refs)
             if "finding" in string(operation["kind"]):
-                obj(ledger["findings"])[string(operation["key"])] = receipt
+                key = string(operation["key"])
+                saved = obj(ledger["findings"])
+                if key in saved and obj(saved[key])["note_id"] != receipt["note_id"]:
+                    history = obj(ledger.setdefault("history", {}))
+                    prior = records(history.get(key, []))
+                    history[key] = [p for p in prior if p["note_id"] not in (obj(saved[key])["note_id"], receipt["note_id"])] + [saved[key]]
+                saved[key] = receipt
             else:
                 ledger["summary"] = receipt
             write_json(ledger_path, ledger)

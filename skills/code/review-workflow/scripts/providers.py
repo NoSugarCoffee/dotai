@@ -43,7 +43,10 @@ def mr_target(url: str) -> tuple[str, str, str]:
     assert match is not None
     project, iid = match.groups()
     require(all(p not in (".", "..") for p in project.split("/")), "Invalid project path")
-    return parsed.netloc.lower(), project, iid
+    host = parsed.netloc.lower()
+    if parsed.port == 443:
+        host = host.rsplit(":", 1)[0]
+    return host, project, iid
 
 
 def pr_target(url: str) -> tuple[str, str, str]:
@@ -133,7 +136,23 @@ class GitLab:
 
 
 def receipt(note: Object) -> Object:
+    require(type(obj(note["author"]).get("id")) is int and cast(int, obj(note["author"])["id"]) > 0,
+            "Written comment has no author ID; reconcile before retrying")
     return {"note_id": note["id"], "author_id": obj(note["author"])["id"]}
+
+
+def inline_anchor(provider: str, position: Object) -> Object:
+    if provider == "github":
+        left = position.get("new_line") is None
+        result = {"path": position.get("new_path"), "side": "LEFT" if left else "RIGHT",
+                  "line": position.get("old_line") if left else position.get("new_line")}
+        require(isinstance(result["path"], str) and type(result["line"]) is int,
+                "GitHub comment anchor unavailable; reconcile the discussion")
+        return result
+    require(isinstance(position.get("new_path"), str) and isinstance(position.get("old_path"), str)
+            and any(type(position.get(key)) is int for key in ("old_line", "new_line")),
+            "GitLab comment anchor unavailable; reconcile the discussion")
+    return {key: position[key] for key in ("old_path", "new_path", "old_line", "new_line") if position.get(key) is not None}
 
 
 THREAD_QUERY = """query($owner:String!, $name:String!, $number:Int!, $cursor:String) {
@@ -207,8 +226,10 @@ class GitHub:
 
     @staticmethod
     def note(data: Object) -> Object:
-        return {**data, "author": obj(data["user"]), "system": False,
-                "position": {"head_sha": data.get("original_commit_id", data.get("commit_id"))}}
+        side = "old_line" if data.get("side") == "LEFT" else "new_line"
+        return {**data, "author": obj(data.get("user") or {}), "system": False,
+                "position": {"head_sha": data.get("original_commit_id", data.get("commit_id")),
+                             "old_path": data.get("path"), "new_path": data.get("path"), side: data.get("line")}}
 
     def discussions(self) -> List[Object]:
         comments = self.rest_pages(self.pull_path + "/comments", 10000)
@@ -273,10 +294,7 @@ class GitHub:
         payload: Object = {"body": operation["body"]}
         if kind == "create_finding":
             pos = obj(operation["position"])
-            # GitHub anchors context on RIGHT, including findings cited on the old side.
-            left = "new_line" not in pos
-            payload.update(commit_id=snapshot_refs["head_sha"], path=pos["new_path"],
-                           side="LEFT" if left else "RIGHT", line=pos["old_line"] if left else pos["new_line"])
+            payload.update(commit_id=snapshot_refs["head_sha"], **inline_anchor("github", pos))
             note = self.note(obj(self.api("POST", self.pull_path + "/comments", payload)))
             return {"discussion_id": str(note["id"]), **receipt(note)}
         if kind == "create_summary":

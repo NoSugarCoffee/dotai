@@ -1,6 +1,6 @@
 # GitHub adapter
 
-Use the installed `gh` CLI and its existing authentication. The helper needs REST
+Use the installed `gh` CLI and its existing authentication. The helper requires Python 3.9+ on a POSIX system (macOS, Linux or WSL) for its `fcntl` ledger lock. The helper needs REST
 access for PR metadata, files and comments, plus GraphQL access for review-thread
 resolution and outdated state. For publication, the login must be able to create
 and edit review comments and ordinary PR comments. Do not fetch or print tokens.

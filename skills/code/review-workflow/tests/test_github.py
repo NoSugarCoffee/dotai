@@ -139,6 +139,59 @@ class GitHubTests(unittest.TestCase):
         self.assertEqual([call[0] for call in self.client.writes], ["POST", "POST", "PATCH", "PATCH"])
         self.assertEqual((len(self.client.comments), len(self.client.notes)), (1, 1))
 
+    def test_moved_finding_preserves_old_comment_and_reuses_history(self):
+        self.publish()
+        original = copy.deepcopy(self.client.comments[0])
+        self.data["findings"][0]["line"] = 12
+        self.publish()
+        self.assertEqual(self.client.comments[0], original)
+        self.assertEqual(self.client.comments[1]["line"], 12)
+        self.publish()
+        self.assertEqual(len(self.client.comments), 2)
+        self.data["findings"][0].update(line=11, fix="More precise repair")
+        self.publish()
+        self.assertEqual(len(self.client.comments), 2)
+        self.assertIn("More precise repair", self.client.comments[0]["body"])
+
+    def test_side_change_at_same_line_creates_left_anchor(self):
+        self.client.files[0]["previous_filename"] = "new.py"
+        self.capture()
+        self.publish()
+        self.data["findings"][0]["side"] = "old"
+        self.publish()
+        self.assertEqual([n["side"] for n in self.client.comments], ["RIGHT", "LEFT"])
+        self.assertEqual([n["line"] for n in self.client.comments], [11, 11])
+
+    def test_resolution_after_planning_prevents_replacement(self):
+        self.publish()
+        self.data["findings"][0]["line"] = 12
+        original = self.client.discussions
+        calls = 0
+        def discussions():
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                self.client.states[100] = (True, False)
+            return original()
+        with patch.object(self.client, "discussions", side_effect=discussions), self.assertRaises(review.ReviewError):
+            self.publish()
+        self.assertEqual(len(self.client.comments), 1)
+
+    def test_deleted_authors_are_captured_but_never_owned(self):
+        self.publish()
+        self.client.comments.append({"id": 101, "body": "Deleted author reply", "user": None, "in_reply_to_id": 100})
+        self.client.notes.append({"id": 201, "body": "Deleted author comment", "user": None})
+        self.capture()
+        captured = review.read_json(self.snapshot)
+        self.assertEqual(captured["discussions"][0]["notes"][1]["author"], {})
+        self.assertEqual(captured["notes"][1]["author"], {})
+        self.data["findings"][0]["fix"] = "Updated repair"
+        self.publish()
+        self.assertEqual(len(self.client.writes), 2)
+        self.client.comments[0]["user"] = None
+        with self.assertRaises(review.ReviewError):
+            self.publish()
+
     def test_human_reply_resolved_and_outdated_threads_are_preserved(self):
         for state in ("reply", "resolved", "outdated"):
             with self.subTest(state=state):

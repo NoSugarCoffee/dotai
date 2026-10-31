@@ -2,7 +2,7 @@
 
 Use the installed `idev-cli` and its existing authentication. Read the environment's `idev-code` and `idev-shared` skills before using it. Do not fetch or print tokens. No company hostname, gateway or credential is bundled here. `idev-cli` selects its configured GitLab instance; the snapshot command checks that the returned MR URL matches the requested host, project and IID.
 
-The helper passes subprocess arguments directly, never through a shell. It paginates diffs, notes and discussions, captures all three `diff_refs`, and checks the revision again after collection. Python 3.9+ is sufficient and there are no third-party dependencies.
+The helper passes subprocess arguments directly, never through a shell. It paginates diffs, notes and discussions, captures all three `diff_refs`, and checks the revision again after collection. Python 3.9+ on a POSIX system (macOS, Linux or WSL) is sufficient; native Windows is unsupported because the ledger lock uses `fcntl` and there are no third-party dependencies.
 
 ```bash
 python3 "$ROOT/scripts/review.py" snapshot --url "$MR_URL" --output "$OUT/snapshot.json"
