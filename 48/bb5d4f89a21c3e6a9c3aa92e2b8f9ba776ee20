@@ -1,0 +1,47 @@
+skills/code/review-workflow/scripts/providers.py
+  s_86a03bc5b85fae::t_1dfb5c874634ce 46-49,139-140,144-157,229-232,297
+skills/code/review-workflow/agents/finding-validator.md
+  s_86a03bc5b85fae::t_091646821925ee 8-9
+skills/code/review-workflow/references/publishing.md
+  s_86a03bc5b85fae::t_091646821925ee 13,17
+skills/code/review-workflow/SKILL.md
+  s_86a03bc5b85fae::t_091646821925ee 3,10-20
+skills/code/review-workflow/skills/review/SKILL.md
+  s_86a03bc5b85fae::t_091646821925ee 8,10
+skills/code/review-workflow/agents/analysis-reviewer.md
+  s_86a03bc5b85fae::t_091646821925ee 8-9
+skills/code/review-workflow/README.md
+  s_86a03bc5b85fae::t_091646821925ee 82
+skills/code/review-workflow/references/github.md
+  s_86a03bc5b85fae::t_091646821925ee 3
+.claude-plugin/marketplace.json
+  s_86a03bc5b85fae::t_091646821925ee 3-8,12
+skills/code/review-workflow/references/scope.md
+  s_86a03bc5b85fae::t_091646821925ee 21
+skills/code/review-workflow/tests/test_github.py
+  s_86a03bc5b85fae::t_1d1702eb67aee3 142-194
+skills/code/review-workflow/references/gitlab.md
+  s_86a03bc5b85fae::t_091646821925ee 5
+skills/code/review-workflow/tests/test_review.py
+  s_86a03bc5b85fae::t_f9c94cfd45c91b 63-68,81-84,140-167,249-276,325-330
+skills/code/review-workflow/references/findings.md
+  s_86a03bc5b85fae::t_091646821925ee 45,54-55,58
+skills/code/review-workflow/scripts/review.py
+  s_86a03bc5b85fae::t_d7a6463788b1a5 19,131-133,144-145,266-267,276-288,294,307-322,324,346,348-355,393-399
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "48bb5d4f89a21c3e6a9c3aa92e2b8f9ba776ee20",
+  "prompts": {},
+  "sessions": {
+    "s_86a03bc5b85fae": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a18d5c-24a4-7dc3-8c55-ea2e7a15e72b",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
