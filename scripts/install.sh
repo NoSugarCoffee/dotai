@@ -386,12 +386,19 @@ install_pi() {
   fi
   if ( cd "$GLOBAL_PKG" && apm compile --root "$staging" --target agents >/dev/null ); then
     # Judged by the marker: a generated file is replaced, anything else — a
-    # hand-written file or a symlink into a dotfiles checkout — is backed up.
-    if [[ -L "$dest" ]] || [[ -f "$dest" ]] && ! grep -qF "$PI_MANAGED_MARKER" "$dest"; then
-      if ! back_up_unmanaged "$dest"; then
-        rm -rf "$staging"
-        return 1
-      fi
+    # hand-written file or a symlink, even one whose target still carries the
+    # marker — is backed up. Tested in separate statements because `A || B && C`
+    # groups as `(A || B) && C` and would let a marker in the link target skip
+    # the backup.
+    local unmanaged=0
+    if [[ -L "$dest" ]]; then
+      unmanaged=1
+    elif [[ -f "$dest" ]] && ! grep -qF "$PI_MANAGED_MARKER" "$dest"; then
+      unmanaged=1
+    fi
+    if [[ "$unmanaged" -eq 1 ]] && ! back_up_unmanaged "$dest"; then
+      rm -rf "$staging"
+      return 1
     fi
     # rules/coding.md lives outside $GLOBAL_PKG, so the compiled file alone
     # would leave Pi without the coding standards the other tools get. mktemp
