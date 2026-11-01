@@ -289,6 +289,11 @@ install_pi() {
   local staging
   staging="$(mktemp -d)"
   if ( cd "$GLOBAL_PKG" && apm compile --root "$staging" --target agents >/dev/null ); then
+    if [[ -d "$PI_AGENT_DIR/AGENTS.md" ]]; then
+      rm -rf "$staging"
+      echo "  ! $PI_AGENT_DIR/AGENTS.md is a directory; move it aside" >&2
+      return 1
+    fi
     # rm before cp: an agent directory provisioned by an earlier layout (or by
     # hand) may hold a symlink here, and cp -f would write through it —
     # overwriting the linked source file instead of replacing the link.

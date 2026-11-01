@@ -128,7 +128,7 @@ remove the lines from `~/.zshrc-local`.
 | Claude Code | `~/.claude/rules/coding.md` | `~/.claude/skills/` |
 | Cursor | `~/.cursor/rules/coding.mdc` | `~/.cursor/skills/` |
 | GitHub Copilot | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | `~/.copilot/skills/` |
-| Pi | `~/.pi/agent/AGENTS.md` | `~/.agents/skills/` |
+| Pi | `$PI_CODING_AGENT_DIR/AGENTS.md` (default `~/.pi/agent/AGENTS.md`) | `~/.agents/skills/` |
 | Generic agents | — | `~/.agents/skills/` |
 
 All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately. Pi's `AGENTS.md` is the exception: APM has no `pi` target, so it is compiled from `global/` and copied, the same way APM writes every other tool's global context file.
