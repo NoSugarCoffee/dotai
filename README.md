@@ -128,9 +128,10 @@ remove the lines from `~/.zshrc-local`.
 | Claude Code | `~/.claude/rules/coding.md` | `~/.claude/skills/` |
 | Cursor | `~/.cursor/rules/coding.mdc` | `~/.cursor/skills/` |
 | GitHub Copilot | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | `~/.copilot/skills/` |
+| Pi | `$PI_CODING_AGENT_DIR/AGENTS.md` (default `~/.pi/agent/AGENTS.md`) | `~/.agents/skills/` |
 | Generic agents | — | `~/.agents/skills/` |
 
-All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately.
+All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately. Pi is the exception: APM has no `pi` target, so its `AGENTS.md` is compiled from `global/` plus `rules/coding.md` and copied. `mcp.json` beside it is a merged copy of the public `.mcp.json` servers — not a link, because `pi mcp add` writes that file. Existing hand-authored Pi instructions are moved to `*.bak` once instead of being overwritten.
 
 ## Managing Skills
 
