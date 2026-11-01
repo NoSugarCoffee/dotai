@@ -38,6 +38,9 @@ CURSOR_SKILLS_DIR="$HOME/.cursor/skills"
 COPILOT_SKILLS_DIR="$HOME/.copilot/skills"
 COPILOT_INTELLIJ_DIR="$HOME/.config/github-copilot/intellij"
 CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+# Pi keeps its user-scope context in a single agent directory, which
+# PI_CODING_AGENT_DIR relocates; honour that instead of hardcoding the default.
+PI_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
 
 # Tab-separated "<link-name>\t<source-dir>" for every skill to publish,
 # resolved once in main() and consumed by link_skills for each tool.
@@ -272,7 +275,35 @@ install_global_instructions() {
   env -u CLAUDE_CONFIG_DIR apm compile -g
 }
 
-# ── 7. Remove the retired claude-tabs command ──────────────────────
+# ── 7. Pi (~/.pi/agent) ────────────────────────────────────────────
+# APM has no `pi` target, so the `apm compile -g` in section 6 writes nothing
+# Pi reads. Compile the same global package for Pi's user-scope context file
+# instead, into a staging directory because AGENTS.md is not the only artifact
+# `apm compile` emits.
+# No skill links: Pi reads ~/.agents/skills/ directly (section 3), and a second
+# copy under <agent-dir>/skills/ would only collide on name — Pi keeps the
+# first hit and warns about the duplicate.
+install_pi() {
+  echo "→ Pi"
+  mkdir -p "$PI_AGENT_DIR"
+  local staging
+  staging="$(mktemp -d)"
+  if ( cd "$GLOBAL_PKG" && apm compile --root "$staging" --target agents >/dev/null ); then
+    # rm before cp: an agent directory provisioned by an earlier layout (or by
+    # hand) may hold a symlink here, and cp -f would write through it —
+    # overwriting the linked source file instead of replacing the link.
+    rm -f "$PI_AGENT_DIR/AGENTS.md"
+    cp "$staging/AGENTS.md" "$PI_AGENT_DIR/AGENTS.md"
+    echo "  ✓ compiled global instructions → $PI_AGENT_DIR/AGENTS.md"
+    rm -rf "$staging"
+  else
+    rm -rf "$staging"
+    echo "  ! failed to compile global instructions for Pi" >&2
+    return 1
+  fi
+}
+
+# ── 8. Remove the retired claude-tabs command ──────────────────────
 remove_legacy_command() {
   local command_path="$BIN_DIR/claude-tabs"
   if [[ -L "$command_path" && "$(readlink "$command_path")" == "$ROOT/scripts/claude-tabs.sh" ]]; then
@@ -349,6 +380,7 @@ main() {
   install_copilot_skills
   install_copilot_intellij
   install_global_instructions
+  install_pi
   remove_legacy_command
 
   echo ""
@@ -356,6 +388,7 @@ main() {
   echo "   Skills   : $SKILLS_SRC + $APM_MODULES (symlinked)"
   echo "   Rules    : $CLAUDE_DIR/rules/coding.md, $CURSOR_DIR/rules/coding.mdc, $COPILOT_INTELLIJ_DIR/global-copilot-instructions.md"
   echo "   Global   : $GLOBAL_PKG via apm install -g --only apm + apm compile -g"
+  echo "   Pi       : $PI_AGENT_DIR/AGENTS.md (compiled from $GLOBAL_PKG)"
 }
 
 main "$@"
