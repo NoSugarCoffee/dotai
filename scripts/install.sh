@@ -298,6 +298,33 @@ back_up_unmanaged() {
   echo "  ✓ moved existing $path → $backup"
 }
 
+# Merge the public .mcp.json servers into Pi's own MCP file, keeping entries the
+# user already defined (their customization wins on a name collision) and leaving
+# an unparseable file untouched.
+merge_public_mcp() {
+  python3 - "$1" "$2" <<'PY'
+import json, os, sys, tempfile
+
+src, dest = sys.argv[1], sys.argv[2]
+public = json.load(open(src))["mcpServers"]
+existing = {}
+if os.path.isfile(dest):
+    try:
+        with open(dest) as fh:
+            existing = json.load(fh).get("mcpServers", {})
+    except (json.JSONDecodeError, AttributeError) as error:
+        sys.exit("  ! %s is not a Pi MCP config (%s); fix or remove it" % (dest, error))
+merged = dict(public)
+merged.update(existing)
+fd, tmp = tempfile.mkstemp(dir=os.path.dirname(dest), prefix=".mcp.json.")
+with os.fdopen(fd, "w") as fh:
+    json.dump({"mcpServers": merged}, fh, indent=2)
+    fh.write("\n")
+os.chmod(tmp, 0o600)
+os.replace(tmp, dest)
+PY
+}
+
 install_pi() {
   echo "→ Pi"
   mkdir -p "$PI_AGENT_DIR"
@@ -337,17 +364,19 @@ install_pi() {
   fi
 
   # The checked-in .mcp.json holds the public servers APM installs per target;
-  # Pi reads the same {"mcpServers": …} shape from its agent directory.
+  # Pi reads the same {"mcpServers": …} shape from its agent directory. Merge a
+  # copy instead of linking: `pi mcp add`, and enable/exposure changes in /mcp,
+  # write this file, and a link would put the user's servers — and any headers
+  # or tokens they carry — into the checkout.
   if [[ -f "$ROOT/.mcp.json" ]]; then
     if [[ -d "$mcp_dest" ]]; then
       echo "  ! $mcp_dest is a directory; move it aside" >&2
       return 1
     fi
-    if ! back_up_unmanaged "$mcp_dest"; then
+    if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest"; then
       return 1
     fi
-    ln -sfn "$ROOT/.mcp.json" "$mcp_dest"
-    echo "  ✓ linked .mcp.json → $mcp_dest"
+    echo "  ✓ merged public servers → $mcp_dest"
   else
     echo "  ! .mcp.json is missing — run 'apm install' to generate it" >&2
   fi
