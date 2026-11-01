@@ -367,8 +367,9 @@ for name, entry in public.items():
     elif not any(normalize(other) == key for other in servers):
         servers[name] = entry
         managed[key] = name
-# Nothing configured and nothing to record: leave a fresh machine untouched.
-if not config and not servers and not public:
+# Nothing configured, nothing recorded, nothing to record: leave a fresh machine
+# untouched. A stale sidecar must still be cleared, so it counts as work.
+if not config and not servers and not public and not written:
     sys.exit(0)
 # Top-level options such as autoEnableCodemode sit beside mcpServers; keep them.
 config["mcpServers"] = servers
