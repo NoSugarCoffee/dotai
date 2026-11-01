@@ -339,6 +339,14 @@ def normalize(name):
     return name.replace("_", "-")
 
 managed = {}
+# Retire servers a public dependency dropped, while their on-disk entry is still
+# exactly what was written. An edited one belongs to the user now.
+for name in list(written):
+    if name in public:
+        continue
+    if name in servers and servers[name] == written[name]:
+        del servers[name]
+
 for name, entry in public.items():
     key = normalize(name)
     if key in managed:
@@ -386,14 +394,18 @@ install_pi() {
       fi
     fi
     # rules/coding.md lives outside $GLOBAL_PKG, so the compiled file alone
-    # would leave Pi without the coding standards the other tools get.
+    # would leave Pi without the coding standards the other tools get. mktemp
+    # keeps the write out of a predictable path a pre-existing symlink could
+    # redirect.
+    local tmp
+    tmp="$(mktemp "$PI_AGENT_DIR/.AGENTS.md.XXXXXX")"
     {
       echo "$PI_MANAGED_MARKER"
       cat "$staging/AGENTS.md"
       echo
       cat "$RULES_SRC/coding.md"
-    } > "$dest.tmp"
-    mv -f "$dest.tmp" "$dest"
+    } > "$tmp"
+    mv -f "$tmp" "$dest"
     echo "  ✓ compiled global instructions + rules/coding.md → $dest"
     rm -rf "$staging"
   else
@@ -411,6 +423,13 @@ install_pi() {
     if [[ -d "$mcp_dest" ]]; then
       echo "  ! $mcp_dest is a directory; move it aside" >&2
       return 1
+    fi
+    # A symlink is nearly always a dotfiles checkout: merging through it would
+    # then replace the link with a regular file and detach that path.
+    if [[ -L "$mcp_dest" ]]; then
+      if ! back_up_unmanaged "$mcp_dest"; then
+        return 1
+      fi
     fi
     if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
       return 1
