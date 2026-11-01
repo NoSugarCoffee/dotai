@@ -131,7 +131,7 @@ remove the lines from `~/.zshrc-local`.
 | Pi | `$PI_CODING_AGENT_DIR/AGENTS.md` (default `~/.pi/agent/AGENTS.md`) | `~/.agents/skills/` |
 | Generic agents | — | `~/.agents/skills/` |
 
-All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately. Pi's `AGENTS.md` is the exception: APM has no `pi` target, so it is compiled from `global/` and copied, the same way APM writes every other tool's global context file.
+All paths are **symlinks** — edit `rules/coding.md` or a skill once and every tool sees the change immediately. Pi is the exception: APM has no `pi` target, so its `AGENTS.md` is compiled from `global/` plus `rules/coding.md` and copied, and the public `.mcp.json` servers are linked to `mcp.json` beside it. Existing hand-authored Pi files are moved to `*.bak` once instead of being overwritten.
 
 ## Managing Skills
 
