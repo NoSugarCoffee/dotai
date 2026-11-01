@@ -355,11 +355,15 @@ for name, entry in public.items():
     key = normalize(name)
     if key in managed:
         continue
+    owned = name in written
     if name in servers:
-        # Refresh only an entry still holding exactly what was written before.
-        if written.get(name) == servers[name]:
+        # Refresh only an entry still holding exactly what this script wrote.
+        # Ownership is never claimed for a pre-existing same-name entry: a user
+        # who configured the server by hand must not have it rewritten later
+        # just because their value happened to match the public one.
+        if owned and written[name] == servers[name]:
             servers[name] = entry
-        managed[key] = name
+            managed[key] = name
     elif not any(normalize(other) == key for other in servers):
         servers[name] = entry
         managed[key] = name
