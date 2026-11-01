@@ -310,7 +310,11 @@ merge_public_mcp() {
 import json, os, sys, tempfile
 
 src, dest, state_path = sys.argv[1], sys.argv[2], sys.argv[3]
-public = json.load(open(src))["mcpServers"]
+# A missing .mcp.json means no public servers; previously managed ones still
+# have to be retired, so treat it as an empty set instead of bailing out.
+public = {}
+if os.path.isfile(src):
+    public = json.load(open(src))["mcpServers"]
 config = {}
 if os.path.isfile(dest):
     try:
@@ -359,6 +363,9 @@ for name, entry in public.items():
     elif not any(normalize(other) == key for other in servers):
         servers[name] = entry
         managed[key] = name
+# Nothing configured and nothing to record: leave a fresh machine untouched.
+if not config and not servers and not public:
+    sys.exit(0)
 # Top-level options such as autoEnableCodemode sit beside mcpServers; keep them.
 config["mcpServers"] = servers
 
@@ -426,25 +433,26 @@ install_pi() {
   # copy instead of linking: `pi mcp add`, and enable/exposure changes in /mcp,
   # write this file, and a link would put the user's servers — and any headers
   # or tokens they carry — into the checkout.
-  if [[ -f "$ROOT/.mcp.json" ]]; then
-    if [[ -d "$mcp_dest" ]]; then
-      echo "  ! $mcp_dest is a directory; move it aside" >&2
-      return 1
-    fi
-    # A symlink is nearly always a dotfiles checkout: merging through it would
-    # then replace the link with a regular file and detach that path.
-    if [[ -L "$mcp_dest" ]]; then
-      if ! back_up_unmanaged "$mcp_dest"; then
-        return 1
-      fi
-    fi
-    if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
-      return 1
-    fi
-    echo "  ✓ merged public servers → $mcp_dest"
-  else
+  if [[ ! -f "$ROOT/.mcp.json" ]]; then
+    # Nothing public to install, but servers this script installed earlier still
+    # have to be retired, so the merge runs with an empty public set.
     echo "  ! .mcp.json is missing — run 'apm install' to generate it" >&2
   fi
+  if [[ -d "$mcp_dest" ]]; then
+    echo "  ! $mcp_dest is a directory; move it aside" >&2
+    return 1
+  fi
+  # A symlink is nearly always a dotfiles checkout: merging through it would
+  # then replace the link with a regular file and detach that path.
+  if [[ -L "$mcp_dest" ]]; then
+    if ! back_up_unmanaged "$mcp_dest"; then
+      return 1
+    fi
+  fi
+  if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
+    return 1
+  fi
+  echo "  ✓ merged public servers → $mcp_dest"
 }
 
 # ── 8. Remove the retired claude-tabs command ──────────────────────
