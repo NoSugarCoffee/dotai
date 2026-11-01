@@ -73,7 +73,7 @@ Run `bash scripts/install.sh` after editing any file under `rules/` or `skills/`
 | `~/.config/github-copilot/intellij/global-copilot-instructions.md` | Symlink → `rules/coding.md` |
 | `~/.claude/rules/`, `~/.codex/AGENTS.md`, `~/.cursor/AGENTS.md`, `~/.copilot/AGENTS.md`, `~/.gemini/GEMINI.md`, … | `apm install -g --only apm global/` + `apm compile -g` |
 | `~/.pi/agent/AGENTS.md` | Generated: `global/` compiled with `apm compile --root <staging> --target agents`, then `rules/coding.md` appended — APM has no `pi` target, so `apm compile -g` skips it. `PI_CODING_AGENT_DIR` moves the directory |
-| `~/.pi/agent/mcp.json` | Merged copy of `.mcp.json`: public servers added, existing entries kept (a copy, not a symlink — `pi mcp add` writes this file; APM's MCP install has no `pi` target) |
+| `~/.pi/agent/mcp.json` | Merged copy of `.mcp.json`: managed entries are added and refreshed, entries you add or edit are kept (a copy, not a symlink — `pi mcp add` writes this file). `.dotai-managed-mcp.json` beside it records what was written |
 
 Each **`install.sh`** run first **removes symlinks** under those `skills` directories that point into this repo's `skills/` or `apm_modules/`, then recreates them from the current checkout. Ordinary directories and symlinks pointing elsewhere are left alone.
 
