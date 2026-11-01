@@ -307,18 +307,36 @@ import json, os, sys, tempfile
 
 src, dest = sys.argv[1], sys.argv[2]
 public = json.load(open(src))["mcpServers"]
-existing = {}
+config = {}
 if os.path.isfile(dest):
     try:
         with open(dest) as fh:
-            existing = json.load(fh).get("mcpServers", {})
+            config = json.load(fh)
     except (json.JSONDecodeError, AttributeError) as error:
         sys.exit("  ! %s is not a Pi MCP config (%s); fix or remove it" % (dest, error))
-merged = dict(public)
-merged.update(existing)
+if not isinstance(config, dict):
+    sys.exit("  ! %s is not a JSON object; fix or remove it" % dest)
+servers = config.get("mcpServers", {})
+if not isinstance(servers, dict):
+    sys.exit("  ! %s has a non-object mcpServers; fix or remove it" % dest)
+
+# Pi counts names differing only in - and _ as the same server and rejects the
+# second, so a public server is skipped when its normalized name is taken.
+def normalize(name):
+    return name.replace("_", "-")
+
+taken = set(normalize(name) for name in servers)
+for name, entry in public.items():
+    if normalize(name) in taken:
+        continue
+    servers[name] = entry
+    taken.add(normalize(name))
+# Top-level options such as autoEnableCodemode sit beside mcpServers; keep them.
+config["mcpServers"] = servers
+
 fd, tmp = tempfile.mkstemp(dir=os.path.dirname(dest), prefix=".mcp.json.")
 with os.fdopen(fd, "w") as fh:
-    json.dump({"mcpServers": merged}, fh, indent=2)
+    json.dump(config, fh, indent=2)
     fh.write("\n")
 os.chmod(tmp, 0o600)
 os.replace(tmp, dest)
