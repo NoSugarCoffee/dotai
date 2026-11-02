@@ -17,11 +17,7 @@ description: Global agent workflow rules for every project
 
 ## Credentials
 
-- Sign in to sites yourself rather than handing the browser back. Read credentials only through these prompt-free stores. Their keys are exported from `~/.zshrc-local`, which you source if your shell lacks them:
-  1. 1Password: `op` with `OP_SERVICE_ACCOUNT_TOKEN`, a read-only service account on vault `agent`.
-  2. Bitwarden: `bw` with `BW_SESSION`, using only items in folder `agent`.
-- If neither key exists, point the user to "Agent credentials" in the dotai README; don't set it up yourself.
-- Never call `op` without the service-account token. It falls back to the desktop app, which prompts the user.
-- Use the one login whose URL hostname equals the login page's hostname. If none or several match, ask. Never try candidates, because failed attempts can lock the account.
-- Never print a secret. Pipe it straight to whatever consumes it.
+- Sign in to sites yourself rather than handing the browser back. Fill any username, password, 动态码 / itoken / OTP or custom vault field on an ego-browser page with the `utils.credential-fill` skill. Never run `bw get`, `op read` or `op item get --reveal` yourself: their output is the secret.
+- The store is whichever of 1Password (`OP_SERVICE_ACCOUNT_TOKEN`, vault `agent`) or Bitwarden (`BW_SESSION`, whole vault) `~/.zshrc-local` exports; a machine sets up one. If neither exists, point the user to "Agent credentials" in the dotai README; don't set it up yourself.
+- The login is the one whose URL hostname, then path, matches the page. If the skill reports no match or a tie, ask the user to fix the vault rather than trying candidates: failed attempts can lock the account.
 - Prefer a dedicated login skill where one exists (e.g. `internal.cas-login`).

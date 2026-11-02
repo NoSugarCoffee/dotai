@@ -106,17 +106,18 @@ echo "export OP_SERVICE_ACCOUNT_TOKEN=$token" >> ~/.zshrc-local
 # Bitwarden: a session key for the whole vault (asks for the master password)
 bw login
 echo "export BW_SESSION=$(bw unlock --raw)" >> ~/.zshrc-local
-echo '{"name":"agent"}' | bw encode | bw create folder
 
 chmod 600 ~/.zshrc-local
 ```
 
-Put a login in the `agent` vault or folder, and give it the URL of the login
-page, for agents to use. Agents use only the login whose URL hostname matches
-the page they are on.
+For 1Password, put a login in the `agent` vault, with the URL of the login page.
+For Bitwarden, logins stay where they are: agents search the whole vault.
+Either way, agents use only the login whose URL hostname matches the page they
+are on (then the path, if several do). For an OTP prompt such as a 动态码, put the
+TOTP on the item whose URL matches the page that asks for it.
 
 - The 1Password service account reads only the `agent` vault.
-- `BW_SESSION` opens your whole Bitwarden vault; the folder only picks the login.
+- `BW_SESSION` opens your whole Bitwarden vault, and agents may use any login in it.
 
 To revoke access, delete the service account in 1Password and run `bw lock`, then
 remove the lines from `~/.zshrc-local`.
