@@ -1,0 +1,26 @@
+skills/utils/credential-fill/scripts/credential_fill.py
+  s_2fca2ae3214c11::t_90a190e3b81c31 1-215,217,225,227-242,246-261,263-271,275-289,291-298
+skills/utils/credential-fill/SKILL.md
+  s_2fca2ae3214c11::t_6845ba70ca717c 1-11,13-21,24-28
+skills/utils/credential-fill/tests/test_credential_fill.py
+  s_2fca2ae3214c11::t_02c197dbb9fc7b 1-84,89-103,105,107-112,120-144,152-162
+  s_2fca2ae3214c11::t_a43baf2d1e6582 113-119
+  s_2fca2ae3214c11::t_cb3cb03a1ad6b1 145-151
+  s_2fca2ae3214c11::t_3b13f7cc41943f 85-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "e082791fae345fe909f20f47731ed843f2073478",
+  "prompts": {},
+  "sessions": {
+    "s_2fca2ae3214c11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e3288bee-dc5c-476e-b7d8-b179b7fabc18",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
