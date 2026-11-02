@@ -13,6 +13,8 @@ description: Global agent workflow rules for every project
 ## Tool preferences
 
 - Prefer Ego Lite (`ego-browser` skill) for browser automation when it is available.
+- When the answer or the fix lives in a web page or a desktop app's UI, operate it yourself instead of handing the user click-by-click steps: a browser with `ego-browser`, a native app with `cua-driver`. Hand back only what needs the user: a password or Touch ID prompt, an approval only they may give, or a physical action.
+- Verify a GUI fix from its real output (the recorded file, the saved page, the app's log), not from a screenshot of a preview, which can be stale or fail to capture.
 - Use Orca Automations for cron jobs and recurring scheduled tasks.
 
 ## Credentials
