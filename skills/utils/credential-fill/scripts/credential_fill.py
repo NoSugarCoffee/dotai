@@ -237,24 +237,24 @@ class EgoPage:
             raise CredentialFillError(f"could not read the URL of page {self._page} in space {self._space}")
         return marked[-1]
 
-    def fill(self, selector: str, value: str, expected_host: str, submit: str) -> None:
+    def fill(self, selector: str, value: str, expected_page: str, submit: str) -> None:
         """The value travels base64-encoded on stdin (not argv, which `ps` shows) and is decoded in the
-        browser process. The host is checked right before typing and again before submitting. The two
-        cannot be one atomic step, because login inputs often sit in cross-origin frames, so a navigation
-        landing inside that window fails the second check and nothing is submitted."""
+        browser process. Host and path are checked right before typing, since a tie between logins on one
+        host was broken by path, and again before a submit click. Check and fill cannot be one atomic
+        step, because login inputs often sit in cross-origin frames, so a navigation landing inside that
+        window fails the second check and nothing is submitted."""
         encoded = base64.b64encode(value.encode()).decode()
         script = (
             f"const task = await taskSpace({space_literal(self._space)});\n"
             f"const page = task.page({json.dumps(self._page)});\n"
-            f"const expected = {json.dumps(expected_host)};\n"
-            "const assertHost = async () => {\n"
-            "  const host = new URL(await page.url()).hostname;\n"
-            "  if (host !== expected) throw new Error('page moved to ' + host);\n"
+            f"const expected = {json.dumps(expected_page)};\n"
+            "const assertPage = async () => {\n"
+            "  const now = new URL(await page.url());\n"
+            "  if (now.hostname + now.pathname !== expected) throw new Error('page moved to ' + now.hostname + now.pathname);\n"
             "};\n"
-            "await assertHost();\n"
+            "await assertPage();\n"
             f"await page.fill({json.dumps(selector)}, Buffer.from('{encoded}', 'base64').toString());\n"
-            "await assertHost();\n"
-            + (f"await page.click({json.dumps(submit)}, {{ label: 'submit' }});\n" if submit else "")
+            + (f"await assertPage();\nawait page.click({json.dumps(submit)}, {{ label: 'submit' }});\n" if submit else "")
             + f"console.log('{FILLED_MARK}');\n"
         )
         result = spawn(["ego-browser", "nodejs"], env=self._env, stdin=script)
@@ -283,12 +283,13 @@ def fill_credential(space: str, page: str, selector: str, field: Field, submit: 
     # The browser needs no vault access, so it does not inherit the store keys.
     browser = EgoPage(space, page, {key: value for key, value in env.items() if key not in STORE_KEYS})
     page_url = browser.url()
-    hostname = urlsplit(page_url).hostname or ""
+    parts = urlsplit(page_url)
+    hostname = parts.hostname or ""
     ref = select_login(store.list_logins(hostname), page_url)
     value = store.read(ref, field)
     if not value:
         raise NoMatchError(f"{ref.name!r} has no {field.label}")
-    browser.fill(selector, value, hostname, submit)
+    browser.fill(selector, value, hostname + parts.path, submit)
     submitted = f", then clicked {submit}" if submit else ""
     return f"filled {field.label} from {ref.name!r} into {selector} on {hostname}{submitted}"
 

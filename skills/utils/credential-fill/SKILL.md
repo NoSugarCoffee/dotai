@@ -18,8 +18,8 @@ It prints only `filled <field> from '<item>' into <selector> on <host>`, plus `,
 - **The login is picked from the page's own URL.** Hostname first; on a tie, the item whose URL path
   also matches. No match exits 2 naming the host; a remaining tie exits 2 naming the candidates. Fix the vault (add the
   page's URL to the right item); don't retry with another item.
-- **The host is checked just before typing and again before submitting**, so a page that navigated
-  away is not filled or not submitted.
+- **Host and path are checked just before typing, and again before a `--submit` click**, so a page that
+  navigated away, even to another login page on the same host, is not filled or not submitted.
 - **One field per call.** For username then password, call twice; then click submit yourself.
 - **A TOTP expires in about 30 seconds.** Fill it with `--submit '<selector of the submit button>'`, which
   clicks in the same browser call. A code submitted later is usually rejected.

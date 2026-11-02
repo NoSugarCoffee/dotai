@@ -106,12 +106,22 @@ class EndToEndTest(unittest.TestCase):
             else:
                 import json, os, re, urllib.parse
                 expected = json.loads(re.search(r'const expected = ("[^"]*");', script).group(1))
-                # Mirror assertHost() only where the script actually calls it before typing, so a
-                # script that drops the recheck fills the moved page and the test catches it.
-                checks_first = 0 <= script.find("await assertHost();") < script.find(".fill(")
-                if checks_first and urllib.parse.urlsplit(url).hostname != expected:
+                # Mirror assertPage() only where the script calls it, so a script that drops a recheck
+                # fills or submits the moved page and the test catches it.
+                def here(u):
+                    parts = urllib.parse.urlsplit(u)
+                    return parts.hostname + parts.path
+                fill_at = script.find(".fill(")
+                if 0 <= script.find("await assertPage();") < fill_at and here(url) != expected:
                     print("Error: page moved", file=sys.stderr)
                     sys.exit(1)
+                moved = os.environ.get("MOVE_AFTER_FILL")
+                if moved and ".click(" in script:
+                    url = moved
+                    checks_before_click = fill_at < script.rfind("await assertPage();") < script.find(".click(")
+                    if checks_before_click and here(url) != expected:
+                        print("Error: page moved", file=sys.stderr)
+                        sys.exit(1)
                 if os.environ.get("BW_SESSION") or os.environ.get("OP_SERVICE_ACCOUNT_TOKEN"):
                     print("Error: browser inherited a store key", file=sys.stderr)
                     sys.exit(1)
@@ -119,12 +129,13 @@ class EndToEndTest(unittest.TestCase):
             """,
         )
 
-    def run_cli(self, *args: str, move_page_to: str = "") -> subprocess.CompletedProcess[str]:
+    def run_cli(self, *args: str, move_page_to: str = "", move_after_fill: str = "") -> subprocess.CompletedProcess[str]:
         env = {
             **os.environ,
             "PATH": f"{self.tmp}{os.pathsep}{os.environ['PATH']}",
             "BW_SESSION": "test",
             "MOVE_PAGE_TO": move_page_to,
+            "MOVE_AFTER_FILL": move_after_fill,
         }
         env.pop("OP_SERVICE_ACCOUNT_TOKEN", None)
         return subprocess.run(
@@ -154,6 +165,23 @@ class EndToEndTest(unittest.TestCase):
     def test_refuses_when_the_page_moves_after_selection(self) -> None:
         self.page_url.write_text("https://cas.example.com/login_en.html")
         result = self.run_cli("--selector", "#pw", "--field", "password", move_page_to="https://evil.example.org/x")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("could not fill #pw", result.stderr)
+        self.assertNotIn(SECRET, result.stdout + result.stderr)
+
+    def test_does_not_submit_when_the_page_moves_after_filling(self) -> None:
+        result = self.run_cli(
+            "--selector", "input[name=otpcode]", "--field", "totp", "--submit", "#verify",
+            move_after_fill="https://evil.example.org/x",
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("could not fill", result.stderr)
+
+    def test_refuses_another_login_page_on_the_same_host(self) -> None:
+        self.page_url.write_text("https://cas.example.com/login_en.html")
+        result = self.run_cli(
+            "--selector", "#pw", "--field", "password", move_page_to="https://cas.example.com/sys_login.html"
+        )
         self.assertEqual(result.returncode, 2)
         self.assertIn("could not fill #pw", result.stderr)
         self.assertNotIn(SECRET, result.stdout + result.stderr)
