@@ -12,17 +12,20 @@ python3 ~/.claude/skills/utils.credential-fill/scripts/credential_fill.py \
   --field username|password|totp|custom:<name> [--submit '<button selector>']
 ```
 
-It prints only `filled <field> from '<item>' into <selector> on <host>`.
+It prints only `filled <field> from '<item>' into <selector> on <host>`, plus `, then clicked <submit>` with
+`--submit`.
 
 - **The login is picked from the page's own URL.** Hostname first; on a tie, the item whose URL path
-  also matches. No match or a remaining tie exits 2 and names the candidates. Fix the vault (add the
+  also matches. No match exits 2 naming the host; a remaining tie exits 2 naming the candidates. Fix the vault (add the
   page's URL to the right item); don't retry with another item.
-- **The host is checked again just before typing**, so a page that navigated away gets nothing.
+- **The host is checked just before typing and again before submitting**, so a page that navigated
+  away is not filled or not submitted.
 - **One field per call.** For username then password, call twice; then click submit yourself.
 - **A TOTP expires in about 30 seconds.** Fill it with `--submit '<selector of the submit button>'`, which
-  clicks in the same browser call. A separate click a minute later fails with "check_otp_code failed".
-- The store is whichever key `~/.zshrc-local` exports: `OP_SERVICE_ACCOUNT_TOKEN` (vault `agent`) or
-  `BW_SESSION` (whole vault).
+  clicks in the same browser call. A code submitted later is usually rejected.
+- The store comes from the calling environment, or from `~/.zshrc-local` when neither key is set:
+  `OP_SERVICE_ACCOUNT_TOKEN` (vault `agent`) or `BW_SESSION` (whole vault). A machine sets up one; if
+  both are set, 1Password is used.
 
 Not covered: passkeys (a WebAuthn ceremony, not a value), SMS or email codes, and captchas. Those
 need the user.

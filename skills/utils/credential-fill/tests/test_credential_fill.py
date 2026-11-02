@@ -1,3 +1,4 @@
+import argparse
 import importlib.util
 import json
 import os
@@ -51,7 +52,7 @@ class ParseFieldTest(unittest.TestCase):
         self.assertEqual(cf.parse_field("custom:sysAccount").label, "custom:sysAccount")
 
     def test_unknown_field_is_rejected(self) -> None:
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegex(argparse.ArgumentTypeError, "unknown field"):
             cf.parse_field("passkey")
 
 
@@ -102,11 +103,19 @@ class EndToEndTest(unittest.TestCase):
             # Like the real ego-browser off a terminal, console.log goes to stderr.
             if ".fill(" not in script:
                 print("CF_URL=" + url, file=sys.stderr)
-            elif '"' + __import__("urllib.parse").parse.urlsplit(url).hostname + '"' in script:
-                print("CF_FILLED", file=sys.stderr)
             else:
-                print("Error: page moved", file=sys.stderr)
-                sys.exit(1)
+                import json, os, re, urllib.parse
+                expected = json.loads(re.search(r'const expected = ("[^"]*");', script).group(1))
+                # Mirror assertHost() only where the script actually calls it before typing, so a
+                # script that drops the recheck fills the moved page and the test catches it.
+                checks_first = 0 <= script.find("await assertHost();") < script.find(".fill(")
+                if checks_first and urllib.parse.urlsplit(url).hostname != expected:
+                    print("Error: page moved", file=sys.stderr)
+                    sys.exit(1)
+                if os.environ.get("BW_SESSION") or os.environ.get("OP_SERVICE_ACCOUNT_TOKEN"):
+                    print("Error: browser inherited a store key", file=sys.stderr)
+                    sys.exit(1)
+                print("CF_FILLED", file=sys.stderr)
             """,
         )
 

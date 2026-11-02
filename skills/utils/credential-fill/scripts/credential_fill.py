@@ -105,9 +105,24 @@ def select_login(refs: list[LoginRef], page_url: str) -> LoginRef:
     raise AmbiguousMatchError(f"several logins match {page.hostname}{page.path}: {names}")
 
 
+STORE_KEYS = ("OP_SERVICE_ACCOUNT_TOKEN", "BW_SESSION")
+
+
+def spawn(args: list[str], *, env: dict[str, str], stdin: str | None) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(args, input=stdin, capture_output=True, text=True, env=env, check=False)
+    except FileNotFoundError as error:
+        raise CredentialFillError(f"`{args[0]}` is not installed or not on PATH") from error
+
+
+def cli_value(output: str) -> str:
+    """Drop only the line ending the CLI adds; a credential's own leading or trailing spaces are kept."""
+    return output.removesuffix("\n").removesuffix("\r")
+
+
 def run_quiet(args: list[str], *, env: dict[str, str], stdin: str | None) -> str:
     """Run a store or browser command; on failure report only the command name, never its output."""
-    result = subprocess.run(args, input=stdin, capture_output=True, text=True, env=env, check=False)
+    result = spawn(args, env=env, stdin=stdin)
     if result.returncode != 0:
         raise CredentialFillError(f"`{args[0]} {args[1] if len(args) > 1 else ''}` exited {result.returncode}")
     return result.stdout
@@ -143,7 +158,7 @@ class BitwardenStore:
             if len(values) != 1:
                 raise NoMatchError(f"{ref.name!r} has no single custom field {field.custom_name!r}")
             return values[0]
-        return run_quiet(["bw", "get", field.kind.value, ref.item_id], env=self._env, stdin=None).strip()
+        return cli_value(run_quiet(["bw", "get", field.kind.value, ref.item_id], env=self._env, stdin=None))
 
 
 class OnePasswordStore:
@@ -166,9 +181,9 @@ class OnePasswordStore:
     def read(self, ref: LoginRef, field: Field) -> str:
         base = ["op", "item", "get", ref.item_id, "--vault", OP_VAULT]
         if field.kind is FieldKind.TOTP:
-            return run_quiet([*base, "--otp"], env=self._env, stdin=None).strip()
+            return cli_value(run_quiet([*base, "--otp"], env=self._env, stdin=None))
         label = field.custom_name if field.kind is FieldKind.CUSTOM else field.kind.value
-        return run_quiet([*base, "--fields", f"label={label}", "--reveal"], env=self._env, stdin=None).strip()
+        return cli_value(run_quiet([*base, "--fields", f"label={label}", "--reveal"], env=self._env, stdin=None))
 
 
 def store_env() -> dict[str, str]:
@@ -184,13 +199,14 @@ def store_env() -> dict[str, str]:
     ).stdout
     for entry in dump.split("\0"):
         key, _, value = entry.partition("=")
-        if key in ("OP_SERVICE_ACCOUNT_TOKEN", "BW_SESSION") and value:
+        if key in STORE_KEYS and value:
             env[key] = value
     return env
 
 
 def choose_store(env: dict[str, str]) -> Store:
-    # 1Password only with the service-account token: without it `op` prompts through the desktop app.
+    # A machine sets up one store. If both keys are present, 1Password wins: without its
+    # service-account token `op` prompts through the desktop app, so its presence is deliberate.
     if env.get("OP_SERVICE_ACCOUNT_TOKEN"):
         return OnePasswordStore(env)
     if env.get("BW_SESSION"):
@@ -215,9 +231,7 @@ class EgoPage:
             f"const task = await taskSpace({space_literal(self._space)});\n"
             f"console.log('{URL_MARK}' + await task.page({json.dumps(self._page)}).url());\n"
         )
-        result = subprocess.run(
-            ["ego-browser", "nodejs"], input=script, capture_output=True, text=True, env=self._env, check=False
-        )
+        result = spawn(["ego-browser", "nodejs"], env=self._env, stdin=script)
         marked = [line.removeprefix(URL_MARK) for line in ego_output(result) if line.startswith(URL_MARK)]
         if result.returncode != 0 or not marked:
             raise CredentialFillError(f"could not read the URL of page {self._page} in space {self._space}")
@@ -225,21 +239,25 @@ class EgoPage:
 
     def fill(self, selector: str, value: str, expected_host: str, submit: str) -> None:
         """The value travels base64-encoded on stdin (not argv, which `ps` shows) and is decoded in the
-        browser process. The host is checked again right before typing, so a page that navigated away
-        after selection never receives the secret."""
+        browser process. The host is checked right before typing and again before submitting. The two
+        cannot be one atomic step, because login inputs often sit in cross-origin frames, so a navigation
+        landing inside that window fails the second check and nothing is submitted."""
         encoded = base64.b64encode(value.encode()).decode()
         script = (
             f"const task = await taskSpace({space_literal(self._space)});\n"
             f"const page = task.page({json.dumps(self._page)});\n"
-            f"const host = new URL(await page.url()).hostname;\n"
-            f"if (host !== {json.dumps(expected_host)}) throw new Error('page moved to ' + host);\n"
+            f"const expected = {json.dumps(expected_host)};\n"
+            "const assertHost = async () => {\n"
+            "  const host = new URL(await page.url()).hostname;\n"
+            "  if (host !== expected) throw new Error('page moved to ' + host);\n"
+            "};\n"
+            "await assertHost();\n"
             f"await page.fill({json.dumps(selector)}, Buffer.from('{encoded}', 'base64').toString());\n"
+            "await assertHost();\n"
             + (f"await page.click({json.dumps(submit)}, {{ label: 'submit' }});\n" if submit else "")
-            +             f"console.log('{FILLED_MARK}');\n"
+            + f"console.log('{FILLED_MARK}');\n"
         )
-        result = subprocess.run(
-            ["ego-browser", "nodejs"], input=script, capture_output=True, text=True, env=self._env, check=False
-        )
+        result = spawn(["ego-browser", "nodejs"], env=self._env, stdin=script)
         lines = ego_output(result)
         if result.returncode != 0 or FILLED_MARK not in lines:
             reason = scrub(lines[-1:] or ["no output"], value, encoded)
@@ -262,7 +280,8 @@ def scrub(lines: list[str], *secrets: str) -> str:
 def fill_credential(space: str, page: str, selector: str, field: Field, submit: str) -> str:
     env = store_env()
     store = choose_store(env)
-    browser = EgoPage(space, page, env)
+    # The browser needs no vault access, so it does not inherit the store keys.
+    browser = EgoPage(space, page, {key: value for key, value in env.items() if key not in STORE_KEYS})
     page_url = browser.url()
     hostname = urlsplit(page_url).hostname or ""
     ref = select_login(store.list_logins(hostname), page_url)
