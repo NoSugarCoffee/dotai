@@ -1,0 +1,19 @@
+skills/code/review-workflow/SKILL.md
+  s_b84a9744de8d28::t_3ab0e4ee533a9d 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.51-trip",
+  "base_commit_sha": "a0773f905478c3a44fa4863310a6c1997cc39c87",
+  "prompts": {},
+  "sessions": {
+    "s_b84a9744de8d28": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1a1bd-f5be-78a0-a06c-eaa5d2fd117c",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
