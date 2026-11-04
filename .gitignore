@@ -22,5 +22,5 @@
 apm_modules/
 
 # Local review evaluations and Python helper bytecode.
-/skills/code/review-workflow-workspace/
-/skills/code/review-workflow/**/__pycache__/
+/skills/code/dotai-review-workspace/
+/skills/code/dotai-review/**/__pycache__/

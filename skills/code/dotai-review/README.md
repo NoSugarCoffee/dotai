@@ -7,7 +7,7 @@ Two review processes share one finding contract and one publisher with GitLab an
 | Routine | One reviewer, followed by a deliberate verification pass | Local Markdown, GitLab or GitHub |
 | Deep | Architecture, independent specialists, validation, severity audit | Local Markdown, GitLab or GitHub |
 
-The source is this directory. `scripts/install.sh` publishes it as `code.review-workflow` for the repo's supported tools; the same directory is a Claude Code plugin. There are no generated copies, external plugin dependencies, bundled server configuration, or CI workflows.
+The source is this directory. `scripts/install.sh` publishes it as `code.dotai-review` for the repo's supported tools; the same directory is a Claude Code plugin. There are no generated copies, external plugin dependencies, bundled server configuration, or CI workflows.
 
 ## Design and process
 
@@ -38,14 +38,14 @@ publisher: the helper does not itself launch agents or enforce their independenc
 From the dotai checkout, run `bash scripts/install.sh`. Start a new agent session and ask:
 
 ```text
-Use review-workflow for a routine review of my pending changes. Keep the report local.
+Use dotai-review for a routine review of my pending changes. Keep the report local.
 
-Use review-workflow for a deep review of HEAD~5..HEAD.
+Use dotai-review for a deep review of HEAD~5..HEAD.
 
-Use review-workflow to review https://gitlab.example.com/team/app/-/merge_requests/42
+Use dotai-review to review https://gitlab.example.com/team/app/-/merge_requests/42
 and post validated findings to that MR.
 
-Use review-workflow for a deep review of https://github.com/owner/repo/pull/42
+Use dotai-review for a deep review of https://github.com/owner/repo/pull/42
 and post validated findings to that PR.
 ```
 
@@ -56,7 +56,7 @@ An MR/PR URL alone does not select publication. Both modes can publish when aske
 Load the local package:
 
 ```bash
-claude --plugin-dir ./skills/code/review-workflow
+claude --plugin-dir ./skills/code/dotai-review
 ```
 
 Or register this repository as a marketplace in Claude Code:
@@ -75,7 +75,7 @@ The repository marketplace can be installed from `NoSugarCoffee/dotai` once this
 /dotai-review:review https://github.com/owner/repo/pull/42 post to GitHub
 ```
 
-`/dotai-review:review-workflow` is the shared core entry. Prefer either the portable skill or plugin entry for a given invocation; both run the same rules. Plugin agents have read-only tools and return findings to the orchestrator, which alone can publish.
+`/dotai-review:dotai-review` is the shared core entry. Prefer either the portable skill or plugin entry for a given invocation; both run the same rules. Plugin agents have read-only tools and return findings to the orchestrator, which alone can publish.
 
 ## GitLab and GitHub integration
 
@@ -95,8 +95,8 @@ The three outputs are `review-summary.md`, `review-inline-comments.md`, and `rev
 ## Verify
 
 ```bash
-python3 -m unittest discover -s skills/code/review-workflow/tests -v
-claude plugin validate skills/code/review-workflow
+python3 -m unittest discover -s skills/code/dotai-review/tests -v
+claude plugin validate skills/code/dotai-review
 claude plugin validate .claude-plugin/marketplace.json
 bash scripts/install.sh --list
 bash scripts/verify-skills-layout.sh
