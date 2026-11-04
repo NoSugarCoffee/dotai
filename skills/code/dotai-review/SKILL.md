@@ -1,6 +1,6 @@
 ---
-name: review-workflow
-description: Review code changes using a routine reviewer or a deep multi-agent pipeline, produce Markdown reports, and publish findings to GitLab merge requests or GitHub pull requests when requested. Use when the user names review-workflow or dotai-review, requests routine or deep review, or asks to post findings to GitLab or GitHub. Supports local changes, branch comparisons, and commit ranges.
+name: dotai-review
+description: Review code changes using a routine reviewer or a deep multi-agent pipeline, produce Markdown reports, and publish findings to GitLab merge requests or GitHub pull requests when requested. Use when the user names dotai-review, requests routine or deep review, or asks to post findings to GitLab or GitHub. Supports local changes, branch comparisons, and commit ranges.
 ---
 
 # Review workflow
@@ -12,7 +12,7 @@ This directory is both a portable skill and the self-contained `dotai-review` Cl
 Before running commands, set `ROOT` to the absolute directory containing this skill's resolved `SKILL.md` and `OUT` to a persistent directory for this target outside the reviewed checkout. For example, when installed by dotai:
 
 ```bash
-ROOT="$(python3 -c 'from pathlib import Path; print((Path.home() / ".agents/skills/code.review-workflow/SKILL.md").resolve().parent)')"
+ROOT="$(python3 -c 'from pathlib import Path; print((Path.home() / ".agents/skills/code.dotai-review/SKILL.md").resolve().parent)')"
 OUT="$HOME/.cache/dotai-review/github.com/OWNER/REPO/NUMBER"
 mkdir -p "$OUT"
 ```
@@ -46,4 +46,4 @@ Replace the example host, repository and number with the captured target; reuse 
 
 ## Plugin entry points
 
-`/dotai-review:review` selects routine depth; `/dotai-review:deep-review` selects deep depth. Both accept ordinary language for target and output. The portable entry is `review-workflow`. Entry points refer to these same instructions.
+`/dotai-review:review` selects routine depth; `/dotai-review:deep-review` selects deep depth. Both accept ordinary language for target and output. The portable entry is `dotai-review`. Entry points refer to these same instructions.

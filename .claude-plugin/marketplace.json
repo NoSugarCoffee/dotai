@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "dotai-review",
-      "source": "./skills/code/review-workflow"
+      "source": "./skills/code/dotai-review"
     }
   ]
 }

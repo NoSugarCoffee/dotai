@@ -31,7 +31,7 @@ global/         APM package of user-scope agent instructions (MRs/PRs, …)
 
 skills/         Skills authored in this repo, by category
   <category>/<name>/SKILL.md
-  code/code-review/       Master review skill + nested focused reviewers
+  code/deprecated-code-review/  Deprecated: use code/dotai-review
   code/prior-art/         Research existing projects before designing a feature
   compass/                Symlinks into another repo (see external-skills.conf)
   internal/               Private submodule (NoSugarCoffee/dotai-internal); empty without access

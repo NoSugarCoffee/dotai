@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: Comprehensive code review - orchestrates focused sub-reviews for security, performance, architecture, maintainability, and coding standards. Full and multi-domain subsets run reviewers in parallel when the runtime allows. Precision over recall.
+name: deprecated-code-review
+description: DEPRECATED — use code.dotai-review instead. Comprehensive code review - orchestrates focused sub-reviews for security, performance, architecture, maintainability, and coding standards. Full and multi-domain subsets run reviewers in parallel when the runtime allows. Precision over recall.
 ---
 
 # Code Review
