@@ -1,0 +1,23 @@
+scripts/install.sh
+  s_dd8a490471e892::t_d550ad9f4f5358 573-582,585-587,590-625,636-650,699,702
+  s_dd8a490471e892::t_83154e7cd9d704 24,317-318,323,328,446-484,506-509,512-513
+  s_dd8a490471e892::t_0a1f70b9de8283 401
+scripts/tests/pi-merge_test.sh
+  s_dd8a490471e892::t_d6620b7aff076a 1-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "8c04fe75a47c76f239b262cb606a17cd132fc7e8",
+  "prompts": {},
+  "sessions": {
+    "s_dd8a490471e892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32b6f98-5868-4198-9d79-6a1fa55fa420",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
