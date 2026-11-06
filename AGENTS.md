@@ -16,9 +16,9 @@ anything that ships with a program, such as the skill pack a package bundles (`c
 agents are told: rules, global instructions, authored and vendored skills, hooks and MCP server
 lists. Don't vendor a skill here that its program already ships, and don't install programs.
 
-Private company MCP servers belong in the user APM manifest (`~/.apm/apm.yml`),
-installed with `apm install -g --target claude,codex --mcp ...`. Never add them
-to this repository's `apm.yml`, `.mcp.json`, or lockfile.
+Private company MCP servers belong in the private submodule's
+`internal/mcp/apm.yml`. Never add them to this repository's `apm.yml`,
+`.mcp.json`, or lockfile.
 
 ## Repo layout
 
@@ -34,7 +34,12 @@ skills/         Skills authored in this repo, by category
   code/deprecated-code-review/  Deprecated: use code/dotai-review
   code/prior-art/         Research existing projects before designing a feature
   compass/                Symlinks into another repo (see external-skills.conf)
-  internal/               Private submodule (NoSugarCoffee/dotai-internal); empty without access
+
+internal/       Private submodule (NoSugarCoffee/dotai-internal); empty without access
+  skills/<name>/SKILL.md  Private skills, published as internal.<name>
+  mcp/apm.yml             Private MCP servers
+  mcp/exceptions.conf     MCP servers allowed in one CLI only
+  scripts/sync-mcp        Installs MCP servers, checks drift, adopts hand-added ones
 
 apm.yml         Upstream skills + public MCP server dependencies
 apm.lock.yaml   Resolved commits and per-file hashes (committed)
@@ -83,7 +88,18 @@ Each **`install.sh`** run first **removes symlinks** under those `skills` direct
 
 **Authored here:** create `skills/<category>/<name>/SKILL.md` and run `bash scripts/install.sh`. A directory without `SKILL.md` is skipped, not published.
 
-**Private (company-internal):** commit `<name>/SKILL.md` to the `skills/internal/` submodule, then bump the submodule pointer here. Fetch it with `git submodule update --init skills/internal`; without access the directory stays empty and nothing is published.
+**Private (company-internal):** commit `skills/<name>/SKILL.md` to the `internal/` submodule, then bump the submodule pointer here. Fetch it with `git submodule update --init internal`; without access the directory stays empty and nothing is published.
+
+## MCP servers
+
+Every server declared in `apm.yml` (public) or `internal/mcp/apm.yml` (private) goes to Claude Code, Codex, and Pi at user scope; `bash scripts/install.sh` installs them and ends with a drift check that only warns.
+
+- `install.sh --check-mcp` reports servers missing from a CLI, servers no manifest declares, and URL mismatches; exits 1 on drift.
+- `install.sh --adopt-mcp NAME` moves a hand-added HTTP server into `internal/mcp/apm.yml` and installs it everywhere.
+- `install.sh --except-mcp TOOL NAME` allows a server in one CLI only (`internal/mcp/exceptions.conf`).
+- A remote plain-HTTP server is never installed to Codex (APM rejects it).
+- Deleting a manifest entry removes the server from all three CLIs. Servers dotai never installed are only reported, never deleted.
+- The private repo used to live at `skills/internal/`; `install.sh` removes that leftover checkout when it is clean and pushed, and stops with the reason otherwise.
 
 **From an upstream repo:**
 
