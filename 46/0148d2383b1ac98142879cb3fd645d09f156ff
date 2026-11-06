@@ -1,0 +1,28 @@
+docs/superpowers/specs/2026-11-06-mcp-parity-design.md
+  s_dd8a490471e892::t_cc76efc23c6237 1-35,38-154,166-191
+  s_dd8a490471e892::t_7ca91dfc95edeb 155-165
+  s_dd8a490471e892::t_a78951d22f4e15 36-37
+docs/superpowers/plans/2026-11-06-mcp-parity.md
+  s_dd8a490471e892::t_5f07c980ce1776 196
+  s_dd8a490471e892::t_3915e38429b6a9 1-88,90,92-195,197-208
+  s_dd8a490471e892::t_5dc03e0a8aad0b 89,91
+docs/superpowers/specs/2026-11-06-mcp-profiles-prior-art.md
+  s_dd8a490471e892::t_c1dd22f2f7dda1 1-117,134-141
+  s_dd8a490471e892::t_efeccd6ad616da 118-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "460148d2383b1ac98142879cb3fd645d09f156ff",
+  "prompts": {},
+  "sessions": {
+    "s_dd8a490471e892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32b6f98-5868-4198-9d79-6a1fa55fa420",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
