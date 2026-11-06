@@ -21,6 +21,7 @@ SKILLS_SRC="$ROOT/skills"
 APM_MODULES="$ROOT/apm_modules"
 # Private submodule (NoSugarCoffee/dotai-internal): skills/, mcp/, scripts/.
 INTERNAL_DIR="$ROOT/internal"
+SYNC_MCP="$INTERNAL_DIR/scripts/sync-mcp"
 RULES_SRC="$ROOT/rules"
 GLOBAL_PKG="$ROOT/global"
 
@@ -313,21 +314,18 @@ back_up_unmanaged() {
   echo "  ✓ moved existing $path → $backup"
 }
 
-# Merge the public .mcp.json servers into Pi's own MCP file. Entries this script
+# Merge the managed servers (public .mcp.json plus the private ones) into Pi's
+# own MCP file. Entries this script
 # wrote last run are refreshed when the user left them alone; anything the user
 # added or edited wins, so an ordinary run never discards their customization.
 # The sidecar records what was written, which is the only way to tell the two
 # apart once the file is on disk.
-merge_public_mcp() {
+merge_managed_mcp() {
   python3 - "$1" "$2" "$3" <<'PY'
 import json, os, sys, tempfile
 
 src, dest, state_path = sys.argv[1], sys.argv[2], sys.argv[3]
-# A missing .mcp.json means no public servers; previously managed ones still
-# have to be retired, so treat it as an empty set instead of bailing out.
-public = {}
-if os.path.isfile(src):
-    public = json.load(open(src))["mcpServers"]
+public = json.load(open(src))["mcpServers"]
 config = {}
 if os.path.isfile(dest):
     try:
@@ -400,10 +398,9 @@ PY
 install_pi() {
   echo "→ Pi"
   mkdir -p "$PI_AGENT_DIR"
-  local staging dest mcp_dest
+  local staging dest
   staging="$(mktemp -d)"
   dest="$PI_AGENT_DIR/AGENTS.md"
-  mcp_dest="$PI_AGENT_DIR/mcp.json"
   if [[ -d "$dest" ]]; then
     rm -rf "$staging"
     echo "  ! $dest is a directory; move it aside" >&2
@@ -446,6 +443,45 @@ install_pi() {
     return 1
   fi
 
+  install_pi_mcp
+}
+
+# Write the servers Pi should get to $1: the public .mcp.json plus, when the
+# private repo is present, `sync-mcp --emit-pi`. A name in both is an error
+# rather than a silent override, because the two would install different URLs.
+managed_mcp_source() {
+  local out="$1" private_json
+  private_json="$(mktemp)"
+  if [[ -x "$SYNC_MCP" ]]; then
+    if ! "$SYNC_MCP" --emit-pi > "$private_json"; then
+      rm -f "$private_json"
+      echo "  ! sync-mcp --emit-pi failed" >&2
+      return 1
+    fi
+  else
+    echo '{"mcpServers": {}}' > "$private_json"
+  fi
+  python3 -I - "$ROOT/.mcp.json" "$private_json" "$out" <<'PY'
+import json, os, sys
+
+public_path, private_path, out = sys.argv[1:4]
+# A missing .mcp.json means no public servers; previously managed ones still
+# have to be retired, so treat it as an empty set instead of bailing out.
+public = json.load(open(public_path))["mcpServers"] if os.path.isfile(public_path) else {}
+private = json.load(open(private_path))["mcpServers"]
+both = sorted(set(public) & set(private))
+if both:
+    sys.exit("  ! declared in both the public and private manifest: " + ", ".join(both))
+with open(out, "w") as fh:
+    json.dump({"mcpServers": {**public, **private}}, fh)
+PY
+  local status=$?
+  rm -f "$private_json"
+  return "$status"
+}
+
+install_pi_mcp() {
+  local mcp_dest="$PI_AGENT_DIR/mcp.json" source_json
   # The checked-in .mcp.json holds the public servers APM installs per target;
   # Pi reads the same {"mcpServers": …} shape from its agent directory. Merge a
   # copy instead of linking: `pi mcp add`, and enable/exposure changes in /mcp,
@@ -467,10 +503,14 @@ install_pi() {
       return 1
     fi
   fi
-  if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
+  source_json="$(mktemp)"
+  if ! managed_mcp_source "$source_json" \
+    || ! merge_managed_mcp "$source_json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
+    rm -f "$source_json"
     return 1
   fi
-  echo "  ✓ merged public servers → $mcp_dest"
+  rm -f "$source_json"
+  echo "  ✓ merged public and private servers → $mcp_dest"
 }
 
 # ── 8. Remove the retired claude-tabs command ──────────────────────
@@ -530,16 +570,59 @@ migrate_legacy_internal_checkout() {
 
 # ── Main ───────────────────────────────────────────────────────────
 usage() {
-  echo "Usage: bash scripts/install.sh [--list | --sync-mcp [--dry-run] [--target claude,codex]]"
+  cat <<'USAGE'
+Usage: bash scripts/install.sh [option]
+  (none)                       publish rules and skills, sync MCP servers, warn on MCP drift
+  --list                       print the resolved "<link-name>\t<source-dir>" pairs and exit
+  --sync-mcp [--dry-run] [--target claude,codex]
+                               only sync MCP servers to Claude Code and Codex
+  --check-mcp                  report MCP drift across Claude Code, Codex, and Pi; exit 1 on drift
+  --adopt-mcp NAME             declare a hand-added server in internal/mcp/apm.yml, then install
+  --except-mcp TOOL NAME       allow a server in one CLI only (internal/mcp/exceptions.conf)
+USAGE
 }
 
-sync_private_mcp() {
-  local sync_script="$SKILLS_SRC/internal/scripts/sync-mcp"
-  if [[ ! -x "$sync_script" ]]; then
-    echo "error: private MCP sync script is unavailable. Run bash scripts/install.sh to initialize the pinned private submodule; private repository access is required." >&2
+require_sync_mcp() {
+  if [[ ! -x "$SYNC_MCP" ]]; then
+    echo "error: $SYNC_MCP is unavailable. Run bash scripts/install.sh to initialize the internal/ submodule; private repository access is required." >&2
     return 1
   fi
-  env -u CLAUDE_CONFIG_DIR "$sync_script" "$@"
+}
+
+# Claude profiles set CLAUDE_CONFIG_DIR; APM must write the shared ~/.claude.json.
+sync_private_mcp() {
+  require_sync_mcp
+  env -u CLAUDE_CONFIG_DIR "$SYNC_MCP" --public-mcp "$ROOT/.mcp.json" "$@"
+}
+
+run_private_sync() {
+  echo "→ MCP servers (Claude Code, Codex)"
+  if [[ ! -x "$SYNC_MCP" ]]; then
+    echo "  · private MCP sync skipped (internal/ not initialised)"
+    return 0
+  fi
+  sync_private_mcp
+}
+
+# The check, adopt and except modes read each CLI's live configuration.
+run_sync_mcp_live() {
+  require_sync_mcp
+  "$SYNC_MCP" "$@" --public-mcp "$ROOT/.mcp.json" \
+    --claude-json "$HOME/.claude.json" --pi-mcp "$PI_AGENT_DIR/mcp.json"
+}
+
+check_mcp() {
+  run_sync_mcp_live --check
+}
+
+# Run last by a plain install: drift is reported, never fatal, so one stray
+# server does not block unrelated skill updates.
+warn_on_mcp_drift() {
+  [[ -x "$SYNC_MCP" ]] || return 0
+  echo "→ MCP drift check"
+  if ! check_mcp; then
+    echo "  ! MCP drift found (see above); bash scripts/install.sh --check-mcp exits non-zero until it is resolved" >&2
+  fi
 }
 
 main() {
@@ -548,6 +631,21 @@ main() {
     --sync-mcp)
       shift
       sync_private_mcp "$@"
+      return
+      ;;
+    --check-mcp)
+      [[ "$#" -eq 1 ]] || { usage >&2; return 1; }
+      check_mcp
+      return
+      ;;
+    --adopt-mcp)
+      [[ "$#" -eq 2 ]] || { usage >&2; return 1; }
+      run_sync_mcp_live --adopt "$2"
+      ;;
+    --except-mcp)
+      [[ "$#" -eq 3 ]] || { usage >&2; return 1; }
+      run_sync_mcp_live --except "$2" "$3"
+      check_mcp
       return
       ;;
     --list)
@@ -598,8 +696,10 @@ main() {
   install_copilot_skills
   install_copilot_intellij
   install_global_instructions
+  run_private_sync
   install_pi
   remove_legacy_command
+  warn_on_mcp_drift
 
   echo ""
   echo "✅ dotai installed."
