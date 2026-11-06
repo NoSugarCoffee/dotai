@@ -1,0 +1,27 @@
+.gitmodules
+  s_dd8a490471e892::t_9bee3e334cb39a 1
+  s_dd8a490471e892::t_f08c416138cd9d 2
+scripts/install.sh
+  s_dd8a490471e892::t_67e768be7bc0d9 612-614
+  s_dd8a490471e892::t_cbd1ff930f4c0c 22-23,77-87,170,485-530,575,581-582,584-585,591
+scripts/tests/migrate-internal_test.sh
+  s_dd8a490471e892::t_152576363cd42f 1-132
+scripts/verify-skills-layout.sh
+  s_dd8a490471e892::t_6c024e9e5cc46b 10,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "b489870203b3c43b716607eaa3d1fdd281dbaa8d",
+  "prompts": {},
+  "sessions": {
+    "s_dd8a490471e892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32b6f98-5868-4198-9d79-6a1fa55fa420",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
