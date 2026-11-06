@@ -1,0 +1,22 @@
+scripts/install.sh
+  s_dd8a490471e892::t_ffe38ef85ac508 571-595
+  s_dd8a490471e892::t_9e4ab951b30487 706
+scripts/tests/internal-update_test.sh
+  s_dd8a490471e892::t_a7198c629c26d6 1-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "4ed1003cc8250f7790341cd254361c2a68b23074",
+  "prompts": {},
+  "sessions": {
+    "s_dd8a490471e892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32b6f98-5868-4198-9d79-6a1fa55fa420",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
