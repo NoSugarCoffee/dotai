@@ -93,6 +93,16 @@ test_unpushed_commit_stops() {
   assert_kept "$root" "unpushed commit stops the migration" "not on any remote branch"
 }
 
+test_unpushed_branch_beside_detached_head_stops() {
+  local root
+  root="$(make_root branch)"
+  git -C "$root/skills/internal" switch -q -c work
+  echo change >> "$root/skills/internal/README.md"
+  git -C "$root/skills/internal" commit -qam local
+  git -C "$root/skills/internal" checkout -q --detach origin/main
+  assert_kept "$root" "unpushed branch beside a clean detached HEAD stops the migration" "unpushed"
+}
+
 test_empty_directory_is_removed() {
   local root="$SCRATCH/empty-root"
   mkdir -p "$root/skills/internal"
@@ -121,6 +131,7 @@ test_clean_checkout_is_removed
 test_untracked_file_stops
 test_stash_stops
 test_unpushed_commit_stops
+test_unpushed_branch_beside_detached_head_stops
 test_empty_directory_is_removed
 test_no_legacy_directory_is_silent
 

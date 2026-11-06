@@ -549,6 +549,10 @@ migrate_legacy_internal_checkout() {
     || problems+=("a stash — git -C '$legacy' stash list")
   [[ -n "$(git -C "$legacy" branch -r --contains HEAD 2>/dev/null)" ]] \
     || problems+=("commits not on any remote branch — git -C '$legacy' log --oneline HEAD --not --remotes")
+  # HEAD is usually detached at the pinned commit, so a local branch with
+  # unpushed work is invisible to the HEAD check above.
+  [[ -z "$(git -C "$legacy" log --branches --not --remotes --oneline)" ]] \
+    || problems+=("local branches with unpushed commits — git -C '$legacy' log --branches --not --remotes --oneline")
   if [[ "${#problems[@]}" -gt 0 ]]; then
     echo "error: $legacy is a leftover of the old private-repo location (now internal/) and holds:" >&2
     printf '  - %s\n' "${problems[@]}" >&2
