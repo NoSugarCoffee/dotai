@@ -568,6 +568,31 @@ migrate_legacy_internal_checkout() {
   echo "  ✓ removed legacy $legacy (clean, everything pushed)"
 }
 
+# ── 10. Bring internal/ to the commit dotai pins ───────────────────
+# `git submodule update` checks out the pinned commit detached, which would
+# silently move someone developing in internal/ off their branch. A checkout
+# on a branch is therefore left where it is; only a detached one (the normal
+# consumer state) or a missing one follows the pin.
+update_internal_checkout() {
+  local branch
+  if branch="$(git -C "$INTERNAL_DIR" symbolic-ref -q --short HEAD 2>/dev/null)" \
+    && [[ "$(git -C "$INTERNAL_DIR" rev-parse --show-toplevel)" == "$(cd "$INTERNAL_DIR" && pwd -P)" ]]; then
+    local pinned head
+    pinned="$(git -C "$ROOT" ls-tree HEAD internal | awk '{ print $3 }')"
+    head="$(git -C "$INTERNAL_DIR" rev-parse HEAD)"
+    if [[ "$head" == "$pinned" ]]; then
+      echo "  · internal/ is on branch $branch at the pinned commit; left as is"
+    else
+      echo "  · internal/ is on branch $branch at ${head:0:7}; dotai pins ${pinned:0:7}. Left as is — run 'git -C internal switch --detach $pinned' to follow the pin"
+    fi
+    return 0
+  fi
+  # Private skills are optional for users without access to dotai-internal.
+  if ! git -C "$ROOT" submodule update --init internal; then
+    echo "warning: internal/ not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
+  fi
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 usage() {
   cat <<'USAGE'
@@ -678,10 +703,7 @@ main() {
 
   migrate_legacy_internal_checkout
 
-  # Private skills are optional for users without access to dotai-internal.
-  if ! git -C "$ROOT" submodule update --init internal; then
-    echo "warning: internal/ not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
-  fi
+  update_internal_checkout
 
   sync_external_skills
 
