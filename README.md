@@ -46,7 +46,7 @@ bash scripts/install.sh     # update private skills and publish everything to yo
 
 That's it. All rules and skills are symlinked into every supported tool's config directory.
 
-The installer initializes and updates `skills/internal` to the commit pinned by
+The installer initializes and updates `internal/` to the commit pinned by
 dotai before publishing skills. If the private repository is unavailable or local
 changes prevent the update, it warns and continues with the available skills.
 `install.sh --list` only lists skills and does not update the submodule.
@@ -68,9 +68,10 @@ binary, macOS app and skill links come from
 
 ### Private MCP servers
 
-Private MCP definitions live in `skills/internal/apm.yml` in the private
-`dotai-internal` submodule. After initializing the pinned submodule with
-`bash scripts/install.sh`, preview and apply them from the dotai root:
+Private MCP definitions live in `internal/mcp/apm.yml` in the private
+`dotai-internal` submodule. A plain `bash scripts/install.sh` installs public and
+private servers into Claude Code, Codex, and Pi, then checks for drift (see "MCP
+servers" in `AGENTS.md`). To sync only the MCP servers:
 
 ```bash
 bash scripts/install.sh --sync-mcp --dry-run
@@ -86,9 +87,7 @@ targets are retained; selecting a tool adds or updates that target. Servers usin
 remote HTTP skip Codex. Native connection conflicts are reported and preserved.
 
 Change private definitions through a PR in `dotai-internal`, then update the
-submodule pointer here to the approved commit. Ordinary `install.sh` runs only
-publish rules and skills; private MCP sync is explicit. Project `apm install`
-continues to manage the public MCPs. Keep private server names, URLs, headers,
+submodule pointer here to the approved commit. Keep private server names, URLs, headers,
 and tokens out of this repository's `apm.yml`, `.mcp.json`, and lockfile.
 
 ### Agent credentials

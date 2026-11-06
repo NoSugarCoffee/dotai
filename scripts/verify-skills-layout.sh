@@ -7,6 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
 APM_MODULES="$ROOT/apm_modules"
+INTERNAL_DIR="$ROOT/internal"
 CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
 
 EXPECTED="$(mktemp)"
@@ -40,7 +41,7 @@ shopt -s nullglob
 for entry in "$CLAUDE_SKILLS_DIR"/*; do
   [[ -L "$entry" ]] || continue
   raw="$(readlink "$entry" 2>/dev/null || true)"
-  [[ "$raw" == "$SKILLS_SRC"/* || "$raw" == "$APM_MODULES"/* ]] || continue
+  [[ "$raw" == "$SKILLS_SRC"/* || "$raw" == "$APM_MODULES"/* || "$raw" == "$INTERNAL_DIR"/* ]] || continue
   cut -f1 "$EXPECTED" | grep -qx "$(basename "$entry")" && continue
   echo "  ✗ STALE LINK: $(basename "$entry") → $raw"
   FAIL=$((FAIL + 1))

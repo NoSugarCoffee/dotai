@@ -17,6 +17,10 @@ description: Global agent workflow rules for every project
 - Verify a GUI fix from its real output (the recorded file, the saved page, the app's log), not from a screenshot of a preview, which can be stale or fail to capture.
 - Use Orca Automations for cron jobs and recurring scheduled tasks.
 
+## MCP servers
+
+- To add an MCP server, declare it in dotai's `internal/mcp/apm.yml` (private) or `apm.yml` (public) and run `bash scripts/install.sh` in dotai; never run `claude mcp add`, `codex mcp add`, or `pi mcp add` directly.
+
 ## Credentials
 
 - Sign in to sites yourself rather than handing the browser back. Fill any username, password, 动态码 / itoken / OTP or custom vault field on an ego-browser page with the `utils.credential-fill` skill. Never run `bw get`, `op read` or `op item get --reveal` yourself: their output is the secret.

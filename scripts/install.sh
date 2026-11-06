@@ -19,6 +19,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
 APM_MODULES="$ROOT/apm_modules"
+# Private submodule (NoSugarCoffee/dotai-internal): skills/, mcp/, scripts/.
+INTERNAL_DIR="$ROOT/internal"
+SYNC_MCP="$INTERNAL_DIR/scripts/sync-mcp"
 RULES_SRC="$ROOT/rules"
 GLOBAL_PKG="$ROOT/global"
 
@@ -69,6 +72,17 @@ resolve_local_skills() {
       [[ -f "$skill_dir/SKILL.md" ]] || continue
       printf '%s\t%s\n' "${category}.$(basename "$skill_dir")" "${skill_dir%/}"
     done
+  done
+}
+
+# Emit link pairs for the private skills under internal/skills/<name>/, which
+# keep the internal.<name> link names they had under skills/internal/.
+resolve_internal_skills() {
+  shopt -s nullglob
+  local skill_dir
+  for skill_dir in "$INTERNAL_DIR"/skills/*/; do
+    [[ -f "$skill_dir/SKILL.md" ]] || continue
+    printf '%s\t%s\n' "internal.$(basename "$skill_dir")" "${skill_dir%/}"
   done
 }
 
@@ -154,7 +168,7 @@ prune_managed_symlinks() {
     raw="$(readlink "$entry" 2>/dev/null || true)"
     [[ -z "$raw" ]] && continue
     resolved="$(realpath "$entry" 2>/dev/null || readlink -f "$entry" 2>/dev/null || echo "$raw")"
-    for root in "$SKILLS_SRC" "$APM_MODULES"; do
+    for root in "$SKILLS_SRC" "$APM_MODULES" "$INTERNAL_DIR"; do
       if [[ "$raw" == "$root"/* || "$resolved" == "$root"/* ]]; then
         rm -f "${entry:?}"
         echo "  ✓ prune $(basename "$entry")"
@@ -300,21 +314,18 @@ back_up_unmanaged() {
   echo "  ✓ moved existing $path → $backup"
 }
 
-# Merge the public .mcp.json servers into Pi's own MCP file. Entries this script
+# Merge the managed servers (public .mcp.json plus the private ones) into Pi's
+# own MCP file. Entries this script
 # wrote last run are refreshed when the user left them alone; anything the user
 # added or edited wins, so an ordinary run never discards their customization.
 # The sidecar records what was written, which is the only way to tell the two
 # apart once the file is on disk.
-merge_public_mcp() {
+merge_managed_mcp() {
   python3 - "$1" "$2" "$3" <<'PY'
 import json, os, sys, tempfile
 
 src, dest, state_path = sys.argv[1], sys.argv[2], sys.argv[3]
-# A missing .mcp.json means no public servers; previously managed ones still
-# have to be retired, so treat it as an empty set instead of bailing out.
-public = {}
-if os.path.isfile(src):
-    public = json.load(open(src))["mcpServers"]
+public = json.load(open(src))["mcpServers"]
 config = {}
 if os.path.isfile(dest):
     try:
@@ -387,10 +398,9 @@ PY
 install_pi() {
   echo "→ Pi"
   mkdir -p "$PI_AGENT_DIR"
-  local staging dest mcp_dest
+  local staging dest
   staging="$(mktemp -d)"
   dest="$PI_AGENT_DIR/AGENTS.md"
-  mcp_dest="$PI_AGENT_DIR/mcp.json"
   if [[ -d "$dest" ]]; then
     rm -rf "$staging"
     echo "  ! $dest is a directory; move it aside" >&2
@@ -433,6 +443,45 @@ install_pi() {
     return 1
   fi
 
+  install_pi_mcp
+}
+
+# Write the servers Pi should get to $1: the public .mcp.json plus, when the
+# private repo is present, `sync-mcp --emit-pi`. A name in both is an error
+# rather than a silent override, because the two would install different URLs.
+managed_mcp_source() {
+  local out="$1" private_json
+  private_json="$(mktemp)"
+  if [[ -x "$SYNC_MCP" ]]; then
+    if ! "$SYNC_MCP" --emit-pi > "$private_json"; then
+      rm -f "$private_json"
+      echo "  ! sync-mcp --emit-pi failed" >&2
+      return 1
+    fi
+  else
+    echo '{"mcpServers": {}}' > "$private_json"
+  fi
+  python3 -I - "$ROOT/.mcp.json" "$private_json" "$out" <<'PY'
+import json, os, sys
+
+public_path, private_path, out = sys.argv[1:4]
+# A missing .mcp.json means no public servers; previously managed ones still
+# have to be retired, so treat it as an empty set instead of bailing out.
+public = json.load(open(public_path))["mcpServers"] if os.path.isfile(public_path) else {}
+private = json.load(open(private_path))["mcpServers"]
+both = sorted(set(public) & set(private))
+if both:
+    sys.exit("  ! declared in both the public and private manifest: " + ", ".join(both))
+with open(out, "w") as fh:
+    json.dump({"mcpServers": {**public, **private}}, fh)
+PY
+  local status=$?
+  rm -f "$private_json"
+  return "$status"
+}
+
+install_pi_mcp() {
+  local mcp_dest="$PI_AGENT_DIR/mcp.json" source_json
   # The checked-in .mcp.json holds the public servers APM installs per target;
   # Pi reads the same {"mcpServers": …} shape from its agent directory. Merge a
   # copy instead of linking: `pi mcp add`, and enable/exposure changes in /mcp,
@@ -454,10 +503,14 @@ install_pi() {
       return 1
     fi
   fi
-  if ! merge_public_mcp "$ROOT/.mcp.json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
+  source_json="$(mktemp)"
+  if ! managed_mcp_source "$source_json" \
+    || ! merge_managed_mcp "$source_json" "$mcp_dest" "$PI_AGENT_DIR/.dotai-managed-mcp.json"; then
+    rm -f "$source_json"
     return 1
   fi
-  echo "  ✓ merged public servers → $mcp_dest"
+  rm -f "$source_json"
+  echo "  ✓ merged public and private servers → $mcp_dest"
 }
 
 # ── 8. Remove the retired claude-tabs command ──────────────────────
@@ -469,18 +522,136 @@ remove_legacy_command() {
   fi
 }
 
-# ── Main ───────────────────────────────────────────────────────────
-usage() {
-  echo "Usage: bash scripts/install.sh [--list | --sync-mcp [--dry-run] [--target claude,codex]]"
-}
-
-sync_private_mcp() {
-  local sync_script="$SKILLS_SRC/internal/scripts/sync-mcp"
-  if [[ ! -x "$sync_script" ]]; then
-    echo "error: private MCP sync script is unavailable. Run bash scripts/install.sh to initialize the pinned private submodule; private repository access is required." >&2
+# ── 9. Migrate the private repo's old mount point ──────────────────
+# The private repo used to be mounted at skills/internal/. A pull moves the
+# gitlink but leaves the old checkout behind, where it would be published a
+# second time as the "internal" skill category. It is a git checkout that may
+# hold unsaved work, so it is only removed when nothing in it would be lost.
+migrate_legacy_internal_checkout() {
+  local legacy="$ROOT/skills/internal"
+  [[ -e "$legacy" ]] || return 0
+  if [[ -d "$legacy" && -z "$(ls -A "$legacy")" ]]; then
+    rmdir "$legacy"
+    echo "  ✓ removed empty legacy $legacy"
+    return 0
+  fi
+  local manual="rm -rf '$legacy' '$ROOT/.git/modules/skills/internal'"
+  if [[ "$(git -C "$legacy" rev-parse --show-toplevel 2>/dev/null)" != "$(cd "$legacy" && pwd -P)" ]]; then
+    echo "error: $legacy is a leftover of the old private-repo location (now internal/) but not a git checkout." >&2
+    echo "Check its contents, then remove it: $manual" >&2
     return 1
   fi
-  env -u CLAUDE_CONFIG_DIR "$sync_script" "$@"
+
+  local problems=()
+  [[ -z "$(git -C "$legacy" status --porcelain --untracked-files=all)" ]] \
+    || problems+=("modified or untracked files — git -C '$legacy' status")
+  [[ -z "$(git -C "$legacy" stash list)" ]] \
+    || problems+=("a stash — git -C '$legacy' stash list")
+  [[ -n "$(git -C "$legacy" branch -r --contains HEAD 2>/dev/null)" ]] \
+    || problems+=("commits not on any remote branch — git -C '$legacy' log --oneline HEAD --not --remotes")
+  # HEAD is usually detached at the pinned commit, so a local branch with
+  # unpushed work is invisible to the HEAD check above.
+  [[ -z "$(git -C "$legacy" log --branches --not --remotes --oneline)" ]] \
+    || problems+=("local branches with unpushed commits — git -C '$legacy' log --branches --not --remotes --oneline")
+  if [[ "${#problems[@]}" -gt 0 ]]; then
+    echo "error: $legacy is a leftover of the old private-repo location (now internal/) and holds:" >&2
+    printf '  - %s\n' "${problems[@]}" >&2
+    echo "Save that work, then remove it: $manual" >&2
+    return 1
+  fi
+
+  local gitdir
+  gitdir="$(git -C "$legacy" rev-parse --absolute-git-dir)"
+  rm -rf "$legacy"
+  if [[ "$gitdir" == "$(cd "$ROOT/.git" && pwd -P)/modules/skills/internal" ]]; then
+    rm -rf "$gitdir"
+  fi
+  if git -C "$ROOT" config --get-regexp '^submodule\.skills/internal\.' >/dev/null; then
+    git -C "$ROOT" config --remove-section submodule.skills/internal
+  fi
+  echo "  ✓ removed legacy $legacy (clean, everything pushed)"
+}
+
+# ── 10. Bring internal/ to the commit dotai pins ───────────────────
+# `git submodule update` checks out the pinned commit detached, which would
+# silently move someone developing in internal/ off their branch. A checkout
+# on a branch is therefore left where it is; only a detached one (the normal
+# consumer state) or a missing one follows the pin.
+update_internal_checkout() {
+  local branch
+  if branch="$(git -C "$INTERNAL_DIR" symbolic-ref -q --short HEAD 2>/dev/null)" \
+    && [[ "$(git -C "$INTERNAL_DIR" rev-parse --show-toplevel)" == "$(cd "$INTERNAL_DIR" && pwd -P)" ]]; then
+    local pinned head
+    pinned="$(git -C "$ROOT" ls-tree HEAD internal | awk '{ print $3 }')"
+    head="$(git -C "$INTERNAL_DIR" rev-parse HEAD)"
+    if [[ "$head" == "$pinned" ]]; then
+      echo "  · internal/ is on branch $branch at the pinned commit; left as is"
+    else
+      echo "  · internal/ is on branch $branch at ${head:0:7}; dotai pins ${pinned:0:7}. Left as is — run 'git -C internal switch --detach $pinned' to follow the pin"
+    fi
+    return 0
+  fi
+  # Private skills are optional for users without access to dotai-internal.
+  if ! git -C "$ROOT" submodule update --init internal; then
+    echo "warning: internal/ not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
+  fi
+}
+
+# ── Main ───────────────────────────────────────────────────────────
+usage() {
+  cat <<'USAGE'
+Usage: bash scripts/install.sh [option]
+  (none)                       publish rules and skills, sync MCP servers, warn on MCP drift
+  --list                       print the resolved "<link-name>\t<source-dir>" pairs and exit
+  --sync-mcp [--dry-run] [--target claude,codex]
+                               only sync MCP servers to Claude Code and Codex
+  --check-mcp                  report MCP drift across Claude Code, Codex, and Pi; exit 1 on drift
+  --adopt-mcp NAME             declare a hand-added server in internal/mcp/apm.yml, then install
+  --except-mcp TOOL NAME       allow a server in one CLI only (internal/mcp/exceptions.conf)
+USAGE
+}
+
+require_sync_mcp() {
+  if [[ ! -x "$SYNC_MCP" ]]; then
+    echo "error: $SYNC_MCP is unavailable. Run bash scripts/install.sh to initialize the internal/ submodule; private repository access is required." >&2
+    return 1
+  fi
+}
+
+# Claude profiles set CLAUDE_CONFIG_DIR; APM must write the shared ~/.claude.json.
+sync_private_mcp() {
+  require_sync_mcp
+  env -u CLAUDE_CONFIG_DIR "$SYNC_MCP" --public-mcp "$ROOT/.mcp.json" "$@"
+}
+
+run_private_sync() {
+  echo "→ MCP servers (Claude Code, Codex)"
+  if [[ ! -x "$SYNC_MCP" ]]; then
+    echo "  · private MCP sync skipped (internal/ not initialised)"
+    return 0
+  fi
+  sync_private_mcp
+}
+
+# The check, adopt and except modes read each CLI's live configuration.
+run_sync_mcp_live() {
+  require_sync_mcp
+  "$SYNC_MCP" "$@" --public-mcp "$ROOT/.mcp.json" \
+    --claude-json "$HOME/.claude.json" --pi-mcp "$PI_AGENT_DIR/mcp.json"
+}
+
+check_mcp() {
+  run_sync_mcp_live --check
+}
+
+# Run last by a plain install: drift is reported, never fatal, so one stray
+# server does not block unrelated skill updates.
+warn_on_mcp_drift() {
+  [[ -x "$SYNC_MCP" ]] || return 0
+  echo "→ MCP drift check"
+  if ! check_mcp; then
+    echo "  ! MCP drift found (see above); bash scripts/install.sh --check-mcp exits non-zero until it is resolved" >&2
+  fi
 }
 
 main() {
@@ -489,6 +660,21 @@ main() {
     --sync-mcp)
       shift
       sync_private_mcp "$@"
+      return
+      ;;
+    --check-mcp)
+      [[ "$#" -eq 1 ]] || { usage >&2; return 1; }
+      check_mcp
+      return
+      ;;
+    --adopt-mcp)
+      [[ "$#" -eq 2 ]] || { usage >&2; return 1; }
+      run_sync_mcp_live --adopt "$2"
+      ;;
+    --except-mcp)
+      [[ "$#" -eq 3 ]] || { usage >&2; return 1; }
+      run_sync_mcp_live --except "$2" "$3"
+      check_mcp
       return
       ;;
     --list)
@@ -513,21 +699,20 @@ main() {
   trap 'rm -f "$LINKS_FILE"' EXIT
 
   if [[ "$list_only" -eq 1 ]]; then
-    { resolve_local_skills; resolve_vendored_skills; } > "$LINKS_FILE"
+    { resolve_local_skills; resolve_internal_skills; resolve_vendored_skills; } > "$LINKS_FILE"
     assert_unique_link_names
     sort "$LINKS_FILE"
     return 0
   fi
 
-  # Private skills are optional for users without access to dotai-internal.
-  if ! git -C "$ROOT" submodule update --init skills/internal; then
-    echo "warning: skills/internal not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
-  fi
+  migrate_legacy_internal_checkout
+
+  update_internal_checkout
 
   sync_external_skills
 
   echo "→ Resolving skills"
-  { resolve_local_skills; resolve_vendored_skills; } > "$LINKS_FILE"
+  { resolve_local_skills; resolve_internal_skills; resolve_vendored_skills; } > "$LINKS_FILE"
   assert_unique_link_names
   echo "  ✓ $(wc -l < "$LINKS_FILE" | tr -d ' ') skills"
 
@@ -537,8 +722,10 @@ main() {
   install_copilot_skills
   install_copilot_intellij
   install_global_instructions
+  run_private_sync
   install_pi
   remove_legacy_command
+  warn_on_mcp_drift
 
   echo ""
   echo "✅ dotai installed."
@@ -548,4 +735,6 @@ main() {
   echo "   Pi       : $PI_AGENT_DIR/AGENTS.md (compiled from $GLOBAL_PKG)"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi
