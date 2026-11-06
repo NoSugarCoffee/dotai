@@ -1,0 +1,20 @@
+apm.lock.yaml
+  s_dd8a490471e892::t_e4babd408d081d 2
+  s_dd8a490471e892::t_b34c1d1e73a64c 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "15194d9a0c125ebdae4fb88ff6e0bc5f1530d869",
+  "prompts": {},
+  "sessions": {
+    "s_dd8a490471e892": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b32b6f98-5868-4198-9d79-6a1fa55fa420",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
