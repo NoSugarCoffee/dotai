@@ -19,6 +19,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." ; pwd)"
 SKILLS_SRC="$ROOT/skills"
 APM_MODULES="$ROOT/apm_modules"
+# Private submodule (NoSugarCoffee/dotai-internal): skills/, mcp/, scripts/.
+INTERNAL_DIR="$ROOT/internal"
 RULES_SRC="$ROOT/rules"
 GLOBAL_PKG="$ROOT/global"
 
@@ -69,6 +71,17 @@ resolve_local_skills() {
       [[ -f "$skill_dir/SKILL.md" ]] || continue
       printf '%s\t%s\n' "${category}.$(basename "$skill_dir")" "${skill_dir%/}"
     done
+  done
+}
+
+# Emit link pairs for the private skills under internal/skills/<name>/, which
+# keep the internal.<name> link names they had under skills/internal/.
+resolve_internal_skills() {
+  shopt -s nullglob
+  local skill_dir
+  for skill_dir in "$INTERNAL_DIR"/skills/*/; do
+    [[ -f "$skill_dir/SKILL.md" ]] || continue
+    printf '%s\t%s\n' "internal.$(basename "$skill_dir")" "${skill_dir%/}"
   done
 }
 
@@ -154,7 +167,7 @@ prune_managed_symlinks() {
     raw="$(readlink "$entry" 2>/dev/null || true)"
     [[ -z "$raw" ]] && continue
     resolved="$(realpath "$entry" 2>/dev/null || readlink -f "$entry" 2>/dev/null || echo "$raw")"
-    for root in "$SKILLS_SRC" "$APM_MODULES"; do
+    for root in "$SKILLS_SRC" "$APM_MODULES" "$INTERNAL_DIR"; do
       if [[ "$raw" == "$root"/* || "$resolved" == "$root"/* ]]; then
         rm -f "${entry:?}"
         echo "  ✓ prune $(basename "$entry")"
@@ -469,6 +482,52 @@ remove_legacy_command() {
   fi
 }
 
+# ── 9. Migrate the private repo's old mount point ──────────────────
+# The private repo used to be mounted at skills/internal/. A pull moves the
+# gitlink but leaves the old checkout behind, where it would be published a
+# second time as the "internal" skill category. It is a git checkout that may
+# hold unsaved work, so it is only removed when nothing in it would be lost.
+migrate_legacy_internal_checkout() {
+  local legacy="$ROOT/skills/internal"
+  [[ -e "$legacy" ]] || return 0
+  if [[ -d "$legacy" && -z "$(ls -A "$legacy")" ]]; then
+    rmdir "$legacy"
+    echo "  ✓ removed empty legacy $legacy"
+    return 0
+  fi
+  local manual="rm -rf '$legacy' '$ROOT/.git/modules/skills/internal'"
+  if [[ "$(git -C "$legacy" rev-parse --show-toplevel 2>/dev/null)" != "$(cd "$legacy" && pwd -P)" ]]; then
+    echo "error: $legacy is a leftover of the old private-repo location (now internal/) but not a git checkout." >&2
+    echo "Check its contents, then remove it: $manual" >&2
+    return 1
+  fi
+
+  local problems=()
+  [[ -z "$(git -C "$legacy" status --porcelain --untracked-files=all)" ]] \
+    || problems+=("modified or untracked files — git -C '$legacy' status")
+  [[ -z "$(git -C "$legacy" stash list)" ]] \
+    || problems+=("a stash — git -C '$legacy' stash list")
+  [[ -n "$(git -C "$legacy" branch -r --contains HEAD 2>/dev/null)" ]] \
+    || problems+=("commits not on any remote branch — git -C '$legacy' log --oneline HEAD --not --remotes")
+  if [[ "${#problems[@]}" -gt 0 ]]; then
+    echo "error: $legacy is a leftover of the old private-repo location (now internal/) and holds:" >&2
+    printf '  - %s\n' "${problems[@]}" >&2
+    echo "Save that work, then remove it: $manual" >&2
+    return 1
+  fi
+
+  local gitdir
+  gitdir="$(git -C "$legacy" rev-parse --absolute-git-dir)"
+  rm -rf "$legacy"
+  if [[ "$gitdir" == "$(cd "$ROOT/.git" && pwd -P)/modules/skills/internal" ]]; then
+    rm -rf "$gitdir"
+  fi
+  if git -C "$ROOT" config --get-regexp '^submodule\.skills/internal\.' >/dev/null; then
+    git -C "$ROOT" config --remove-section submodule.skills/internal
+  fi
+  echo "  ✓ removed legacy $legacy (clean, everything pushed)"
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 usage() {
   echo "Usage: bash scripts/install.sh [--list | --sync-mcp [--dry-run] [--target claude,codex]]"
@@ -513,21 +572,23 @@ main() {
   trap 'rm -f "$LINKS_FILE"' EXIT
 
   if [[ "$list_only" -eq 1 ]]; then
-    { resolve_local_skills; resolve_vendored_skills; } > "$LINKS_FILE"
+    { resolve_local_skills; resolve_internal_skills; resolve_vendored_skills; } > "$LINKS_FILE"
     assert_unique_link_names
     sort "$LINKS_FILE"
     return 0
   fi
 
+  migrate_legacy_internal_checkout
+
   # Private skills are optional for users without access to dotai-internal.
-  if ! git -C "$ROOT" submodule update --init skills/internal; then
-    echo "warning: skills/internal not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
+  if ! git -C "$ROOT" submodule update --init internal; then
+    echo "warning: internal/ not updated (no access to NoSugarCoffee/dotai-internal, or local changes?); internal.* skills skipped or stale." >&2
   fi
 
   sync_external_skills
 
   echo "→ Resolving skills"
-  { resolve_local_skills; resolve_vendored_skills; } > "$LINKS_FILE"
+  { resolve_local_skills; resolve_internal_skills; resolve_vendored_skills; } > "$LINKS_FILE"
   assert_unique_link_names
   echo "  ✓ $(wc -l < "$LINKS_FILE" | tr -d ' ') skills"
 
@@ -548,4 +609,6 @@ main() {
   echo "   Pi       : $PI_AGENT_DIR/AGENTS.md (compiled from $GLOBAL_PKG)"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi
