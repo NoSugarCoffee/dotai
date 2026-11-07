@@ -1,0 +1,19 @@
+.humanlayer/tasks/pr-53/description.md
+  s_bc8e1a134d242e::t_16701f1051c7a5 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "50436da4e5a885795159dd8ef5d25ee1e497b8b5",
+  "prompts": {},
+  "sessions": {
+    "s_bc8e1a134d242e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b38d-5bba-7921-b5b2-236a61f0d1f7",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
