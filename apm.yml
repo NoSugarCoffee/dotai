@@ -52,7 +52,7 @@ dependencies:
         - hyperframes
     # Whole repo: its plugins declare no skill manifest, so --skill is rejected
     # and vendored-skills.conf selects what gets published.
-    - humanlayer/skills#3c2629142c5d437428269b1b722b08c0b87f574d
+    - humanlayer/skills#4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329
     - anthropics/claude-plugins-community/eli5#06ec7b6a0a82bdc4bec44bd82d4368c42f20d7c1
   mcp:
     - name: io.github.github/github-mcp-server
