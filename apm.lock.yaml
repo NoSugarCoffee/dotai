@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-11-06T16:31:31.863887+00:00'
+generated_at: '2026-11-07T01:11:45.646899+00:00'
 apm_version: 0.35.0
 dependencies:
 - repo_url: anthropics/claude-plugins-community
@@ -324,11 +324,11 @@ dependencies:
 - repo_url: humanlayer/skills
   name: skills
   host: github.com
-  resolved_commit: 3c2629142c5d437428269b1b722b08c0b87f574d
-  resolved_ref: 3c2629142c5d437428269b1b722b08c0b87f574d
-  version: 3c26291
+  resolved_commit: 4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329
+  resolved_ref: 4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329
+  version: 4d69d20
   package_type: marketplace_plugin
-  content_hash: sha256:4909722b6edba6dbaa5481adca944937237e71c402f62c03a973923ef5cf986f
+  content_hash: sha256:69b67a19adf4e24777ba033a9ecc21221ea76070a2411edaa4d204b2b8034207
 - repo_url: jimliu/baoyu-skills
   materialization_repo_url: JimLiu/baoyu-skills
   name: fa735fca818eb2ee
