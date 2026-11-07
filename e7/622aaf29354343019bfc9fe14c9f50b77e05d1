@@ -1,0 +1,23 @@
+vendored-skills.conf
+  s_bc8e1a134d242e::t_7f33fc84efdb01 17
+apm.yml
+  s_bc8e1a134d242e::t_0cdc21b6558cc0 55
+apm.lock.yaml
+  s_bc8e1a134d242e::t_0cdc21b6558cc0 2,327-329,331
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "e7622aaf29354343019bfc9fe14c9f50b77e05d1",
+  "prompts": {},
+  "sessions": {
+    "s_bc8e1a134d242e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1b38d-5bba-7921-b5b2-236a61f0d1f7",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "NoSugarCoffee <25247325+NoSugarCoffee@users.noreply.github.com>"
+    }
+  }
+}
